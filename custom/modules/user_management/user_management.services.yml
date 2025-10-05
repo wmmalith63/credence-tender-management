@@ -1,0 +1,6 @@
+services:
+  user_management.homepage_redirect_subscriber:
+    class: Drupal\user_management\EventSubscriber\HomePageRedirectSubscriber
+    arguments: ['@current_user', '@current_route_match']
+    tags:
+      - { name: event_subscriber }

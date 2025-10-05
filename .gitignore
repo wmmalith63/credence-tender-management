@@ -1,0 +1,205 @@
+# Drupal specific files and directories
+sites/*/files/
+sites/*/private/
+sites/*/settings.local.php
+sites/*/settings.php
+sites/*/services.yml
+sites/default/files/
+sites/default/private/
+sites/default/settings.local.php
+sites/default/settings.php
+sites/default/services.yml
+
+# Drupal core (if you're not tracking core)
+web/core/
+core/
+vendor/
+composer.lock
+
+# Drupal temporary files
+sites/*/files/tmp/
+sites/*/files/cache/
+sites/*/files/css/
+sites/*/files/js/
+sites/*/files/php/
+sites/*/files/translations/
+sites/*/files/backup_migrate/
+
+# Docker volumes and data
+/drupal_data/
+/postgres_data/
+/docker-data/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.buildpath
+.settings/
+nbproject/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# Node.js dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Composer
+composer.phar
+vendor/
+
+# Backup files
+*.bak
+*.backup
+*.sql
+*.dump
+
+# Cache files
+.cache/
+cache/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# PhpStorm
+.idea/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Docker
+.dockerignore
+
+# Drupal multisite
+sites/*/files/
+sites/*/private/
+
+# Sensitive configuration files
+settings.local.php
+services.local.yml
+
+# Development tools
+.editorconfig
+.eslintrc
+.php_cs
+.php_cs.cache
+phpunit.xml
+behat.yml
+
+# Build artifacts
+build/
+dist/
+
+# Package managers
+package-lock.json
+yarn.lock
+
+# Testing
+tests/
+test/
+spec/
+*.test.js
+*.spec.js

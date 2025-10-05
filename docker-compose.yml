@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  web:
+    image: drupal:10-apache
+    container_name: credence_tender_web
+    ports:
+      - "8080:80"
+    volumes:
+      - drupal_data:/var/www/html
+      - ./custom/modules:/var/www/html/modules/custom
+      - ./custom/themes:/var/www/html/themes/custom
+      - ./config:/var/www/html/config
+    environment:
+      DRUPAL_DATABASE_HOST: db
+      DRUPAL_DATABASE_PORT: 5432
+      DRUPAL_DATABASE_NAME: tender_management
+      DRUPAL_DATABASE_USERNAME: drupal
+      DRUPAL_DATABASE_PASSWORD: drupal123
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    container_name: credence_tender_db
+    environment:
+      POSTGRES_DB: tender_management
+      POSTGRES_USER: drupal
+      POSTGRES_PASSWORD: drupal123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Removed the init script volume to prevent premature table creation
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  adminer:
+    image: adminer
+    container_name: credence_tender_adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  drupal_data:
+  postgres_data:

@@ -1,0 +1,450 @@
+<?php
+
+/**
+ * @file
+ * Contains user_management.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\user\Entity\User;
+use Drupal\Core\Database\Database;
+
+/**
+ * Implements hook_help().
+ */
+function user_management_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.user_management':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The User Management module provides enhanced user registration and management features for the tender management system.') . '</p>';
+      $output .= '<h3>' . t('Features') . '</h3>';
+      $output .= '<ul>';
+      $output .= '<li>' . t('Email-based user registration') . '</li>';
+      $output .= '<li>' . t('Extended user profiles') . '</li>';
+      $output .= '<li>' . t('User verification system') . '</li>';
+      $output .= '<li>' . t('Role-based access control') . '</li>';
+      $output .= '</ul>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ * Alter user registration form.
+ */
+function user_management_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Add custom fields to registration form
+  $form['company_info'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Company Information'),
+    '#weight' => 1,
+  ];
+  
+  $form['company_info']['company_name'] = [
+    '#type' => 'textfield',
+    '#title' => t('Company Name'),
+    '#required' => TRUE,
+    '#maxlength' => 255,
+  ];
+  
+  $form['company_info']['company_registration'] = [
+    '#type' => 'textfield',
+    '#title' => t('Company Registration Number'),
+    '#required' => TRUE,
+    '#maxlength' => 100,
+  ];
+  
+  $form['contact_info'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Contact Information'),
+    '#weight' => 2,
+  ];
+  
+  $form['contact_info']['phone'] = [
+    '#type' => 'textfield',
+    '#title' => t('Phone Number'),
+    '#required' => TRUE,
+    '#maxlength' => 20,
+  ];
+  
+  $form['contact_info']['address'] = [
+    '#type' => 'textarea',
+    '#title' => t('Address'),
+    '#required' => TRUE,
+    '#rows' => 3,
+  ];
+  
+  $form['contact_info']['city'] = [
+    '#type' => 'textfield',
+    '#title' => t('City'),
+    '#required' => TRUE,
+    '#maxlength' => 100,
+  ];
+  
+  $form['contact_info']['country'] = [
+    '#type' => 'select',
+    '#title' => t('Country'),
+    '#required' => TRUE,
+    '#options' => _user_management_get_countries(),
+    '#default_value' => 'US',
+  ];
+  
+  $form['contact_info']['postal_code'] = [
+    '#type' => 'textfield',
+    '#title' => t('Postal Code'),
+    '#required' => TRUE,
+    '#maxlength' => 20,
+  ];
+  
+  $form['contact_info']['website'] = [
+    '#type' => 'url',
+    '#title' => t('Website'),
+    '#maxlength' => 255,
+  ];
+  
+  // Add custom submit handler
+  $form['actions']['submit']['#submit'][] = 'user_management_user_register_submit';
+}
+
+/**
+ * Custom submit handler for user registration form.
+ */
+function user_management_user_register_submit(&$form, FormStateInterface $form_state) {
+  $values = $form_state->getValues();
+  $account = $form_state->get('user');
+  
+  if ($account && $account->id()) {
+    // Insert extended profile data
+    $connection = Database::getConnection();
+    $connection->insert('user_profiles')
+      ->fields([
+        'uid' => $account->id(),
+        'company_name' => $values['company_name'],
+        'company_registration' => $values['company_registration'],
+        'phone' => $values['phone'],
+        'address' => $values['address'],
+        'city' => $values['city'],
+        'country' => $values['country'],
+        'postal_code' => $values['postal_code'],
+        'website' => $values['website'],
+        'verification_status' => 'pending',
+      ])
+      ->execute();
+    
+    // Send notification to admin for user verification
+    _user_management_send_verification_notification($account);
+    
+    // Display message to user
+    \Drupal::messenger()->addMessage(t('Your registration has been submitted. You will receive an email once your account is verified by our administrators.'));
+  }
+}
+
+/**
+ * Implements hook_user_delete().
+ */
+function user_management_user_delete($account) {
+  // Delete user profile data when user is deleted
+  $connection = Database::getConnection();
+  $connection->delete('user_profiles')
+    ->condition('uid', $account->id())
+    ->execute();
+}
+
+/**
+ * Implements hook_user_load().
+ */
+function user_management_user_load($users) {
+  foreach ($users as $account) {
+    // Load extended profile data
+    $connection = Database::getConnection();
+    $query = $connection->select('user_profiles', 'up')
+      ->fields('up')
+      ->condition('uid', $account->id())
+      ->execute();
+    
+    $profile = $query->fetchAssoc();
+    if ($profile) {
+      $account->user_profile = $profile;
+    }
+  }
+}
+
+/**
+ * Helper function to get countries list.
+ */
+function _user_management_get_countries() {
+  return [
+    'AF' => t('Afghanistan'),
+    'AL' => t('Albania'),
+    'DZ' => t('Algeria'),
+    'AS' => t('American Samoa'),
+    'AD' => t('Andorra'),
+    'AO' => t('Angola'),
+    'AI' => t('Anguilla'),
+    'AQ' => t('Antarctica'),
+    'AG' => t('Antigua and Barbuda'),
+    'AR' => t('Argentina'),
+    'AM' => t('Armenia'),
+    'AW' => t('Aruba'),
+    'AU' => t('Australia'),
+    'AT' => t('Austria'),
+    'AZ' => t('Azerbaijan'),
+    'BS' => t('Bahamas'),
+    'BH' => t('Bahrain'),
+    'BD' => t('Bangladesh'),
+    'BB' => t('Barbados'),
+    'BY' => t('Belarus'),
+    'BE' => t('Belgium'),
+    'BZ' => t('Belize'),
+    'BJ' => t('Benin'),
+    'BM' => t('Bermuda'),
+    'BT' => t('Bhutan'),
+    'BO' => t('Bolivia'),
+    'BA' => t('Bosnia and Herzegovina'),
+    'BW' => t('Botswana'),
+    'BV' => t('Bouvet Island'),
+    'BR' => t('Brazil'),
+    'IO' => t('British Indian Ocean Territory'),
+    'BN' => t('Brunei Darussalam'),
+    'BG' => t('Bulgaria'),
+    'BF' => t('Burkina Faso'),
+    'BI' => t('Burundi'),
+    'KH' => t('Cambodia'),
+    'CM' => t('Cameroon'),
+    'CA' => t('Canada'),
+    'CV' => t('Cape Verde'),
+    'KY' => t('Cayman Islands'),
+    'CF' => t('Central African Republic'),
+    'TD' => t('Chad'),
+    'CL' => t('Chile'),
+    'CN' => t('China'),
+    'CX' => t('Christmas Island'),
+    'CC' => t('Cocos (Keeling) Islands'),
+    'CO' => t('Colombia'),
+    'KM' => t('Comoros'),
+    'CG' => t('Congo'),
+    'CD' => t('Congo, the Democratic Republic of the'),
+    'CK' => t('Cook Islands'),
+    'CR' => t('Costa Rica'),
+    'CI' => t('Cote D\'Ivoire'),
+    'HR' => t('Croatia'),
+    'CU' => t('Cuba'),
+    'CY' => t('Cyprus'),
+    'CZ' => t('Czech Republic'),
+    'DK' => t('Denmark'),
+    'DJ' => t('Djibouti'),
+    'DM' => t('Dominica'),
+    'DO' => t('Dominican Republic'),
+    'EC' => t('Ecuador'),
+    'EG' => t('Egypt'),
+    'SV' => t('El Salvador'),
+    'GQ' => t('Equatorial Guinea'),
+    'ER' => t('Eritrea'),
+    'EE' => t('Estonia'),
+    'ET' => t('Ethiopia'),
+    'FK' => t('Falkland Islands (Malvinas)'),
+    'FO' => t('Faroe Islands'),
+    'FJ' => t('Fiji'),
+    'FI' => t('Finland'),
+    'FR' => t('France'),
+    'GF' => t('French Guiana'),
+    'PF' => t('French Polynesia'),
+    'TF' => t('French Southern Territories'),
+    'GA' => t('Gabon'),
+    'GM' => t('Gambia'),
+    'GE' => t('Georgia'),
+    'DE' => t('Germany'),
+    'GH' => t('Ghana'),
+    'GI' => t('Gibraltar'),
+    'GR' => t('Greece'),
+    'GL' => t('Greenland'),
+    'GD' => t('Grenada'),
+    'GP' => t('Guadeloupe'),
+    'GU' => t('Guam'),
+    'GT' => t('Guatemala'),
+    'GN' => t('Guinea'),
+    'GW' => t('Guinea-Bissau'),
+    'GY' => t('Guyana'),
+    'HT' => t('Haiti'),
+    'HM' => t('Heard Island and Mcdonald Islands'),
+    'VA' => t('Holy See (Vatican City State)'),
+    'HN' => t('Honduras'),
+    'HK' => t('Hong Kong'),
+    'HU' => t('Hungary'),
+    'IS' => t('Iceland'),
+    'IN' => t('India'),
+    'ID' => t('Indonesia'),
+    'IR' => t('Iran, Islamic Republic of'),
+    'IQ' => t('Iraq'),
+    'IE' => t('Ireland'),
+    'IL' => t('Israel'),
+    'IT' => t('Italy'),
+    'JM' => t('Jamaica'),
+    'JP' => t('Japan'),
+    'JO' => t('Jordan'),
+    'KZ' => t('Kazakhstan'),
+    'KE' => t('Kenya'),
+    'KI' => t('Kiribati'),
+    'KP' => t('Korea, Democratic People\'s Republic of'),
+    'KR' => t('Korea, Republic of'),
+    'KW' => t('Kuwait'),
+    'KG' => t('Kyrgyzstan'),
+    'LA' => t('Lao People\'s Democratic Republic'),
+    'LV' => t('Latvia'),
+    'LB' => t('Lebanon'),
+    'LS' => t('Lesotho'),
+    'LR' => t('Liberia'),
+    'LY' => t('Libyan Arab Jamahiriya'),
+    'LI' => t('Liechtenstein'),
+    'LT' => t('Lithuania'),
+    'LU' => t('Luxembourg'),
+    'MO' => t('Macao'),
+    'MK' => t('Macedonia, the Former Yugoslav Republic of'),
+    'MG' => t('Madagascar'),
+    'MW' => t('Malawi'),
+    'MY' => t('Malaysia'),
+    'MV' => t('Maldives'),
+    'ML' => t('Mali'),
+    'MT' => t('Malta'),
+    'MH' => t('Marshall Islands'),
+    'MQ' => t('Martinique'),
+    'MR' => t('Mauritania'),
+    'MU' => t('Mauritius'),
+    'YT' => t('Mayotte'),
+    'MX' => t('Mexico'),
+    'FM' => t('Micronesia, Federated States of'),
+    'MD' => t('Moldova, Republic of'),
+    'MC' => t('Monaco'),
+    'MN' => t('Mongolia'),
+    'MS' => t('Montserrat'),
+    'MA' => t('Morocco'),
+    'MZ' => t('Mozambique'),
+    'MM' => t('Myanmar'),
+    'NA' => t('Namibia'),
+    'NR' => t('Nauru'),
+    'NP' => t('Nepal'),
+    'NL' => t('Netherlands'),
+    'AN' => t('Netherlands Antilles'),
+    'NC' => t('New Caledonia'),
+    'NZ' => t('New Zealand'),
+    'NI' => t('Nicaragua'),
+    'NE' => t('Niger'),
+    'NG' => t('Nigeria'),
+    'NU' => t('Niue'),
+    'NF' => t('Norfolk Island'),
+    'MP' => t('Northern Mariana Islands'),
+    'NO' => t('Norway'),
+    'OM' => t('Oman'),
+    'PK' => t('Pakistan'),
+    'PW' => t('Palau'),
+    'PS' => t('Palestinian Territory, Occupied'),
+    'PA' => t('Panama'),
+    'PG' => t('Papua New Guinea'),
+    'PY' => t('Paraguay'),
+    'PE' => t('Peru'),
+    'PH' => t('Philippines'),
+    'PN' => t('Pitcairn'),
+    'PL' => t('Poland'),
+    'PT' => t('Portugal'),
+    'PR' => t('Puerto Rico'),
+    'QA' => t('Qatar'),
+    'RE' => t('Reunion'),
+    'RO' => t('Romania'),
+    'RU' => t('Russian Federation'),
+    'RW' => t('Rwanda'),
+    'SH' => t('Saint Helena'),
+    'KN' => t('Saint Kitts and Nevis'),
+    'LC' => t('Saint Lucia'),
+    'PM' => t('Saint Pierre and Miquelon'),
+    'VC' => t('Saint Vincent and the Grenadines'),
+    'WS' => t('Samoa'),
+    'SM' => t('San Marino'),
+    'ST' => t('Sao Tome and Principe'),
+    'SA' => t('Saudi Arabia'),
+    'SN' => t('Senegal'),
+    'CS' => t('Serbia and Montenegro'),
+    'SC' => t('Seychelles'),
+    'SL' => t('Sierra Leone'),
+    'SG' => t('Singapore'),
+    'SK' => t('Slovakia'),
+    'SI' => t('Slovenia'),
+    'SB' => t('Solomon Islands'),
+    'SO' => t('Somalia'),
+    'ZA' => t('South Africa'),
+    'GS' => t('South Georgia and the South Sandwich Islands'),
+    'ES' => t('Spain'),
+    'LK' => t('Sri Lanka'),
+    'SD' => t('Sudan'),
+    'SR' => t('Suriname'),
+    'SJ' => t('Svalbard and Jan Mayen'),
+    'SZ' => t('Swaziland'),
+    'SE' => t('Sweden'),
+    'CH' => t('Switzerland'),
+    'SY' => t('Syrian Arab Republic'),
+    'TW' => t('Taiwan, Province of China'),
+    'TJ' => t('Tajikistan'),
+    'TZ' => t('Tanzania, United Republic of'),
+    'TH' => t('Thailand'),
+    'TL' => t('Timor-Leste'),
+    'TG' => t('Togo'),
+    'TK' => t('Tokelau'),
+    'TO' => t('Tonga'),
+    'TT' => t('Trinidad and Tobago'),
+    'TN' => t('Tunisia'),
+    'TR' => t('Turkey'),
+    'TM' => t('Turkmenistan'),
+    'TC' => t('Turks and Caicos Islands'),
+    'TV' => t('Tuvalu'),
+    'UG' => t('Uganda'),
+    'UA' => t('Ukraine'),
+    'AE' => t('United Arab Emirates'),
+    'GB' => t('United Kingdom'),
+    'US' => t('United States'),
+    'UM' => t('United States Minor Outlying Islands'),
+    'UY' => t('Uruguay'),
+    'UZ' => t('Uzbekistan'),
+    'VU' => t('Vanuatu'),
+    'VE' => t('Venezuela'),
+    'VN' => t('Viet Nam'),
+    'VG' => t('Virgin Islands, British'),
+    'VI' => t('Virgin Islands, U.S.'),
+    'WF' => t('Wallis and Futuna'),
+    'EH' => t('Western Sahara'),
+    'YE' => t('Yemen'),
+    'ZM' => t('Zambia'),
+    'ZW' => t('Zimbabwe'),
+  ];
+}
+
+/**
+ * Send verification notification to administrators.
+ */
+function _user_management_send_verification_notification($account) {
+  $mailManager = \Drupal::service('plugin.manager.mail');
+  $module = 'user_management';
+  $key = 'user_verification_needed';
+  $to = \Drupal::config('system.site')->get('mail');
+  $params['account'] = $account;
+  $langcode = \Drupal::currentUser()->getPreferredLangcode();
+  
+  $result = $mailManager->mail($module, $key, $to, $langcode, $params, NULL, TRUE);
+}
+
+/**
+ * Implements hook_mail().
+ */
+function user_management_mail($key, &$message, $params) {
+  switch ($key) {
+    case 'user_verification_needed':
+      $account = $params['account'];
+      $message['from'] = \Drupal::config('system.site')->get('mail');
+      $message['subject'] = t('New User Registration Requires Verification');
+      $message['body'][] = t('A new user has registered and requires verification:');
+      $message['body'][] = t('Name: @name', ['@name' => $account->getDisplayName()]);
+      $message['body'][] = t('Email: @email', ['@email' => $account->getEmail()]);
+      $message['body'][] = t('Please review and verify this user account.');
+      break;
+  }
+}

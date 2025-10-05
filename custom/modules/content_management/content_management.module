@@ -1,0 +1,321 @@
+<?php
+
+/**
+ * @file
+ * Contains content_management.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\user\Entity\User;
+use Drupal\Core\Database\Database;
+
+/**
+ * Implements hook_help().
+ */
+function content_management_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.content_management':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Content Management module provides TV content procurement management features similar to RTM e-TVCMS system.') . '</p>';
+      $output .= '<h3>' . t('Features') . '</h3>';
+      $output .= '<ul>';
+      $output .= '<li>' . t('Content procurement management') . '</li>';
+      $output .= '<li>' . t('Producer registration and certification') . '</li>';
+      $output .= '<li>' . t('Content proposal submission') . '</li>';
+      $output .= '<li>' . t('Evaluation and scoring system') . '</li>';
+      $output .= '<li>' . t('Production contract management') . '</li>';
+      $output .= '<li>' . t('Workflow management') . '</li>';
+      $output .= '</ul>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function content_management_theme() {
+  return [
+    'content_procurement_dashboard' => [
+      'variables' => [
+        'procurements' => NULL,
+        'statistics' => NULL,
+      ],
+      'template' => 'content-procurement-dashboard',
+    ],
+    'content_proposal_form' => [
+      'variables' => [
+        'proposal' => NULL,
+        'procurement' => NULL,
+      ],
+      'template' => 'content-proposal-form',
+    ],
+    'producer_certification_status' => [
+      'variables' => [
+        'producer' => NULL,
+        'status' => NULL,
+      ],
+      'template' => 'producer-certification-status',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_user_login().
+ */
+function content_management_user_login($account) {
+  // Check if user is a producer and redirect to appropriate dashboard
+  $connection = Database::getConnection();
+  $producer = $connection->select('content_producers', 'cp')
+    ->fields('cp')
+    ->condition('uid', $account->id())
+    ->execute()
+    ->fetchAssoc();
+  
+  if ($producer) {
+    // Set a flag for producer users
+    \Drupal::messenger()->addMessage(t('Welcome to RTM Content Procurement System'));
+  }
+}
+
+/**
+ * Get content types for e-TVCMS.
+ */
+function content_management_get_content_types() {
+  return [
+    'swasta_baharu' => t('Swasta Baharu (Local New Private)'),
+    'sambung_siri' => t('Sambung Siri (Series Continuation)'),
+    'program_luar_negara' => t('Program Luar Negara (International Programs)'),
+    'produk_siap_tempatan' => t('Produk Siap Tempatan (Local Finished Products)'),
+  ];
+}
+
+/**
+ * Get program genres.
+ */
+function content_management_get_program_genres() {
+  return [
+    'drama' => t('Drama'),
+    'dokumentari' => t('Dokumentari'),
+    'varieti' => t('Varieti'),
+    'berita' => t('Berita & Hal Ehwal Semasa'),
+    'kanak_kanak' => t('Kanak-kanak'),
+    'pendidikan' => t('Pendidikan'),
+    'sukan' => t('Sukan'),
+    'muzik' => t('Muzik'),
+  ];
+}
+
+/**
+ * Get target audiences.
+ */
+function content_management_get_target_audiences() {
+  return [
+    'umum' => t('Umum (General)'),
+    'kanak_kanak' => t('Kanak-kanak (Children)'),
+    'remaja' => t('Remaja (Teenagers)'),
+    'dewasa' => t('Dewasa (Adults)'),
+    'keluarga' => t('Keluarga (Family)'),
+    'wanita' => t('Wanita (Women)'),
+    'lelaki' => t('Lelaki (Men)'),
+  ];
+}
+
+/**
+ * Get language requirements.
+ */
+function content_management_get_language_requirements() {
+  return [
+    'bahasa_malaysia' => t('Bahasa Malaysia'),
+    'english' => t('English'),
+    'mandarin' => t('Mandarin'),
+    'tamil' => t('Tamil'),
+    'mixed' => t('Mixed Languages'),
+    'subtitle_required' => t('Subtitle Required'),
+  ];
+}
+
+/**
+ * Get producer specializations.
+ */
+function content_management_get_producer_specializations() {
+  return [
+    'drama_production' => t('Drama Production'),
+    'documentary_production' => t('Documentary Production'),
+    'variety_shows' => t('Variety Shows'),
+    'news_production' => t('News Production'),
+    'children_programs' => t('Children Programs'),
+    'educational_content' => t('Educational Content'),
+    'animation' => t('Animation'),
+    'music_programs' => t('Music Programs'),
+    'sports_coverage' => t('Sports Coverage'),
+    'live_events' => t('Live Events'),
+  ];
+}
+
+/**
+ * Get production house types.
+ */
+function content_management_get_production_house_types() {
+  return [
+    'independent' => t('Independent Production House'),
+    'corporate' => t('Corporate Production Company'),
+    'freelancer' => t('Freelance Producer'),
+    'partnership' => t('Partnership/Consortium'),
+    'international' => t('International Production Company'),
+  ];
+}
+
+/**
+ * Generate procurement number.
+ */
+function content_management_generate_procurement_number($content_type) {
+  $year = date('Y');
+  $month = date('m');
+  
+  // Get the next sequence number
+  $connection = Database::getConnection();
+  $count = $connection->select('content_procurements', 'cp')
+    ->condition('procurement_number', "RTM-$year-$month-%", 'LIKE')
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+  
+  $sequence = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+  
+  $type_codes = [
+    'swasta_baharu' => 'SB',
+    'sambung_siri' => 'SS',
+    'program_luar_negara' => 'PLN',
+    'produk_siap_tempatan' => 'PST',
+  ];
+  
+  $type_code = $type_codes[$content_type] ?? 'GEN';
+  
+  return "RTM-$year-$month-$type_code-$sequence";
+}
+
+/**
+ * Generate producer code.
+ */
+function content_management_generate_producer_code() {
+  $year = date('Y');
+  
+  $connection = Database::getConnection();
+  $count = $connection->select('content_producers', 'cp')
+    ->condition('producer_code', "PROD-$year-%", 'LIKE')
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+  
+  $sequence = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+  
+  return "PROD-$year-$sequence";
+}
+
+/**
+ * Send notification for content procurement events.
+ */
+function content_management_send_notification($user_id, $title, $message, $type, $entity_type = NULL, $entity_id = NULL) {
+  $connection = Database::getConnection();
+  $connection->insert('notifications')
+    ->fields([
+      'user_id' => $user_id,
+      'title' => $title,
+      'message' => $message,
+      'notification_type' => $type,
+      'related_entity_type' => $entity_type,
+      'related_entity_id' => $entity_id,
+    ])
+    ->execute();
+}
+
+/**
+ * Log audit trail for content management activities.
+ */
+function content_management_log_activity($entity_type, $entity_id, $action, $old_values = NULL, $new_values = NULL) {
+  $connection = Database::getConnection();
+  $current_user = \Drupal::currentUser();
+  $request = \Drupal::request();
+  
+  $connection->insert('audit_logs')
+    ->fields([
+      'user_id' => $current_user->id(),
+      'entity_type' => $entity_type,
+      'entity_id' => $entity_id,
+      'action' => $action,
+      'old_values' => $old_values ? json_encode($old_values) : NULL,
+      'new_values' => $new_values ? json_encode($new_values) : NULL,
+      'ip_address' => $request->getClientIp(),
+      'user_agent' => $request->headers->get('User-Agent'),
+    ])
+    ->execute();
+}
+
+/**
+ * Check if user has producer profile.
+ */
+function content_management_user_is_producer($uid) {
+  $connection = Database::getConnection();
+  $result = $connection->select('content_producers', 'cp')
+    ->fields('cp', ['id'])
+    ->condition('uid', $uid)
+    ->execute()
+    ->fetchField();
+  
+  return !empty($result);
+}
+
+/**
+ * Get producer profile by user ID.
+ */
+function content_management_get_producer_profile($uid) {
+  $connection = Database::getConnection();
+  return $connection->select('content_producers', 'cp')
+    ->fields('cp')
+    ->condition('uid', $uid)
+    ->execute()
+    ->fetchAssoc();
+}
+
+/**
+ * Calculate proposal score.
+ */
+function content_management_calculate_proposal_score($proposal_id) {
+  $connection = Database::getConnection();
+  
+  // Get all evaluation scores for this proposal
+  $query = $connection->select('evaluation_scores', 'es');
+  $query->join('evaluation_criteria', 'ec', 'es.criteria_id = ec.id');
+  $query->fields('es', ['score']);
+  $query->fields('ec', ['weight_percentage']);
+  $query->condition('es.proposal_id', $proposal_id);
+  
+  $results = $query->execute()->fetchAll();
+  
+  $weighted_score = 0;
+  $total_weight = 0;
+  
+  foreach ($results as $result) {
+    $weighted_score += ($result->score * $result->weight_percentage / 100);
+    $total_weight += $result->weight_percentage;
+  }
+  
+  return $total_weight > 0 ? round($weighted_score, 2) : 0;
+}
+
+/**
+ * Update proposal scores.
+ */
+function content_management_update_proposal_scores($proposal_id) {
+  $total_score = content_management_calculate_proposal_score($proposal_id);
+  
+  $connection = Database::getConnection();
+  $connection->update('content_proposals')
+    ->fields(['total_score' => $total_score])
+    ->condition('id', $proposal_id)
+    ->execute();
+  
+  return $total_score;
+}

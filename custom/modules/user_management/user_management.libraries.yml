@@ -1,0 +1,16 @@
+user_management:
+  version: 1.x
+  css:
+    theme:
+      css/user_management.css: {}
+
+login_registration:
+  version: 10.0
+  css:
+    theme:
+      css/login_registration.css: {}
+  js:
+    js/login_registration.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal

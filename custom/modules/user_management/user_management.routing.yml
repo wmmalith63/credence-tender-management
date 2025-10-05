@@ -1,0 +1,23 @@
+user_management.login_register:
+  path: '/login'
+  defaults:
+    _form: '\Drupal\user_management\Form\LoginRegistrationForm'
+    _title: 'Login / Register - e-TVCMS'
+  requirements:
+    _access: 'TRUE'
+
+user_management.profile:
+  path: '/user/profile'
+  defaults:
+    _controller: '\Drupal\user_management\Controller\UserManagementController::profile'
+    _title: 'User Profile'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+user_management.register:
+  path: '/producer/register'
+  defaults:
+    _controller: '\Drupal\user_management\Controller\UserManagementController::register'
+    _title: 'Producer Registration'
+  requirements:
+    _permission: 'access content'

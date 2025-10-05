@@ -1,0 +1,13 @@
+name: User Management
+type: module
+description: 'Custom user management module for tender management system with email-based registration'
+core_version_requirement: ^10
+package: 'Credence Tender Management'
+dependencies:
+  - drupal:user
+  - drupal:field
+  - drupal:system
+  - drupal:node
+  - drupal:views
+  - drupal:rest
+  - drupal:serialization

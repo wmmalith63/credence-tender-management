@@ -1,0 +1,283 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the User Management module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function user_management_install() {
+  // Create content producer role if it doesn't exist
+  if (!\Drupal\user\Entity\Role::load('content_producer')) {
+    $role = \Drupal\user\Entity\Role::create([
+      'id' => 'content_producer',
+      'label' => 'Content Producer',
+      'weight' => 3,
+    ]);
+    $role->save();
+    
+    // Grant permissions to content producer role
+    user_role_grant_permissions('content_producer', [
+      'access content',
+      'access user profiles',
+    ]);
+  }
+  
+  // Create extended user profiles table after Drupal is installed
+  $database = \Drupal::database();
+  
+  // Create user_profiles table
+  $schema = [
+    'description' => 'Extended user profile information',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique profile ID.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'User ID from users table.',
+      ],
+      'company_name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => 'Company name.',
+      ],
+      'company_registration' => [
+        'type' => 'varchar',
+        'length' => 100,
+        'description' => 'Company registration number.',
+      ],
+      'phone' => [
+        'type' => 'varchar',
+        'length' => 20,
+        'description' => 'Phone number.',
+      ],
+      'address' => [
+        'type' => 'text',
+        'description' => 'Address.',
+      ],
+      'city' => [
+        'type' => 'varchar',
+        'length' => 100,
+        'description' => 'City.',
+      ],
+      'country' => [
+        'type' => 'varchar',
+        'length' => 100,
+        'description' => 'Country.',
+      ],
+      'postal_code' => [
+        'type' => 'varchar',
+        'length' => 20,
+        'description' => 'Postal code.',
+      ],
+      'website' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => 'Website URL.',
+      ],
+      'verification_status' => [
+        'type' => 'varchar',
+        'length' => 20,
+        'not null' => TRUE,
+        'default' => 'pending',
+        'description' => 'Verification status.',
+      ],
+      'created_at' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Timestamp when profile was created.',
+      ],
+      'updated_at' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Timestamp when profile was last updated.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'uid' => ['uid'],
+      'verification_status' => ['verification_status'],
+    ],
+    'foreign keys' => [
+      'user' => [
+        'table' => 'users',
+        'columns' => ['uid' => 'uid'],
+      ],
+    ],
+  ];
+  
+  $database->schema()->createTable('user_profiles', $schema);
+  
+  // Create notifications table
+  $notifications_schema = [
+    'description' => 'System notifications for users',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique notification ID.',
+      ],
+      'user_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'User ID from users table.',
+      ],
+      'title' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Notification title.',
+      ],
+      'message' => [
+        'type' => 'text',
+        'description' => 'Notification message.',
+      ],
+      'notification_type' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'description' => 'Type of notification.',
+      ],
+      'related_entity_type' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'description' => 'Related entity type.',
+      ],
+      'related_entity_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'description' => 'Related entity ID.',
+      ],
+      'is_read' => [
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Read status.',
+      ],
+      'created_at' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Timestamp when notification was created.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'user_id' => ['user_id'],
+      'is_read' => ['is_read'],
+      'notification_type' => ['notification_type'],
+    ],
+    'foreign keys' => [
+      'user' => [
+        'table' => 'users',
+        'columns' => ['user_id' => 'uid'],
+      ],
+    ],
+  ];
+  
+  $database->schema()->createTable('notifications', $schema);
+  
+  // Create audit_logs table
+  $audit_schema = [
+    'description' => 'Audit trail for system activities',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique audit log ID.',
+      ],
+      'user_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'description' => 'User ID from users table.',
+      ],
+      'entity_type' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        'description' => 'Entity type.',
+      ],
+      'entity_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Entity ID.',
+      ],
+      'action' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        'description' => 'Action performed.',
+      ],
+      'old_values' => [
+        'type' => 'text',
+        'size' => 'big',
+        'description' => 'Old values (JSON).',
+      ],
+      'new_values' => [
+        'type' => 'text',
+        'size' => 'big',
+        'description' => 'New values (JSON).',
+      ],
+      'ip_address' => [
+        'type' => 'varchar',
+        'length' => 45,
+        'description' => 'IP address.',
+      ],
+      'user_agent' => [
+        'type' => 'text',
+        'description' => 'User agent.',
+      ],
+      'created_at' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Timestamp when log was created.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'user_id' => ['user_id'],
+      'entity' => ['entity_type', 'entity_id'],
+      'action' => ['action'],
+    ],
+    'foreign keys' => [
+      'user' => [
+        'table' => 'users',
+        'columns' => ['user_id' => 'uid'],
+      ],
+    ],
+  ];
+  
+  $database->schema()->createTable('audit_logs', $audit_schema);
+  
+  \Drupal::messenger()->addMessage(t('User Management module installed successfully. Extended user profile tables created.'));
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function user_management_uninstall() {
+  $database = \Drupal::database();
+  
+  // Drop custom tables
+  $tables = ['user_profiles', 'notifications', 'audit_logs'];
+  
+  foreach ($tables as $table) {
+    if ($database->schema()->tableExists($table)) {
+      $database->schema()->dropTable($table);
+    }
+  }
+  
+  \Drupal::messenger()->addMessage(t('User Management module uninstalled successfully. Custom tables removed.'));
+}
