@@ -11,223 +11,550 @@
 <div class="dashboard-container">
   <!-- Dashboard Header -->
   <div class="dashboard-header">
-    <h1 class="dashboard-title">e-TVCMS Dashboard</h1>
-    <p class="dashboard-subtitle">Tender Management System</p>
+    <div class="etvcms-header">
+      <h1 class="system-title">e-TVCMS</h1>
+      <p class="system-subtitle">Electronic Tender and Content Management System</p>
+    </div>
     
-    <div class="user-welcome">
-      <div class="user-info">
-        <div>
-          <div class="user-avatar">
-            {{ user.getAccountName()|first|upper }}
+    <div class="top-navigation">
+      <div class="nav-left">
+        <a href="/dashboard" class="nav-item active">
+          <span class="nav-icon">🏠</span> Home
+        </a>
+        <a href="/tenders" class="nav-item">
+          <span class="nav-icon">📋</span> Tender
+        </a>
+        <a href="/faq" class="nav-item">
+          <span class="nav-icon">❓</span> FAQ
+        </a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://wa.me/60123456789" class="contact-btn whatsapp">
+          <span class="icon">💬</span> WhatsApp
+        </a>
+        <a href="mailto:support@etvcms.gov.my" class="contact-btn email">
+          <span class="icon">✉️</span> Email
+        </a>
+        
+        <div class="account-menu">
+          <button class="account-btn">
+            <span class="icon">👤</span> Account ▼
+          </button>
+          <div class="account-dropdown">
+            <a href="/user/profile" class="dropdown-item" data-dashboard-link="profile" onclick="return handleDashboardLink(event, '/user/profile', 'profile')">
+              <span class="icon">👤</span> My Profile
+            </a>
+            <a href="/user/password" class="dropdown-item">
+              <span class="icon">🔑</span> Password
+            </a>
+            <a href="/company/details" class="dropdown-item active" data-dashboard-link="company-details" onclick="return handleDashboardLink(event, '/company/details', 'company-details')">
+              <span class="icon">🏢</span> Company Details
+            </a>
+            <a href="/proposals" class="dropdown-item" data-dashboard-link="proposals" onclick="return handleDashboardLink(event, '/proposals', 'proposals')">
+              <span class="icon">📝</span> Proposal
+            </a>
+            <a href="/user/logout" class="dropdown-item logout">
+              <span class="icon">🚪</span> Logout
+            </a>
           </div>
-        </div>
-        <div>
-          <h2>Welcome, {{ user.getAccountName() }}!</h2>
-          <p>{{ user.getEmail() }}</p>
-          <p>Member since: {{ user.getCreatedTime()|format_date('custom', 'F Y') }}</p>
-        </div>
-        <div class="quick-actions">
-          <a href="/user/{{ user.id() }}/edit" class="action-btn">Edit Profile</a>
-          <a href="/user/logout" class="action-btn danger">Logout</a>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Dashboard Navigation -->
-  <div class="dashboard-nav">
-    <ul class="nav-menu">
-      <li><a href="/dashboard"><span class="nav-icon">🏠</span> Dashboard</a></li>
-      <li><a href="/tenders"><span class="nav-icon">📋</span> Tenders</a></li>
-      <li><a href="/proposals"><span class="nav-icon">📝</span> My Proposals</a></li>
-      <li><a href="/documents"><span class="nav-icon">📁</span> Documents</a></li>
-      <li><a href="/user/profile"><span class="nav-icon">👤</span> Profile</a></li>
-      <li><a href="/reports"><span class="nav-icon">📊</span> Reports</a></li>
-    </ul>
-  </div>
-
-  <!-- Dashboard Grid -->
-  <div class="dashboard-grid">
     
-    <!-- Overview Card -->
-    <div class="dashboard-card">
-      <div class="card-header">
-        <div class="card-icon">📊</div>
-        <h3 class="card-title">Overview</h3>
-      </div>
-      <div class="card-content">
-        <p>Quick overview of your tender management activities.</p>
-        <div class="card-stats">
-          <div class="stat-item">
-            <span class="stat-number">5</span>
-            <span class="stat-label">Active Tenders</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">12</span>
-            <span class="stat-label">Proposals</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">3</span>
-            <span class="stat-label">Awarded</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent Tenders -->
-    <div class="dashboard-card">
-      <div class="card-header">
-        <div class="card-icon">📋</div>
-        <h3 class="card-title">Recent Tenders</h3>
-      </div>
-      <div class="card-content">
-        <ul class="activity-list">
-          <li class="activity-item">
-            <div class="activity-icon">📋</div>
-            <div class="activity-content">
-              <div class="activity-title">IT Infrastructure Upgrade</div>
-              <div class="activity-time">Posted 2 hours ago</div>
-            </div>
-          </li>
-          <li class="activity-item">
-            <div class="activity-icon">🏗️</div>
-            <div class="activity-content">
-              <div class="activity-title">Building Construction Project</div>
-              <div class="activity-time">Posted 1 day ago</div>
-            </div>
-          </li>
-          <li class="activity-item">
-            <div class="activity-icon">🚗</div>
-            <div class="activity-content">
-              <div class="activity-title">Vehicle Fleet Management</div>
-              <div class="activity-time">Posted 3 days ago</div>
-            </div>
-          </li>
-        </ul>
-        <div class="quick-actions">
-          <a href="/tenders" class="action-btn">View All Tenders</a>
-          <a href="/tenders/create" class="action-btn secondary">Create Tender</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- My Proposals -->
-    <div class="dashboard-card">
-      <div class="card-header">
-        <div class="card-icon">📝</div>
-        <h3 class="card-title">My Proposals</h3>
-      </div>
-      <div class="card-content">
-        <ul class="activity-list">
-          <li class="activity-item">
-            <div class="activity-icon">✅</div>
-            <div class="activity-content">
-              <div class="activity-title">Software Development Proposal</div>
-              <div class="activity-time">Submitted - Under Review</div>
-            </div>
-          </li>
-          <li class="activity-item">
-            <div class="activity-icon">⏳</div>
-            <div class="activity-content">
-              <div class="activity-title">Marketing Campaign Draft</div>
-              <div class="activity-time">Draft - Due in 5 days</div>
-            </div>
-          </li>
-          <li class="activity-item">
-            <div class="activity-icon">🏆</div>
-            <div class="activity-content">
-              <div class="activity-title">Web Design Project</div>
-              <div class="activity-time">Awarded - In Progress</div>
-            </div>
-          </li>
-        </ul>
-        <div class="quick-actions">
-          <a href="/proposals" class="action-btn">View All Proposals</a>
-          <a href="/proposals/create" class="action-btn secondary">Create Proposal</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="dashboard-card">
-      <div class="card-header">
-        <div class="card-icon">⚡</div>
-        <h3 class="card-title">Quick Actions</h3>
-      </div>
-      <div class="card-content">
-        <p>Frequently used actions and shortcuts.</p>
-        <div class="quick-actions">
-          <a href="/tenders/search" class="action-btn">Search Tenders</a>
-          <a href="/proposals/create" class="action-btn">Submit Proposal</a>
-          <a href="/documents/upload" class="action-btn secondary">Upload Document</a>
-          <a href="/reports/generate" class="action-btn secondary">Generate Report</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Notifications -->
-    <div class="dashboard-card">
-      <div class="card-header">
-        <div class="card-icon">🔔</div>
-        <h3 class="card-title">Notifications</h3>
-      </div>
-      <div class="card-content">
-        <ul class="activity-list">
-          <li class="activity-item">
-            <div class="activity-icon">📩</div>
-            <div class="activity-content">
-              <div class="activity-title">New tender matching your criteria</div>
-              <div class="activity-time">2 hours ago</div>
-            </div>
-          </li>
-          <li class="activity-item">
-            <div class="activity-icon">⏰</div>
-            <div class="activity-content">
-              <div class="activity-title">Proposal deadline approaching</div>
-              <div class="activity-time">1 day ago</div>
-            </div>
-          </li>
-          <li class="activity-item">
-            <div class="activity-icon">🎉</div>
-            <div class="activity-content">
-              <div class="activity-title">Congratulations! Proposal accepted</div>
-              <div class="activity-time">3 days ago</div>
-            </div>
-          </li>
-        </ul>
-        <div class="quick-actions">
-          <a href="/notifications" class="action-btn">View All Notifications</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- System Status -->
-    <div class="dashboard-card">
-      <div class="card-header">
-        <div class="card-icon">🖥️</div>
-        <h3 class="card-title">System Status</h3>
-      </div>
-      <div class="card-content">
-        <p>Current system status and performance metrics.</p>
-        <div class="card-stats">
-          <div class="stat-item">
-            <span class="stat-number">99.9</span>
-            <span class="stat-label">Uptime %</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">156</span>
-            <span class="stat-label">Online Users</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">1.2</span>
-            <span class="stat-label">Avg Response (s)</span>
-          </div>
-        </div>
-        <div class="quick-actions">
-          <a href="/system/status" class="action-btn secondary">View Details</a>
-        </div>
-      </div>
-    </div>
-
+    
   </div>
+
+  <!-- Main Content Area (Dynamic) -->
+  <div class="dashboard-main-content">
+    <!-- Content will be loaded here dynamically -->
+  </div>
+
 </div>
+
+<script>
+// Immediate JavaScript to handle navigation - no waiting for Drupal behaviors
+(function() {
+  console.log('Dashboard navigation script loaded');
+  
+  // Function to prevent default navigation and load content
+  function handleDashboardLink(e, url, contentType) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Intercepting navigation to:', url, contentType);
+    
+    // Remove active classes
+    document.querySelectorAll('.dropdown-item, .nav-item, .action-btn').forEach(function(el) {
+      el.classList.remove('active');
+    });
+    
+    // Add active class to clicked element
+    e.target.closest('a').classList.add('active');
+    
+    // Load content
+    loadContent(contentType);
+    
+    return false;
+  }
+  
+  // Load different content types
+  function loadContent(type) {
+    var contentArea = document.querySelector('.dashboard-main-content');
+    if (!contentArea) return;
+    
+    console.log('Loading content type:', type);
+    
+    switch(type) {
+      case 'company-details':
+        contentArea.innerHTML = getCompanyDetailsForm();
+        loadExistingCompanyData();
+        break;
+      case 'proposals':
+        contentArea.innerHTML = getProposalsContent();
+        break;
+      case 'profile':
+        contentArea.innerHTML = getProfileContent();
+        break;
+      default:
+        contentArea.innerHTML = getDashboardHome();
+    }
+  }
+  
+  // Load existing company data
+  function loadExistingCompanyData() {
+    console.log('Loading existing company data...');
+    
+    fetch('/ajax/company/get', {
+      method: 'GET',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(result) {
+      if (result.success && result.data) {
+        console.log('Company data loaded:', result.data);
+        populateCompanyForm(result.data);
+      } else {
+        console.log('No existing company data found');
+      }
+    })
+    .catch(function(error) {
+      console.error('Error loading company data:', error);
+    });
+  }
+  
+  // Populate form with existing data
+  function populateCompanyForm(data) {
+    var form = document.getElementById('company-details-form');
+    if (!form) return;
+    
+    // Populate form fields
+    var fields = ['company_name', 'business_registration_number', 'email', 'phone', 'address', 'postal_code', 'city', 'state'];
+    fields.forEach(function(fieldName) {
+      var field = form.querySelector('[name="' + fieldName + '"]');
+      if (field && data[fieldName]) {
+        field.value = data[fieldName];
+      }
+    });
+    
+    console.log('Form populated with existing data');
+  }
+  
+  // Company details form HTML
+  function getCompanyDetailsForm() {
+    return `
+      <div class="dashboard-content company-details-section">
+        <div class="content-header">
+          <h2 class="content-title">COMPANY DETAILS</h2>
+          <div class="breadcrumb">
+            <span>Account Menu</span> > <span class="current">Company Details</span>
+          </div>
+        </div>
+        
+        <div class="purpose-statement">
+          <p>• Completing Company Details is necessary to meet tender eligibility requirements</p>
+        </div>
+        
+        <form id="company-details-form" class="company-form" onsubmit="return handleFormSubmit(event)">
+          <div class="form-section">
+            <h3 class="section-title">Company Information</h3>
+            
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label for="company_name">Company Name <span class="required">*</span></label>
+                <input type="text" id="company_name" name="company_name" class="form-control" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="business_registration_number">Business Registration Number <span class="required">*</span></label>
+                <input type="text" id="business_registration_number" name="business_registration_number" class="form-control" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="email">Email <span class="required">*</span></label>
+                <input type="email" id="email" name="email" class="form-control" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="phone">Phone Number <span class="required">*</span></label>
+                <input type="tel" id="phone" name="phone" class="form-control" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="postal_code">Postal Code <span class="required">*</span></label>
+                <input type="text" id="postal_code" name="postal_code" class="form-control" pattern="[0-9]{5}" required>
+              </div>
+              
+              <div class="form-group full-width">
+                <label for="address">Address <span class="required">*</span></label>
+                <textarea id="address" name="address" class="form-control" rows="3" required></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="city">City <span class="required">*</span></label>
+                <input type="text" id="city" name="city" class="form-control" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="state">State <span class="required">*</span></label>
+                <select id="state" name="state" class="form-control" required>
+                  <option value="">- Select State -</option>
+                  <option value="johor">Johor</option>
+                  <option value="kedah">Kedah</option>
+                  <option value="kelantan">Kelantan</option>
+                  <option value="kuala_lumpur">Kuala Lumpur</option>
+                  <option value="labuan">Labuan</option>
+                  <option value="melaka">Melaka</option>
+                  <option value="negeri_sembilan">Negeri Sembilan</option>
+                  <option value="pahang">Pahang</option>
+                  <option value="penang">Penang</option>
+                  <option value="perak">Perak</option>
+                  <option value="perlis">Perlis</option>
+                  <option value="putrajaya">Putrajaya</option>
+                  <option value="sabah">Sabah</option>
+                  <option value="sarawak">Sarawak</option>
+                  <option value="selangor">Selangor</option>
+                  <option value="terengganu">Terengganu</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <h3 class="section-title">Board of Directors</h3>
+            <div class="directors-section">
+              <table class="directors-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>IC/Passport</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="directors-tbody">
+                  <tr class="empty-row">
+                    <td colspan="4" class="text-center">No directors added yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+              <button type="button" class="btn btn-add-director" onclick="addDirector()">Add Director</button>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-save">Save Company Details</button>
+          </div>
+        </form>
+      </div>
+    `;
+  }
+  
+  // Dashboard home content
+  function getDashboardHome() {
+    return `
+      <div class="dashboard-content home-section">
+        
+        <div class="dashboard-grid">
+          <div class="dashboard-card">
+            <div class="card-icon">🏢</div>
+            <h3>Company Details</h3>
+            <p>Complete your company profile to participate in tenders</p>
+            <a href="/company/details" class="btn btn-primary" data-dashboard-link="company-details" onclick="return handleDashboardLink(event, '/company/details', 'company-details')">Complete Details</a>
+          </div>
+          
+          <div class="dashboard-card">
+            <div class="card-icon">📋</div>
+            <h3>Active Tenders</h3>
+            <p>View and apply for available tenders</p>
+            <button class="btn btn-primary">View Tenders</button>
+          </div>
+          
+          <div class="dashboard-card">
+            <div class="card-icon">📝</div>
+            <h3>My Proposals</h3>
+            <p>Track your submitted proposals</p>
+            <a href="/proposals" class="btn btn-primary" data-dashboard-link="proposals" onclick="return handleDashboardLink(event, '/proposals', 'proposals')">View Proposals</a>
+          </div>
+          
+          <div class="dashboard-card">
+            <div class="card-icon">👤</div>
+            <h3>Profile Settings</h3>
+            <p>Manage your account settings</p>
+            <a href="/user/profile" class="btn btn-primary" data-dashboard-link="profile" onclick="return handleDashboardLink(event, '/user/profile', 'profile')">Edit Profile</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Other content functions
+  function getProposalsContent() {
+    return `
+      <div class="dashboard-content proposals-section">
+        <div class="content-header">
+          <h2 class="content-title">MY PROPOSALS</h2>
+          <div class="breadcrumb">
+            <span>Account Menu</span> > <span class="current">Proposals</span>
+          </div>
+        </div>
+        <div class="proposals-grid">
+          <div class="proposal-card">
+            <h3>Proposal Management</h3>
+            <p>View and manage your submitted proposals</p>
+            <button class="btn btn-primary">View Proposals</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  function getProfileContent() {
+    return `
+      <div class="dashboard-content profile-section">
+        <div class="content-header">
+          <h2 class="content-title">MY PROFILE</h2>
+          <div class="breadcrumb">
+            <span>Account Menu</span> > <span class="current">My Profile</span>
+          </div>
+        </div>
+        <div class="profile-info">
+          <h3>Profile Information</h3>
+          <p>Manage your personal account information</p>
+          <button class="btn btn-primary">Edit Profile</button>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Handle form submission
+  window.handleFormSubmit = function(e) {
+    e.preventDefault();
+    console.log('Form submitted via AJAX');
+    
+    var form = e.target;
+    var formData = new FormData(form);
+    var submitBtn = form.querySelector('.btn-save');
+    
+    // Validate required fields
+    var requiredFields = ['company_name', 'business_registration_number', 'email', 'phone', 'address', 'city', 'state'];
+    var missingFields = [];
+    
+    requiredFields.forEach(function(fieldName) {
+      var field = form.querySelector('[name="' + fieldName + '"]');
+      if (!field || !field.value.trim()) {
+        missingFields.push(fieldName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+      }
+    });
+    
+    if (missingFields.length > 0) {
+      showMessage('Please fill in all required fields: ' + missingFields.join(', '), 'error');
+      return false;
+    }
+    
+    // Validate email
+    var email = form.querySelector('[name="email"]').value;
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showMessage('Please enter a valid email address.', 'error');
+      return false;
+    }
+    
+    // Validate postal code
+    var postalCode = form.querySelector('[name="postal_code"]').value;
+    if (postalCode && !/^\d{5}$/.test(postalCode)) {
+      showMessage('Please enter a valid 5-digit postal code.', 'error');
+      return false;
+    }
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Saving...';
+    
+    // Convert FormData to regular object for JSON
+    var data = {};
+    for (var pair of formData.entries()) {
+      data[pair[0]] = pair[1];
+    }
+    
+    // Add directors data
+    var directorsData = [];
+    var directorRows = form.querySelectorAll('.director-row');
+    directorRows.forEach(function(row) {
+      var name = row.querySelector('[name="director_name[]"]').value;
+      var position = row.querySelector('[name="director_position[]"]').value;
+      var ic = row.querySelector('[name="director_ic[]"]').value;
+      
+      if (name && position && ic) {
+        directorsData.push({
+          name: name,
+          position: position,
+          ic: ic
+        });
+      }
+    });
+    
+    if (directorsData.length > 0) {
+      data.directors = JSON.stringify(directorsData);
+    }
+    
+    // Send AJAX request
+    fetch('/ajax/company/save', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: new URLSearchParams(data)
+    })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(result) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Save Company Details';
+      
+      if (result.success) {
+        showMessage(result.message, 'success');
+        console.log('Company details saved successfully');
+      } else {
+        showMessage(result.message || 'Failed to save company details', 'error');
+        console.error('Save failed:', result.message);
+      }
+    })
+    .catch(function(error) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Save Company Details';
+      showMessage('Network error. Please check your connection and try again.', 'error');
+      console.error('Network error:', error);
+    });
+    
+    return false;
+  };
+  
+  // Show message function
+  function showMessage(message, type) {
+    // Remove existing messages
+    var existingMessages = document.querySelectorAll('.messages');
+    existingMessages.forEach(function(msg) {
+      msg.parentNode.removeChild(msg);
+    });
+    
+    // Create new message
+    var messageDiv = document.createElement('div');
+    messageDiv.className = 'messages messages--' + type;
+    messageDiv.innerHTML = message;
+    
+    // Insert at the top of the content area
+    var contentArea = document.querySelector('.dashboard-content');
+    if (contentArea) {
+      contentArea.insertBefore(messageDiv, contentArea.firstChild);
+    }
+    
+    // Auto-remove message after 8 seconds
+    setTimeout(function() {
+      if (messageDiv.parentNode) {
+        messageDiv.parentNode.removeChild(messageDiv);
+      }
+    }, 8000);
+  }
+  
+  // Add director function
+  window.addDirector = function() {
+    var tbody = document.getElementById('directors-tbody');
+    var emptyRow = tbody.querySelector('.empty-row');
+    if (emptyRow) {
+      emptyRow.parentNode.removeChild(emptyRow);
+    }
+    
+    var newRow = document.createElement('tr');
+    newRow.className = 'director-row';
+    newRow.innerHTML = `
+      <td><input type="text" name="director_name[]" class="form-control" placeholder="Director Name"></td>
+      <td><input type="text" name="director_position[]" class="form-control" placeholder="Position"></td>
+      <td><input type="text" name="director_ic[]" class="form-control" placeholder="IC/Passport"></td>
+      <td><button type="button" class="btn btn-danger btn-sm" onclick="removeDirector(this)">Remove</button></td>
+    `;
+    tbody.appendChild(newRow);
+  };
+  
+  // Remove director function
+  window.removeDirector = function(button) {
+    var row = button.closest('tr');
+    row.parentNode.removeChild(row);
+    
+    var tbody = document.getElementById('directors-tbody');
+    if (tbody.children.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="4" class="text-center">No directors added yet.</td></tr>';
+    }
+  };
+  
+  // Make handleDashboardLink global
+  window.handleDashboardLink = handleDashboardLink;
+  
+  // DOM ready handler
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM ready - setting up navigation');
+    
+    // Load dashboard home initially
+    loadContent('home');
+    
+    // Add event listeners to all navigation links
+    document.addEventListener('click', function(e) {
+      var target = e.target.closest('a');
+      if (!target) return;
+      
+      var href = target.getAttribute('href');
+      var dashboardLink = target.getAttribute('data-dashboard-link');
+      
+      // Handle specific dashboard links
+      if (dashboardLink) {
+        console.log('Dashboard link detected:', dashboardLink);
+        return handleDashboardLink(e, href, dashboardLink);
+      }
+      
+      // Handle company details links
+      if (href && href.includes('/company')) {
+        console.log('Company link detected:', href);
+        return handleDashboardLink(e, href, 'company-details');
+      }
+      
+      // Handle proposals links
+      if (href && href.includes('/proposals')) {
+        console.log('Proposals link detected:', href);
+        return handleDashboardLink(e, href, 'proposals');
+      }
+      
+      // Handle profile links
+      if (href && href.includes('/user/profile')) {
+        console.log('Profile link detected:', href);
+        return handleDashboardLink(e, href, 'profile');
+      }
+    });
+  });
+  
+})();
+</script>

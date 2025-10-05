@@ -261,6 +261,114 @@ function user_management_install() {
   
   $database->schema()->createTable('audit_logs', $audit_schema);
   
+  // Create content_producers table
+  $content_producers_schema = [
+    'description' => 'Content producers information',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique content producer ID.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'User ID from users table.',
+      ],
+      'company_name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Company name.',
+      ],
+      'business_registration_number' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'description' => 'Business registration number.',
+      ],
+      'email' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => 'Email address.',
+      ],
+      'phone' => [
+        'type' => 'varchar',
+        'length' => 20,
+        'description' => 'Phone number.',
+      ],
+      'address' => [
+        'type' => 'text',
+        'description' => 'Company address.',
+      ],
+      'postal_code' => [
+        'type' => 'varchar',
+        'length' => 10,
+        'description' => 'Postal code.',
+      ],
+      'city' => [
+        'type' => 'varchar',
+        'length' => 100,
+        'description' => 'City.',
+      ],
+      'state' => [
+        'type' => 'varchar',
+        'length' => 100,
+        'description' => 'State.',
+      ],
+      'country' => [
+        'type' => 'varchar',
+        'length' => 100,
+        'default' => 'Malaysia',
+        'description' => 'Country.',
+      ],
+      'contact_person' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => 'Contact person name.',
+      ],
+      'certification_status' => [
+        'type' => 'varchar',
+        'length' => 20,
+        'not null' => TRUE,
+        'default' => 'pending',
+        'description' => 'Certification status.',
+      ],
+      'created_at' => [
+        'type' => 'datetime',
+        'mysql_type' => 'timestamp',
+        'pgsql_type' => 'timestamp',
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Timestamp when record was created.',
+      ],
+      'updated_at' => [
+        'type' => 'datetime',
+        'mysql_type' => 'timestamp',
+        'pgsql_type' => 'timestamp',
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Timestamp when record was last updated.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'uid' => ['uid'],
+    ],
+    'indexes' => [
+      'certification_status' => ['certification_status'],
+      'company_name' => ['company_name'],
+    ],
+    'foreign keys' => [
+      'user' => [
+        'table' => 'users',
+        'columns' => ['uid' => 'uid'],
+      ],
+    ],
+  ];
+  
+  $database->schema()->createTable('content_producers', $content_producers_schema);
+  
   \Drupal::messenger()->addMessage(t('User Management module installed successfully. Extended user profile tables created.'));
 }
 
@@ -271,7 +379,7 @@ function user_management_uninstall() {
   $database = \Drupal::database();
   
   // Drop custom tables
-  $tables = ['user_profiles', 'notifications', 'audit_logs'];
+  $tables = ['user_profiles', 'notifications', 'audit_logs', 'content_producers'];
   
   foreach ($tables as $table) {
     if ($database->schema()->tableExists($table)) {

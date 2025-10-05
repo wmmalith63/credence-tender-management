@@ -22,6 +22,16 @@ dashboard:
       css/dashboard.css: {}
   js:
     js/dashboard.js: {}
+    js/dashboard-tabs.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+
+company_details:
+  version: 1.0
+  css:
+    theme:
+      css/company-details.css: {}
   dependencies:
     - core/jquery
     - core/drupal

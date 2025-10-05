@@ -18,7 +18,6 @@ user_management.dashboard:
   path: '/dashboard'
   defaults:
     _controller: '\Drupal\user_management\Controller\UserManagementController::dashboard'
-    _title: 'Dashboard - e-TVCMS'
   requirements:
     _user_is_logged_in: 'TRUE'
 
@@ -37,3 +36,25 @@ user_management.register:
     _title: 'Producer Registration'
   requirements:
     _permission: 'access content'
+
+user_management.company_details:
+  path: '/company/details'
+  defaults:
+    _form: '\Drupal\user_management\Form\CompanyDetailsForm'
+    _title: 'Company Details - e-TVCMS'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+user_management.save_company_details:
+  path: '/ajax/company/save'
+  defaults:
+    _controller: '\Drupal\user_management\Controller\UserManagementController::saveCompanyDetails'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+user_management.get_company_details:
+  path: '/ajax/company/get'
+  defaults:
+    _controller: '\Drupal\user_management\Controller\UserManagementController::getCompanyDetails'
+  requirements:
+    _user_is_logged_in: 'TRUE'
