@@ -255,6 +255,9 @@ class LoginRegistrationForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $triggering_element = $form_state->getTriggeringElement();
     
+    // Debug output
+    $this->messenger()->addMessage($this->t('Form submitted! Trigger: @trigger', ['@trigger' => $triggering_element['#name']]));
+    
     if ($triggering_element['#name'] == 'login') {
       $this->handleLogin($form, $form_state);
     } elseif ($triggering_element['#name'] == 'register') {
@@ -269,12 +272,24 @@ class LoginRegistrationForm extends FormBase {
     $email = $form_state->getValue('login_email');
     $password = $form_state->getValue('login_password');
     
+    // Debug logging
+    \Drupal::logger('user_management')->info('Login attempt for email: @email', ['@email' => $email]);
+    
     $user = user_load_by_mail($email);
-    if ($user && $this->passwordHasher->check($password, $user->getPassword())) {
-      user_login_finalize($user);
-      $this->messenger()->addMessage($this->t('Login successful. Welcome to e-TVCMS!'));
-      $form_state->setRedirect('user_management.profile');
+    if ($user) {
+      \Drupal::logger('user_management')->info('User found for email: @email', ['@email' => $email]);
+      
+      if ($this->passwordHasher->check($password, $user->getPassword())) {
+        \Drupal::logger('user_management')->info('Password correct for user: @email', ['@email' => $email]);
+        user_login_finalize($user);
+        $this->messenger()->addMessage($this->t('Login successful. Welcome to e-TVCMS Dashboard!'));
+        $form_state->setRedirect('user_management.dashboard');
+      } else {
+        \Drupal::logger('user_management')->warning('Invalid password for user: @email', ['@email' => $email]);
+        $this->messenger()->addError($this->t('Invalid email or password.'));
+      }
     } else {
+      \Drupal::logger('user_management')->warning('User not found for email: @email', ['@email' => $email]);
       $this->messenger()->addError($this->t('Invalid email or password.'));
     }
   }
@@ -292,7 +307,7 @@ class LoginRegistrationForm extends FormBase {
         'mail' => $email,
         'pass' => $password,
         'status' => 1,
-        'roles' => ['content_producer'],
+        // Don't specify roles - authenticated users get 'authenticated' role automatically
       ]);
       $user->save();
       
@@ -303,8 +318,13 @@ class LoginRegistrationForm extends FormBase {
       $form_state->setValue('register_password', '');
       $form_state->setValue('register_confirm_password', '');
       
+      // Optionally auto-login the user after registration
+      user_login_finalize($user);
+      $form_state->setRedirect('user_management.dashboard');
+      
     } catch (\Exception $e) {
-      $this->messenger()->addError($this->t('Registration failed. Please try again.'));
+      $this->messenger()->addError($this->t('Registration failed: @error', ['@error' => $e->getMessage()]));
+      \Drupal::logger('user_management')->error('Registration failed: @error', ['@error' => $e->getMessage()]);
     }
   }
 

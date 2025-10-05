@@ -6,6 +6,22 @@ user_management.login_register:
   requirements:
     _access: 'TRUE'
 
+user_management.auth:
+  path: '/auth'
+  defaults:
+    _form: '\Drupal\user_management\Form\LoginRegistrationForm'
+    _title: 'Login / Register - e-TVCMS'
+  requirements:
+    _access: 'TRUE'
+
+user_management.dashboard:
+  path: '/dashboard'
+  defaults:
+    _controller: '\Drupal\user_management\Controller\UserManagementController::dashboard'
+    _title: 'Dashboard - e-TVCMS'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
 user_management.profile:
   path: '/user/profile'
   defaults:

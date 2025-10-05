@@ -1,0 +1,233 @@
+{#
+/**
+ * @file
+ * Template for user dashboard page.
+ *
+ * Available variables:
+ * - user: The user entity.
+ */
+#}
+
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <h1 class="dashboard-title">e-TVCMS Dashboard</h1>
+    <p class="dashboard-subtitle">Tender Management System</p>
+    
+    <div class="user-welcome">
+      <div class="user-info">
+        <div>
+          <div class="user-avatar">
+            {{ user.getAccountName()|first|upper }}
+          </div>
+        </div>
+        <div>
+          <h2>Welcome, {{ user.getAccountName() }}!</h2>
+          <p>{{ user.getEmail() }}</p>
+          <p>Member since: {{ user.getCreatedTime()|format_date('custom', 'F Y') }}</p>
+        </div>
+        <div class="quick-actions">
+          <a href="/user/{{ user.id() }}/edit" class="action-btn">Edit Profile</a>
+          <a href="/user/logout" class="action-btn danger">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Navigation -->
+  <div class="dashboard-nav">
+    <ul class="nav-menu">
+      <li><a href="/dashboard"><span class="nav-icon">🏠</span> Dashboard</a></li>
+      <li><a href="/tenders"><span class="nav-icon">📋</span> Tenders</a></li>
+      <li><a href="/proposals"><span class="nav-icon">📝</span> My Proposals</a></li>
+      <li><a href="/documents"><span class="nav-icon">📁</span> Documents</a></li>
+      <li><a href="/user/profile"><span class="nav-icon">👤</span> Profile</a></li>
+      <li><a href="/reports"><span class="nav-icon">📊</span> Reports</a></li>
+    </ul>
+  </div>
+
+  <!-- Dashboard Grid -->
+  <div class="dashboard-grid">
+    
+    <!-- Overview Card -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="card-icon">📊</div>
+        <h3 class="card-title">Overview</h3>
+      </div>
+      <div class="card-content">
+        <p>Quick overview of your tender management activities.</p>
+        <div class="card-stats">
+          <div class="stat-item">
+            <span class="stat-number">5</span>
+            <span class="stat-label">Active Tenders</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">12</span>
+            <span class="stat-label">Proposals</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">3</span>
+            <span class="stat-label">Awarded</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Tenders -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="card-icon">📋</div>
+        <h3 class="card-title">Recent Tenders</h3>
+      </div>
+      <div class="card-content">
+        <ul class="activity-list">
+          <li class="activity-item">
+            <div class="activity-icon">📋</div>
+            <div class="activity-content">
+              <div class="activity-title">IT Infrastructure Upgrade</div>
+              <div class="activity-time">Posted 2 hours ago</div>
+            </div>
+          </li>
+          <li class="activity-item">
+            <div class="activity-icon">🏗️</div>
+            <div class="activity-content">
+              <div class="activity-title">Building Construction Project</div>
+              <div class="activity-time">Posted 1 day ago</div>
+            </div>
+          </li>
+          <li class="activity-item">
+            <div class="activity-icon">🚗</div>
+            <div class="activity-content">
+              <div class="activity-title">Vehicle Fleet Management</div>
+              <div class="activity-time">Posted 3 days ago</div>
+            </div>
+          </li>
+        </ul>
+        <div class="quick-actions">
+          <a href="/tenders" class="action-btn">View All Tenders</a>
+          <a href="/tenders/create" class="action-btn secondary">Create Tender</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Proposals -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="card-icon">📝</div>
+        <h3 class="card-title">My Proposals</h3>
+      </div>
+      <div class="card-content">
+        <ul class="activity-list">
+          <li class="activity-item">
+            <div class="activity-icon">✅</div>
+            <div class="activity-content">
+              <div class="activity-title">Software Development Proposal</div>
+              <div class="activity-time">Submitted - Under Review</div>
+            </div>
+          </li>
+          <li class="activity-item">
+            <div class="activity-icon">⏳</div>
+            <div class="activity-content">
+              <div class="activity-title">Marketing Campaign Draft</div>
+              <div class="activity-time">Draft - Due in 5 days</div>
+            </div>
+          </li>
+          <li class="activity-item">
+            <div class="activity-icon">🏆</div>
+            <div class="activity-content">
+              <div class="activity-title">Web Design Project</div>
+              <div class="activity-time">Awarded - In Progress</div>
+            </div>
+          </li>
+        </ul>
+        <div class="quick-actions">
+          <a href="/proposals" class="action-btn">View All Proposals</a>
+          <a href="/proposals/create" class="action-btn secondary">Create Proposal</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="card-icon">⚡</div>
+        <h3 class="card-title">Quick Actions</h3>
+      </div>
+      <div class="card-content">
+        <p>Frequently used actions and shortcuts.</p>
+        <div class="quick-actions">
+          <a href="/tenders/search" class="action-btn">Search Tenders</a>
+          <a href="/proposals/create" class="action-btn">Submit Proposal</a>
+          <a href="/documents/upload" class="action-btn secondary">Upload Document</a>
+          <a href="/reports/generate" class="action-btn secondary">Generate Report</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="card-icon">🔔</div>
+        <h3 class="card-title">Notifications</h3>
+      </div>
+      <div class="card-content">
+        <ul class="activity-list">
+          <li class="activity-item">
+            <div class="activity-icon">📩</div>
+            <div class="activity-content">
+              <div class="activity-title">New tender matching your criteria</div>
+              <div class="activity-time">2 hours ago</div>
+            </div>
+          </li>
+          <li class="activity-item">
+            <div class="activity-icon">⏰</div>
+            <div class="activity-content">
+              <div class="activity-title">Proposal deadline approaching</div>
+              <div class="activity-time">1 day ago</div>
+            </div>
+          </li>
+          <li class="activity-item">
+            <div class="activity-icon">🎉</div>
+            <div class="activity-content">
+              <div class="activity-title">Congratulations! Proposal accepted</div>
+              <div class="activity-time">3 days ago</div>
+            </div>
+          </li>
+        </ul>
+        <div class="quick-actions">
+          <a href="/notifications" class="action-btn">View All Notifications</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Status -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="card-icon">🖥️</div>
+        <h3 class="card-title">System Status</h3>
+      </div>
+      <div class="card-content">
+        <p>Current system status and performance metrics.</p>
+        <div class="card-stats">
+          <div class="stat-item">
+            <span class="stat-number">99.9</span>
+            <span class="stat-label">Uptime %</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">156</span>
+            <span class="stat-label">Online Users</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">1.2</span>
+            <span class="stat-label">Avg Response (s)</span>
+          </div>
+        </div>
+        <div class="quick-actions">
+          <a href="/system/status" class="action-btn secondary">View Details</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

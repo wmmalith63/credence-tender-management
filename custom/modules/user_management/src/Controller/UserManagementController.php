@@ -40,8 +40,33 @@ class UserManagementController extends ControllerBase {
    * Display user profile.
    */
   public function profile() {
+    $current_user = $this->currentUser();
+    $user = \Drupal\user\Entity\User::load($current_user->id());
+    
     $build = [
-      '#markup' => '<h2>User Profile</h2><p>User profile information will appear here.</p>',
+      '#theme' => 'user_profile_page',
+      '#user' => $user,
+      '#attached' => [
+        'library' => ['user_management/dashboard'],
+      ],
+    ];
+    
+    return $build;
+  }
+
+  /**
+   * Display user dashboard.
+   */
+  public function dashboard() {
+    $current_user = $this->currentUser();
+    $user = \Drupal\user\Entity\User::load($current_user->id());
+    
+    $build = [
+      '#theme' => 'user_dashboard',
+      '#user' => $user,
+      '#attached' => [
+        'library' => ['user_management/dashboard'],
+      ],
     ];
     
     return $build;

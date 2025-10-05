@@ -1,0 +1,119 @@
+{#
+/**
+ * @file
+ * Template for user profile page.
+ *
+ * Available variables:
+ * - user: The user entity.
+ */
+#}
+
+<div class="dashboard-container">
+  <!-- Profile Header -->
+  <div class="dashboard-header">
+    <h1 class="dashboard-title">User Profile</h1>
+    <p class="dashboard-subtitle">Manage your account information</p>
+    
+    <div class="user-welcome">
+      <div class="user-info">
+        <div>
+          <div class="user-avatar">
+            {{ user.getAccountName()|first|upper }}
+          </div>
+        </div>
+        <div>
+          <h2>{{ user.getAccountName() }}</h2>
+          <p>{{ user.getEmail() }}</p>
+          <p>User ID: {{ user.id() }}</p>
+          <p>Member since: {{ user.getCreatedTime()|format_date('custom', 'F d, Y') }}</p>
+          <p>Last login: {{ user.getLastLoginTime()|format_date('custom', 'F d, Y - g:i A') }}</p>
+        </div>
+        <div class="quick-actions">
+          <a href="/user/{{ user.id() }}/edit" class="action-btn">Edit Profile</a>
+          <a href="/dashboard" class="action-btn secondary">Back to Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Information -->
+  <div class="dashboard-grid">
+    
+    <!-- Account Information -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="card-icon">👤</div>
+        <h3 class="card-title">Account Information</h3>
+      </div>
+      <div class="card-content">
+        <p><strong>Username:</strong> {{ user.getAccountName() }}</p>
+        <p><strong>Email:</strong> {{ user.getEmail() }}</p>
+        <p><strong>Status:</strong> 
+          {% if user.isActive() %}
+            <span style="color: #27ae60;">Active</span>
+          {% else %}
+            <span style="color: #e74c3c;">Inactive</span>
+          {% endif %}
+        </p>
+        <p><strong>Roles:</strong> {{ user.getRoles()|join(', ') }}</p>
+        <div class="quick-actions">
+          <a href="/user/{{ user.id() }}/edit" class="action-btn">Edit Information</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Summary -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="card-icon">📊</div>
+        <h3 class="card-title">Activity Summary</h3>
+      </div>
+      <div class="card-content">
+        <div class="card-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ user.getCreatedTime()|format_interval }}</span>
+            <span class="stat-label">Member For</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">12</span>
+            <span class="stat-label">Proposals</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">3</span>
+            <span class="stat-label">Awarded</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security Settings -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="card-icon">🔒</div>
+        <h3 class="card-title">Security Settings</h3>
+      </div>
+      <div class="card-content">
+        <p>Manage your account security settings.</p>
+        <div class="quick-actions">
+          <a href="/user/{{ user.id() }}/edit" class="action-btn">Change Password</a>
+          <a href="/user/{{ user.id() }}/edit" class="action-btn secondary">Security Settings</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preferences -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="card-icon">⚙️</div>
+        <h3 class="card-title">Preferences</h3>
+      </div>
+      <div class="card-content">
+        <p>Customize your experience and notification settings.</p>
+        <div class="quick-actions">
+          <a href="/user/{{ user.id() }}/edit" class="action-btn">Edit Preferences</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -5,12 +5,23 @@ user_management:
       css/user_management.css: {}
 
 login_registration:
-  version: 10.0
+  version: 21.0
   css:
     theme:
       css/login_registration.css: {}
   js:
     js/login_registration.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+
+dashboard:
+  version: 1.0
+  css:
+    theme:
+      css/dashboard.css: {}
+  js:
+    js/dashboard.js: {}
   dependencies:
     - core/jquery
     - core/drupal
