@@ -2541,7 +2541,976 @@ function deleteTender(tenderId) {
 
 function loadVendorManagementContent() {
     console.log('Loading vendor management content...');
+    const contentDiv = document.getElementById('vendor-management-content');
+    if (!contentDiv) {
+        console.error('vendor-management-content div not found!');
+        return;
+    }
+    
+    console.log('Found vendor-management-content div, showing loading...');
+    
+    // Show loading state
+    contentDiv.innerHTML = `
+        <div class="loading-message" style="text-align: center; padding: 3rem;">
+            <div class="spinner"></div>
+            <p>Loading vendor management...</p>
+        </div>
+        <style>
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        </style>
+    `;
+    
+    // Load vendor management interface
+    setTimeout(() => {
+        console.log('Loading vendor management interface...');
+        displayVendorManagement();
+    }, 500);
 }
+
+function displayVendorManagement() {
+    console.log('displayVendorManagement called');
+    const contentDiv = document.getElementById('vendor-management-content');
+    if (!contentDiv) {
+        console.error('vendor-management-content div not found in displayVendorManagement!');
+        return;
+    }
+    
+    console.log('Building vendor management HTML...');
+    
+    const vendorManagementHTML = `
+        <div class="vendor-management-container">
+            <!-- Header with Add Vendor Button -->
+            <div class="vendor-header">
+                <h3>Vendor Management</h3>
+                <div class="vendor-actions">
+                    <button onclick="showAddVendorForm()" class="btn btn-primary">
+                        ➕ Add New Vendor
+                    </button>
+                    <button onclick="loadVendorList()" class="btn btn-secondary">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Add/Edit Vendor Form (Initially Hidden) -->
+            <div id="vendor-form-container" class="vendor-form-container" style="display: none;">
+                <div class="form-header">
+                    <h4 id="form-title">Add New Vendor</h4>
+                    <button onclick="hideVendorForm()" class="btn-close">✕</button>
+                </div>
+                
+                <form id="vendor-form" class="vendor-form">
+                    <input type="hidden" id="vendor_id" name="vendor_id">
+                    
+                    <div class="form-grid">
+                        <!-- Company Information -->
+                        <div class="form-section">
+                            <h5>Company Information</h5>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="company_name">Company Name *</label>
+                                    <input type="text" id="company_name" name="company_name" required class="form-control">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="company_registration">Registration Number *</label>
+                                    <input type="text" id="company_registration" name="company_registration" required class="form-control">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="business_type">Business Type</label>
+                                    <select id="business_type" name="business_type" class="form-control">
+                                        <option value="">Select Type</option>
+                                        <option value="government_agency">Government Agency</option>
+                                        <option value="statutory_body">Statutory Body</option>
+                                        <option value="broadcasting">Broadcasting/Media</option>
+                                        <option value="production">Production Company</option>
+                                        <option value="post_production">Post Production</option>
+                                        <option value="equipment_rental">Equipment Rental</option>
+                                        <option value="talent_agency">Talent Agency</option>
+                                        <option value="panel">Panel/Committee</option>
+                                        <option value="corporate_unit">Corporate Unit</option>
+                                        <option value="ministry">Ministry/Department</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="company_size">Company Size</label>
+                                    <select id="company_size" name="company_size" class="form-control">
+                                        <option value="">Select Size</option>
+                                        <option value="small">Small (1-20 employees)</option>
+                                        <option value="medium">Medium (21-100 employees)</option>
+                                        <option value="large">Large (100+ employees)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Contact Information -->
+                        <div class="form-section">
+                            <h5>Contact Information</h5>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contact_person">Contact Person *</label>
+                                    <input type="text" id="contact_person" name="contact_person" required class="form-control">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="contact_email">Email *</label>
+                                    <input type="email" id="contact_email" name="contact_email" required class="form-control">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contact_phone">Phone *</label>
+                                    <input type="tel" id="contact_phone" name="contact_phone" required class="form-control">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="website">Website</label>
+                                    <input type="url" id="website" name="website" class="form-control" placeholder="https://...">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Address Information -->
+                        <div class="form-section">
+                            <h5>Address</h5>
+                            
+                            <div class="form-group">
+                                <label for="address">Street Address *</label>
+                                <textarea id="address" name="address" rows="2" required class="form-control"></textarea>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="city">City *</label>
+                                    <input type="text" id="city" name="city" required class="form-control">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="state">State *</label>
+                                    <input type="text" id="state" name="state" required class="form-control">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="postal_code">Postal Code *</label>
+                                    <input type="text" id="postal_code" name="postal_code" required class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Information -->
+                        <div class="form-section">
+                            <h5>Additional Information</h5>
+                            
+                            <div class="form-group">
+                                <label for="specializations">Specializations</label>
+                                <textarea id="specializations" name="specializations" rows="2" 
+                                         placeholder="e.g., Drama production, Documentary filming, etc." class="form-control"></textarea>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="years_experience">Years of Experience</label>
+                                    <input type="number" id="years_experience" name="years_experience" min="0" class="form-control">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="status">Status</label>
+                                    <select id="status" name="status" class="form-control">
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                        <option value="blacklisted">Blacklisted</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" onclick="hideVendorForm()" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Vendor</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Vendor List -->
+            <div id="vendor-list-container" class="vendor-list-container">
+                <!-- Vendor list will be loaded here -->
+            </div>
+        </div>
+        
+        <style>
+        .vendor-management-container {
+            padding: 1rem;
+            max-width: 100%;
+        }
+        
+        .vendor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e8f4f8;
+        }
+        
+        .vendor-header h3 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .vendor-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .vendor-form-container {
+            background: white;
+            border: 1px solid #e8f4f8;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e8f4f8;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .form-header h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .btn-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+        
+        .btn-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .vendor-form {
+            padding: 1.5rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            gap: 2rem;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .form-section h5 {
+            color: #2c3e50;
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e8f4f8;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            padding-top: 1rem;
+            border-top: 1px solid #e8f4f8;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .vendor-list-container {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e8f4f8;
+            overflow: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            .vendor-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .vendor-actions {
+                justify-content: center;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+        </style>
+    `;
+    
+    console.log('Setting vendor management HTML...');
+    contentDiv.innerHTML = vendorManagementHTML;
+    console.log('Vendor management HTML set, loading vendor list...');
+    
+    // Load existing vendors
+    loadVendorList();
+}
+
+// Vendor Management Support Functions
+function showAddVendorForm() {
+    const formContainer = document.getElementById('vendor-form-container');
+    const formTitle = document.getElementById('form-title');
+    const form = document.getElementById('vendor-form');
+    
+    if (formContainer && formTitle && form) {
+        formTitle.textContent = 'Add New Vendor';
+        form.reset();
+        document.getElementById('vendor_id').value = '';
+        formContainer.style.display = 'block';
+        
+        // Scroll to form
+        formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function hideVendorForm() {
+    const formContainer = document.getElementById('vendor-form-container');
+    if (formContainer) {
+        formContainer.style.display = 'none';
+    }
+}
+
+function editVendor(vendorId) {
+    console.log('Editing vendor:', vendorId);
+    
+    // Fetch vendor data from server
+    fetch(`/ajax/vendor/get/${vendorId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                populateVendorForm(data.vendor);
+                showVendorFormForEdit(vendorId);
+            } else {
+                alert('Error loading vendor data: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading vendor:', error);
+            alert('Failed to load vendor data. Please try again.');
+        });
+}
+
+function populateVendorForm(vendor) {
+    // Populate form fields with vendor data
+    document.getElementById('vendor_id').value = vendor.id || '';
+    document.getElementById('company_name').value = vendor.company_name || '';
+    document.getElementById('company_registration').value = vendor.company_registration || '';
+    document.getElementById('business_type').value = vendor.business_type || '';
+    document.getElementById('company_size').value = vendor.company_size || '';
+    document.getElementById('contact_person').value = vendor.contact_person || '';
+    document.getElementById('contact_email').value = vendor.contact_email || '';
+    document.getElementById('contact_phone').value = vendor.contact_phone || '';
+    document.getElementById('website').value = vendor.website || '';
+    document.getElementById('address').value = vendor.address || '';
+    document.getElementById('city').value = vendor.city || '';
+    document.getElementById('state').value = vendor.state || '';
+    document.getElementById('postal_code').value = vendor.postal_code || '';
+    document.getElementById('specializations').value = vendor.specializations || '';
+    document.getElementById('years_experience').value = vendor.years_experience || '';
+    document.getElementById('status').value = vendor.status || 'active';
+}
+
+function showVendorFormForEdit(vendorId) {
+    const formContainer = document.getElementById('vendor-form-container');
+    const formTitle = document.getElementById('form-title');
+    
+    if (formContainer && formTitle) {
+        formTitle.textContent = 'Edit Vendor';
+        formContainer.style.display = 'block';
+        
+        // Scroll to form
+        formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function deleteVendor(vendorId) {
+    if (confirm('Are you sure you want to delete this vendor? This action cannot be undone.')) {
+        console.log('Deleting vendor:', vendorId);
+        
+        // Make API call to delete vendor
+        fetch(`/ajax/vendor/delete/${vendorId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Vendor deleted successfully!');
+                loadVendorList(); // Reload the list
+            } else {
+                alert('Error deleting vendor: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting vendor:', error);
+            alert('Failed to delete vendor. Please try again.');
+        });
+    }
+}
+
+function loadVendorList() {
+    const listContainer = document.getElementById('vendor-list-container');
+    if (!listContainer) return;
+    
+    // Show loading state
+    listContainer.innerHTML = `
+        <div class="loading-message" style="text-align: center; padding: 3rem;">
+            <div class="spinner"></div>
+            <p>Loading vendors...</p>
+        </div>
+    `;
+    
+    // Make AJAX call to get vendors
+    console.log('Making fetch request to /ajax/vendors/list...');
+    fetch('/ajax/vendors/list')
+        .then(response => {
+            console.log('Fetch response received:', response.status, response.statusText);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Vendor data received:', data);
+            if (data.success) {
+                console.log('Vendor data success, displaying', data.vendors.length, 'vendors');
+                displayVendorListData(data.vendors);
+            } else {
+                console.error('API returned error:', data.message);
+                displayVendorError(data.message || 'Unknown error from API');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            displayVendorError('Failed to load vendors: ' + error.message);
+        });
+}
+
+function displayVendorListData(vendors) {
+    console.log('displayVendorListData called with:', vendors);
+    const listContainer = document.getElementById('vendor-list-container');
+    if (!listContainer) {
+        console.error('vendor-list-container not found!');
+        return;
+    }
+    
+    console.log('Found vendor-list-container, processing', vendors ? vendors.length : 'undefined', 'vendors');
+    
+    if (vendors.length === 0) {
+        listContainer.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <h3>No Vendors Found</h3>
+                <p>No vendors are currently registered in the system.</p>
+                <button onclick="showAddVendorForm()" class="btn btn-primary">Add First Vendor</button>
+            </div>
+        `;
+        return;
+    }
+    
+    console.log('Creating vendor list HTML for', vendors.length, 'vendors...');
+    const vendorListHTML = `
+        <div class="vendor-list-header">
+            <h4>Registered Vendors (${vendors.length})</h4>
+            <div class="list-filters">
+                <select id="status-filter" onchange="filterVendors()" class="form-control">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="blacklisted">Blacklisted</option>
+                </select>
+                
+                <select id="type-filter" onchange="filterVendors()" class="form-control">
+                    <option value="">All Types</option>
+                    <option value="government_agency">Government Agency</option>
+                    <option value="statutory_body">Statutory Body</option>
+                    <option value="broadcasting">Broadcasting/Media</option>
+                    <option value="production">Production</option>
+                    <option value="post_production">Post Production</option>
+                    <option value="equipment_rental">Equipment Rental</option>
+                    <option value="talent_agency">Talent Agency</option>
+                    <option value="panel">Panel/Committee</option>
+                    <option value="corporate_unit">Corporate Unit</option>
+                    <option value="ministry">Ministry/Department</option>
+                    <option value="other">Other</option>
+                </select>
+                
+                <input type="text" id="search-vendors" placeholder="Search vendors..." 
+                       onkeyup="searchVendors()" class="form-control">
+            </div>
+        </div>
+        
+        <div class="vendor-grid" id="vendor-grid">
+            ${vendors.map(vendor => `
+                <div class="vendor-card" data-status="${vendor.status || 'active'}" data-type="${vendor.business_type || 'other'}">
+                    <div class="vendor-header">
+                        <div class="vendor-title">
+                            <h5>${vendor.company_name || 'Unknown Company'}</h5>
+                            <span class="vendor-reg">${vendor.company_registration || 'N/A'}</span>
+                        </div>
+                        <div class="vendor-status status-${vendor.status || 'active'}">
+                            ${(vendor.status || 'active').charAt(0).toUpperCase() + (vendor.status || 'active').slice(1)}
+                        </div>
+                    </div>
+                    
+                    <div class="vendor-details">
+                        <div class="detail-row">
+                            <strong>Contact:</strong> ${vendor.contact_person || 'N/A'}
+                        </div>
+                        <div class="detail-row">
+                            <strong>Email:</strong> ${vendor.contact_email || 'N/A'}
+                        </div>
+                        <div class="detail-row">
+                            <strong>Phone:</strong> ${vendor.contact_phone || 'N/A'}
+                        </div>
+                        <div class="detail-row">
+                            <strong>Location:</strong> ${vendor.city || 'N/A'}${vendor.state ? ', ' + vendor.state : ''}
+                        </div>
+                        <div class="detail-row">
+                            <strong>Type:</strong> ${(vendor.business_type || 'other').replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </div>
+                        <div class="detail-row">
+                            <strong>Experience:</strong> ${vendor.years_experience || 0} years
+                        </div>
+                        ${vendor.specializations ? `
+                            <div class="detail-row">
+                                <strong>Specializations:</strong> ${vendor.specializations}
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="vendor-actions">
+                        <button onclick="editVendor(${vendor.id})" class="btn btn-edit" title="Edit Vendor">
+                            ✏️ Edit
+                        </button>
+                        <button onclick="viewVendorDetails(${vendor.id})" class="btn btn-view" title="View Details">
+                            👁️ View
+                        </button>
+                        <button onclick="deleteVendor(${vendor.id})" class="btn btn-delete" title="Delete Vendor">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+        
+        <style>
+        .vendor-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e8f4f8;
+            background: #f8f9fa;
+        }
+        
+        .vendor-list-header h4 {
+            margin: 0;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .list-filters {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .list-filters .form-control {
+            width: auto;
+            min-width: 150px;
+            padding: 0.5rem;
+        }
+        
+        .vendor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+        }
+        
+        .vendor-card {
+            background: white;
+            border: 2px solid #e8f4f8;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .vendor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #3498db;
+        }
+        
+        .vendor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e8f4f8;
+        }
+        
+        .vendor-title h5 {
+            margin: 0 0 0.5rem 0;
+            color: #2c3e50;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .vendor-reg {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .vendor-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-active {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+        
+        .status-inactive {
+            background: #fdeaea;
+            color: #e74c3c;
+        }
+        
+        .status-blacklisted {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .vendor-details {
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-row {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+        
+        .detail-row strong {
+            color: #34495e;
+            margin-right: 0.5rem;
+        }
+        
+        .vendor-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: space-between;
+        }
+        
+        .vendor-actions .btn {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+        }
+        
+        .btn-edit {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .btn-view {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #7f8c8d;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state p {
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .vendor-list-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .list-filters {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .list-filters .form-control {
+                min-width: auto;
+            }
+            
+            .vendor-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .vendor-actions {
+                flex-direction: column;
+            }
+        }
+        </style>
+    `;
+    
+    console.log('Setting vendor list HTML, length:', vendorListHTML.length);
+    listContainer.innerHTML = vendorListHTML;
+    console.log('Vendor list HTML set successfully');
+}
+
+function displayVendorError(message) {
+    const listContainer = document.getElementById('vendor-list-container');
+    if (!listContainer) return;
+    
+    listContainer.innerHTML = `
+        <div class="error-state" style="text-align: center; padding: 3rem; color: #e74c3c;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+            <h3>Error Loading Vendors</h3>
+            <p>${message}</p>
+            <button onclick="loadVendorList()" class="btn btn-primary">Try Again</button>
+        </div>
+    `;
+}
+
+function filterVendors() {
+    const statusFilter = document.getElementById('status-filter').value;
+    const typeFilter = document.getElementById('type-filter').value;
+    const vendorCards = document.querySelectorAll('.vendor-card');
+    
+    vendorCards.forEach(card => {
+        const status = card.getAttribute('data-status');
+        const type = card.getAttribute('data-type');
+        
+        const statusMatch = !statusFilter || status === statusFilter;
+        const typeMatch = !typeFilter || type === typeFilter;
+        
+        if (statusMatch && typeMatch) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function searchVendors() {
+    const searchTerm = document.getElementById('search-vendors').value.toLowerCase();
+    const vendorCards = document.querySelectorAll('.vendor-card');
+    
+    vendorCards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function viewVendorDetails(vendorId) {
+    console.log('Viewing vendor details:', vendorId);
+    alert('View details functionality - would show detailed vendor information for ID: ' + vendorId);
+}
+
+// Handle vendor form submission
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listener for vendor form submission
+    setTimeout(() => {
+        const vendorForm = document.getElementById('vendor-form');
+        if (vendorForm) {
+            vendorForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const vendorData = {};
+                
+                // Convert form data to object
+                for (let [key, value] of formData.entries()) {
+                    vendorData[key] = value;
+                }
+                
+                console.log('Submitting vendor data:', vendorData);
+                
+                // Show loading state
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Saving...';
+                submitButton.disabled = true;
+                
+                // Make API call to save vendor
+                fetch('/ajax/vendor/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(vendorData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Vendor saved successfully!');
+                        hideVendorForm();
+                        loadVendorList();
+                    } else {
+                        alert('Error saving vendor: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error saving vendor:', error);
+                    alert('Failed to save vendor. Please try again.');
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                });
+            });
+        }
+    }, 1000);
+});
 
 function loadEvaluationContent() {
     console.log('Loading evaluation content...');
@@ -2630,6 +3599,9 @@ function loadSectionContent(section) {
             break;
         case 'vendor-registration':
             loadVendorRegistrationForm();
+            break;
+        case 'vendor-management':
+            loadVendorManagementContent();
             break;
         case 'available-tenders':
             loadAvailableTenders();
@@ -3370,6 +4342,18 @@ function initializeCompanyForm() {
         <h2>Manage Tenders</h2>
       </div>
       <div id="tender-management-content">
+        
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Vendor Management Section (Admin only) -->
+    {% if is_admin %}
+    <div class="content-section" id="vendor-management-section">
+      <div class="section-header">
+        <h2>Vendor Management</h2>
+      </div>
+      <div id="vendor-management-content">
         
       </div>
     </div>

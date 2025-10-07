@@ -690,4 +690,252 @@ class TenderManagementController extends ControllerBase {
     }
   }
 
+  /**
+   * AJAX endpoint to get vendors list.
+   */
+  public function getVendors() {
+    try {
+      $query = $this->database->select('company_vendors', 'cv')
+        ->fields('cv')
+        ->orderBy('company_name', 'ASC');
+      
+      $vendors = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+      
+      // Format the data for display
+      $formatted_vendors = [];
+      foreach ($vendors as $vendor) {
+        $formatted_vendors[] = [
+          'id' => $vendor['id'],
+          'company_name' => $vendor['company_name'],
+          'company_registration' => $vendor['company_registration'],
+          'business_type' => $vendor['business_type'],
+          'company_size' => $vendor['company_size'],
+          'contact_person' => $vendor['contact_person'],
+          'contact_email' => $vendor['contact_email'],
+          'contact_phone' => $vendor['contact_phone'],
+          'website' => $vendor['website'],
+          'address' => $vendor['address'],
+          'city' => $vendor['city'],
+          'state' => $vendor['state'],
+          'postal_code' => $vendor['postal_code'],
+          'specializations' => $vendor['specializations'],
+          'years_experience' => $vendor['years_experience'],
+          'status' => $vendor['status'],
+          'created_at' => date('M j, Y', strtotime($vendor['created_at'])),
+        ];
+      }
+      
+      return new JsonResponse([
+        'success' => TRUE,
+        'vendors' => $formatted_vendors,
+        'total' => count($formatted_vendors),
+      ]);
+      
+    } catch (\Exception $e) {
+      $this->loggerFactory->get('tender_management')
+        ->error('Error loading vendors: @error', ['@error' => $e->getMessage()]);
+      
+      return new JsonResponse([
+        'success' => FALSE,
+        'message' => 'Error loading vendors: ' . $e->getMessage(),
+      ], 500);
+    }
+  }
+
+  /**
+   * AJAX endpoint to save vendor (create or update).
+   */
+  public function saveVendor(Request $request) {
+    $data = json_decode($request->getContent(), TRUE);
+    
+    if (!$data) {
+      return new JsonResponse([
+        'success' => FALSE,
+        'message' => 'Invalid JSON data',
+      ], 400);
+    }
+    
+    // Validate required fields
+    $required_fields = ['company_name', 'company_registration', 'contact_person', 'contact_email', 'contact_phone', 'address', 'city', 'state', 'postal_code'];
+    $missing_fields = [];
+    
+    foreach ($required_fields as $field) {
+      if (empty($data[$field])) {
+        $missing_fields[] = $field;
+      }
+    }
+    
+    if (!empty($missing_fields)) {
+      return new JsonResponse([
+        'success' => FALSE,
+        'message' => 'Missing required fields: ' . implode(', ', $missing_fields),
+      ], 400);
+    }
+    
+    try {
+      $vendor_data = [
+        'company_name' => $data['company_name'],
+        'company_registration' => $data['company_registration'],
+        'business_type' => $data['business_type'] ?? '',
+        'company_size' => $data['company_size'] ?? '',
+        'contact_person' => $data['contact_person'],
+        'contact_email' => $data['contact_email'],
+        'contact_phone' => $data['contact_phone'],
+        'website' => $data['website'] ?? '',
+        'address' => $data['address'],
+        'city' => $data['city'],
+        'state' => $data['state'],
+        'postal_code' => $data['postal_code'],
+        'specializations' => $data['specializations'] ?? '',
+        'years_experience' => (int)($data['years_experience'] ?? 0),
+        'status' => $data['status'] ?? 'active',
+        'updated_at' => date('Y-m-d H:i:s'),
+      ];
+      
+      // Check if updating existing vendor
+      if (!empty($data['vendor_id'])) {
+        $vendor_id = (int)$data['vendor_id'];
+        
+        // Check if vendor exists
+        $existing = $this->database->select('company_vendors', 'cv')
+          ->fields('cv', ['id'])
+          ->condition('id', $vendor_id)
+          ->execute()
+          ->fetchField();
+        
+        if (!$existing) {
+          return new JsonResponse([
+            'success' => FALSE,
+            'message' => 'Vendor not found',
+          ], 404);
+        }
+        
+        // Update vendor
+        $this->database->update('company_vendors')
+          ->fields($vendor_data)
+          ->condition('id', $vendor_id)
+          ->execute();
+        
+        $this->loggerFactory->get('tender_management')
+          ->info('Vendor updated: @id', ['@id' => $vendor_id]);
+        
+        return new JsonResponse([
+          'success' => TRUE,
+          'message' => 'Vendor updated successfully',
+          'vendor_id' => $vendor_id,
+        ]);
+        
+      } else {
+        // Create new vendor
+        $vendor_data['created_at'] = date('Y-m-d H:i:s');
+        $vendor_data['created_by'] = $this->currentUser->id();
+        
+        $vendor_id = $this->database->insert('company_vendors')
+          ->fields($vendor_data)
+          ->execute();
+        
+        $this->loggerFactory->get('tender_management')
+          ->info('New vendor created: @id', ['@id' => $vendor_id]);
+        
+        return new JsonResponse([
+          'success' => TRUE,
+          'message' => 'Vendor created successfully',
+          'vendor_id' => $vendor_id,
+        ]);
+      }
+      
+    } catch (\Exception $e) {
+      $this->loggerFactory->get('tender_management')
+        ->error('Error saving vendor: @error', ['@error' => $e->getMessage()]);
+      
+      return new JsonResponse([
+        'success' => FALSE,
+        'message' => 'Error saving vendor: ' . $e->getMessage(),
+      ], 500);
+    }
+  }
+
+  /**
+   * AJAX endpoint to get single vendor details.
+   */
+  public function getVendor($vendor_id) {
+    try {
+      $vendor = $this->database->select('company_vendors', 'cv')
+        ->fields('cv')
+        ->condition('id', $vendor_id)
+        ->execute()
+        ->fetchAssoc();
+      
+      if (!$vendor) {
+        return new JsonResponse([
+          'success' => FALSE,
+          'message' => 'Vendor not found',
+        ], 404);
+      }
+      
+      return new JsonResponse([
+        'success' => TRUE,
+        'vendor' => $vendor,
+      ]);
+      
+    } catch (\Exception $e) {
+      $this->loggerFactory->get('tender_management')
+        ->error('Error loading vendor: @error', ['@error' => $e->getMessage()]);
+      
+      return new JsonResponse([
+        'success' => FALSE,
+        'message' => 'Error loading vendor: ' . $e->getMessage(),
+      ], 500);
+    }
+  }
+
+  /**
+   * AJAX endpoint to delete vendor.
+   */
+  public function deleteVendor($vendor_id) {
+    try {
+      // Check if vendor exists
+      $existing = $this->database->select('company_vendors', 'cv')
+        ->fields('cv', ['id', 'company_name'])
+        ->condition('id', $vendor_id)
+        ->execute()
+        ->fetchAssoc();
+      
+      if (!$existing) {
+        return new JsonResponse([
+          'success' => FALSE,
+          'message' => 'Vendor not found',
+        ], 404);
+      }
+      
+      // Check if vendor has active proposals or contracts
+      // You might want to add this check based on your business logic
+      
+      // Delete vendor
+      $this->database->delete('company_vendors')
+        ->condition('id', $vendor_id)
+        ->execute();
+      
+      $this->loggerFactory->get('tender_management')
+        ->info('Vendor deleted: @id (@name)', [
+          '@id' => $vendor_id,
+          '@name' => $existing['company_name']
+        ]);
+      
+      return new JsonResponse([
+        'success' => TRUE,
+        'message' => 'Vendor deleted successfully',
+      ]);
+      
+    } catch (\Exception $e) {
+      $this->loggerFactory->get('tender_management')
+        ->error('Error deleting vendor: @error', ['@error' => $e->getMessage()]);
+      
+      return new JsonResponse([
+        'success' => FALSE,
+        'message' => 'Error deleting vendor: ' . $e->getMessage(),
+      ], 500);
+    }
+  }
+
 }

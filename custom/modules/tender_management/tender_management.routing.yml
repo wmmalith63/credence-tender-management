@@ -152,3 +152,44 @@ tender_management.ajax_upcoming_deadlines:
     _access: 'TRUE'
   options:
     _admin_route: FALSE
+# Vendor Management AJAX endpoints
+tender_management.ajax_get_vendors:
+  path: '/ajax/vendors/list'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::getVendors'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_get_vendor:
+  path: '/ajax/vendor/get/{vendor_id}'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::getVendor'
+  requirements:
+    _permission: 'access tender management'
+    _access: 'TRUE'
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_save_vendor:
+  path: '/ajax/vendor/save'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::saveVendor'
+  requirements:
+    _permission: 'access tender management'
+    _access: 'TRUE'
+    _method: 'POST'
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_delete_vendor:
+  path: '/ajax/vendor/delete/{vendor_id}'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::deleteVendor'
+  requirements:
+    _permission: 'access tender management'
+    _access: 'TRUE'
+    _method: 'DELETE|POST'
+  options:
+    _admin_route: FALSE
