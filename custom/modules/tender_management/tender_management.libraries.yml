@@ -1,0 +1,69 @@
+tender_dashboard:
+  css:
+    theme:
+      css/tender-dashboard.css: {}
+  js:
+    js/tender-dashboard.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+
+vendor_registration:
+  css:
+    theme:
+      css/vendor-registration.css: {}
+  js:
+    js/vendor-registration.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+
+create_tender:
+  css:
+    theme:
+      css/create-tender.css: {}
+  js:
+    js/create-tender.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+
+tender_list:
+  css:
+    theme:
+      css/tender-list.css: {}
+  js:
+    js/tender-list.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+
+tender_details:
+  css:
+    theme:
+      css/tender-details.css: {}
+  js:
+    js/tender-details.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+
+evaluation:
+  css:
+    theme:
+      css/evaluation.css: {}
+  js:
+    js/evaluation.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+
+results:
+  css:
+    theme:
+      css/results.css: {}
+  js:
+    js/results.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal

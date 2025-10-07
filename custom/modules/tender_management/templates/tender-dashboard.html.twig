@@ -1,0 +1,3527 @@
+{#
+/**
+ * @file
+ * Template for tender management dashboard.
+ *
+ * Available variables:
+ * - user_roles: Array of user roles
+ * - is_admin: Boolean for admin access
+ * - is_evaluator: Boolean for evaluator access
+ * - is_vendor: Boolean for vendor access
+ */
+#}
+
+<style>
+.tender-dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dashboard-title {
+  color: #2c3e50;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.user-section {
+  text-align: right;
+}
+
+.welcome-text {
+  display: block;
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.role-badge {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.tender-navigation {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 0 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-menu {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 1rem 1.2rem;
+  color: #2c3e50;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  position: relative;
+  text-align: center;
+  min-width: 120px;
+}
+
+.nav-link:hover {
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+  transform: translateY(-2px);
+}
+
+.nav-item.active .nav-link {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  color: white;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.nav-icon {
+  font-size: 1.5rem;
+}
+
+.notification-count {
+  background: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  min-width: 1.2rem;
+  text-align: center;
+}
+
+.tender-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.content-section {
+  display: none;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-height: 500px;
+}
+
+.content-section.active {
+  display: block;
+  animation: fadeInUp 0.5s ease;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e8f4f8;
+}
+
+.section-header h2 {
+  color: #2c3e50;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-number {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dashboard-widgets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.widget {
+  background: #f8fbff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e8f4f8;
+}
+
+.widget h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e8f4f8;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-icon {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.2rem;
+}
+
+.activity-content p {
+  margin: 0 0 0.25rem 0;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.activity-time {
+  color: #7f8c8d;
+  font-size: 0.8rem;
+}
+
+.no-data {
+  text-align: center;
+  color: #7f8c8d;
+  padding: 2rem;
+  font-style: italic;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .nav-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .dashboard-widgets {
+    grid-template-columns: 1fr;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}
+</style>
+
+
+<script>
+// Define calculateTotal function first so it's immediately available globally
+function calculateTotal() {
+    console.log('calculateTotal called');
+    const episodes = document.getElementById('total_episodes');
+    const budgetPerEpisode = document.getElementById('budget_per_episode');
+    const totalBudget = document.getElementById('total_budget');
+    
+    console.log('Episodes element:', episodes);
+    console.log('Budget element:', budgetPerEpisode);
+    console.log('Total element:', totalBudget);
+    
+    if (episodes && budgetPerEpisode && totalBudget) {
+        const episodeCount = parseFloat(episodes.value || 0);
+        const budgetPerEp = parseFloat(budgetPerEpisode.value || 0);
+        
+        console.log('Episode count:', episodeCount);
+        console.log('Budget per episode:', budgetPerEp);
+        
+        if (episodeCount >= 0 && budgetPerEp >= 0) {
+            const total = episodeCount * budgetPerEp;
+            totalBudget.value = total.toFixed(2);
+            
+            console.log('Calculated total:', total);
+            
+            // Add visual feedback
+            if (total > 0) {
+                totalBudget.style.backgroundColor = '#e8f5e8';
+                totalBudget.style.fontWeight = 'bold';
+            } else {
+                totalBudget.style.backgroundColor = '';
+                totalBudget.style.fontWeight = '';
+            }
+        }
+    } else {
+        console.error('One or more elements not found');
+    }
+}
+
+// Define testButtonClick first so it's immediately available
+function testButtonClick() {
+    console.log('testButtonClick called - loading tender form');
+    loadCreateTenderContent();
+}
+
+// Auto-load the tender form when page loads
+function autoLoadTenderForm() {
+    console.log('Auto-loading tender form');
+    loadCreateTenderContent();
+}
+
+// Define global functions first
+function createTenderFormHTML() {
+    
+    // Use DOM creation instead of template literals to avoid syntax issues
+    const formHTML = `<form id="tender-creation-form" class="tender-form">
+            <div class="form-grid">
+                <div class="form-main">
+                    <div class="form-section">
+                        <h3>Basic Information</h3>
+                        
+                        <div class="form-group">
+                            <label for="tender_number">Tender Number *</label>
+                            <input type="text" id="tender_number" name="tender_number" required 
+                                   placeholder="e.g., TND-2025-001" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tender_title">Tender Title *</label>
+                            <input type="text" id="tender_title" name="tender_title" required 
+                                   placeholder="Enter tender title" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tender_description">Description</label>
+                            <textarea id="tender_description" name="tender_description" rows="4" 
+                                      placeholder="Detailed description of the tender" class="form-control"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tender_type">Tender Type *</label>
+                                <select id="tender_type" name="tender_type" required class="form-control">
+                                    <option value="">Select Type</option>
+                                    <option value="NEW">NEW</option>
+                                    <option value="CONTINUATION SERIES">CONTINUATION SERIES</option>
+                                    <option value="OTHERS">OTHERS</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="tender_category">Category *</label>
+                                <select id="tender_category" name="tender_category" required class="form-control">
+                                    <option value="">Select Category</option>
+                                    <option value="DRAMA">DRAMA</option>
+                                    <option value="DOCUMENTARY">DOCUMENTARY</option>
+                                    <option value="NEWS">NEWS</option>
+                                    <option value="ENTERTAINMENT">ENTERTAINMENT</option>
+                                    <option value="EDUCATIONAL">EDUCATIONAL</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="VARIETY">VARIETY</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Production Details</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="episode_duration">Episode Duration *</label>
+                                <select id="episode_duration" name="episode_duration" required class="form-control">
+                                    <option value="">Select Duration</option>
+                                    <option value="30 MINUTES">30 MINUTES</option>
+                                    <option value="60 MINUTES">60 MINUTES</option>
+                                    <option value="90 MINUTES">90 MINUTES</option>
+                                    <option value="120 MINUTES">120 MINUTES</option>
+                                    <option value="OTHER">OTHER</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="total_episodes">Total Episodes *</label>
+                                <input type="number" id="total_episodes" name="total_episodes" required 
+                                       min="1" placeholder="e.g., 13" class="form-control" onchange="calculateTotal()">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="budget_per_episode">Budget Per Episode (RM) *</label>
+                                <input type="number" id="budget_per_episode" name="budget_per_episode" required 
+                                       min="0" step="0.01" placeholder="e.g., 50000.00" class="form-control" onchange="calculateTotal()">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="total_budget">Total Budget (RM)</label>
+                                <input type="number" id="total_budget" name="total_budget" readonly 
+                                       class="form-control readonly-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Timeline</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="submission_deadline">Submission Deadline *</label>
+                                <input type="datetime-local" id="submission_deadline" name="submission_deadline" required class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="evaluation_period">Evaluation Period</label>
+                                <input type="text" id="evaluation_period" name="evaluation_period" 
+                                       placeholder="e.g., 2 weeks" class="form-control">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="production_start">Production Start Date *</label>
+                                <input type="date" id="production_start" name="production_start" required class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="production_end">Production End Date *</label>
+                                <input type="date" id="production_end" name="production_end" required class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Requirements</h3>
+                        
+                        <div class="form-group">
+                            <label for="technical_requirements">Technical Requirements</label>
+                            <textarea id="technical_requirements" name="technical_requirements" rows="4" 
+                                      placeholder="Specify technical requirements..." class="form-control"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content_requirements">Content Requirements</label>
+                            <textarea id="content_requirements" name="content_requirements" rows="4" 
+                                      placeholder="Specify content requirements..." class="form-control"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
+                        <button type="submit" class="btn btn-primary">Publish Tender</button>
+                    </div>
+                </div>
+
+                <div class="form-sidebar">
+                    <div class="requirements-panel">
+                        <h3>📋 Tender Requirements</h3>
+                        
+                        <div class="requirement-section">
+                            <h4>📄 Documentation Required</h4>
+                            <ul>
+                                <li>Company Registration Certificate</li>
+                                <li>Tax Clearance Certificate</li>
+                                <li>Financial Statements (Last 3 years)</li>
+                                <li>Portfolio/Previous Work Samples</li>
+                                <li>Project Proposal</li>
+                                <li>Budget Breakdown</li>
+                            </ul>
+                        </div>
+
+                        <div class="requirement-section">
+                            <h4>✅ Eligibility Criteria</h4>
+                            <ul>
+                                <li>Must be a registered Malaysian company</li>
+                                <li>Minimum 3 years experience in media production</li>
+                                <li>Valid broadcasting licenses</li>
+                                <li>Compliance with MCMC regulations</li>
+                                <li>No outstanding government dues</li>
+                            </ul>
+                        </div>
+
+                        <div class="requirement-section">
+                            <h4>⚡ Technical Specifications</h4>
+                            <ul>
+                                <li>HD/4K video production capability</li>
+                                <li>Professional audio equipment</li>
+                                <li>Post-production facilities</li>
+                                <li>Broadcast-ready delivery formats</li>
+                                <li>Quality assurance processes</li>
+                            </ul>
+                        </div>
+
+                        <div class="requirement-section">
+                            <h4>📊 Evaluation Criteria</h4>
+                            <ul>
+                                <li><strong>Technical Capability (30%)</strong></li>
+                                <li><strong>Creative Proposal (25%)</strong></li>
+                                <li><strong>Budget & Cost (20%)</strong></li>
+                                <li><strong>Experience & Portfolio (15%)</strong></li>
+                                <li><strong>Timeline & Delivery (10%)</strong></li>
+                            </ul>
+                        </div>
+
+                        <div class="info-box">
+                            <h4>ℹ️ Important Notes</h4>
+                            <p>All submissions must comply with Malaysian content guidelines and broadcasting standards.</p>
+                            <p><strong>Deadline:</strong> Submissions after the deadline will not be considered.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>`;
+    
+    // Add CSS separately
+    const cssHTML = `<style>
+        .tender-form {
+            max-width: 100%;
+            margin: 0;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        .form-main {
+            background: white;
+            padding: 0;
+        }
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e8f4f8;
+            border-radius: 8px;
+            background: #fafbfc;
+        }
+        .form-section h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e8f4f8;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        .readonly-field {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            padding: 2rem 1.5rem;
+            background: white;
+            border-top: 1px solid #e8f4f8;
+            margin-top: 2rem;
+        }
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .form-sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+        .requirements-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        }
+        .requirements-panel h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        .requirement-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .requirement-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .requirement-section h4 {
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+        .requirement-section ul {
+            margin: 0;
+            padding-left: 1.2rem;
+            list-style-type: disc;
+        }
+        .requirement-section li {
+            margin-bottom: 0.3rem;
+            line-height: 1.4;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .info-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .info-box h4 {
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .info-box p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-sidebar {
+                order: -1;
+                position: relative;
+                top: auto;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .form-actions {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+        </style>`;
+    
+    return formHTML + cssHTML;
+}
+
+
+
+// Move loadCreateTenderContent to global scope so onclick can access it
+function loadCreateTenderContent() {
+    console.log('loadCreateTenderContent called!');
+    console.log('Looking for element with ID: create-tender-content');
+    
+    try {
+        const contentDiv = document.getElementById('create-tender-content');
+        console.log('Found contentDiv:', contentDiv);
+        if (!contentDiv) {
+            console.error('create-tender-content div not found!');
+            console.log('Available elements with IDs:', Array.from(document.querySelectorAll('[id]')).map(el => el.id));
+            return;
+        }
+        
+        console.log('Current contentDiv innerHTML:', contentDiv.innerHTML.substring(0, 100));
+        console.log('Setting innerHTML...');
+        
+        // Create form element dynamically to avoid template string issues
+        const formHTML = createTenderFormHTML();
+        console.log('formHTML created, length:', formHTML.length);
+        
+        contentDiv.innerHTML = formHTML;
+        console.log('Form HTML set successfully');
+        
+        // Initialize form functionality
+        console.log('Initializing form...');
+        setTimeout(() => {
+            initializeTenderForm();
+            console.log('Form initialization complete!');
+        }, 100);
+        
+    } catch (error) {
+        console.error('Error in loadCreateTenderContent:', error);
+        const contentDiv = document.getElementById('create-tender-content');
+        if (contentDiv) {
+            contentDiv.innerHTML = '<div style="padding: 2rem; text-align: center; color: red;"><h3>Error Loading Form</h3><p>Please refresh the page and try again.</p><p>Error: ' + error.message + '</p></div>';
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Navigation functionality
+    const navLinks = document.querySelectorAll('.nav-link[data-section]');
+    const contentSections = document.querySelectorAll('.content-section');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetSection = this.getAttribute('data-section');
+            
+            // Update active nav item
+            document.querySelector('.nav-item.active').classList.remove('active');
+            this.parentElement.classList.add('active');
+            
+            // Show target section
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            const targetElement = document.getElementById(targetSection + '-section');
+            if (targetElement) {
+                targetElement.classList.add('active');
+                
+                // Load content if needed
+                loadSectionContent(targetSection);
+            }
+        });
+    });
+    
+    // Load initial dashboard data
+    loadDashboardStats();
+    loadRecentActivities();
+    loadUpcomingDeadlines();
+    
+    // Auto-load tender form immediately if create-tender section exists
+    const createTenderContent = document.getElementById('create-tender-content');
+    if (createTenderContent) {
+        console.log('Found create-tender-content, loading form immediately');
+        loadCreateTenderContent();
+    }
+    
+    // Auto-load tender form if create-tender section is active
+    setTimeout(function() {
+        const createTenderSection = document.getElementById('create-tender-section');
+        if (createTenderSection && createTenderSection.classList.contains('active')) {
+            console.log('Auto-loading tender form for active create-tender section');
+            autoLoadTenderForm();
+        }
+    }, 100);
+    
+    // Force load tender form after a brief delay to ensure DOM is ready
+    setTimeout(function() {
+        const createTenderContent = document.getElementById('create-tender-content');
+        if (createTenderContent && (!createTenderContent.innerHTML || createTenderContent.innerHTML.trim().length < 100)) {
+            console.log('Force loading tender form...');
+            loadCreateTenderContent();
+        }
+    }, 200);
+});
+
+function loadSectionContent(section) {
+    console.log('Loading section:', section);
+    
+    switch(section) {
+        case 'create-tender':
+            console.log('Navigation: Loading create tender form...');
+            // Load the form directly
+            loadCreateTenderContent();
+            break;
+        case 'tender-management':
+            console.log('DEBUG: tender-management section triggered');
+            loadTenderManagementContent();
+            break;
+        case 'vendor-management':
+            loadVendorManagementContent();
+            break;
+        case 'evaluation':
+            loadEvaluationContent();
+            break;
+        case 'results':
+            loadResultsContent();
+            break;
+        case 'notifications':
+            loadNotificationsContent();
+            break;
+        default:
+            console.log('Unknown section:', section);
+    }
+}
+
+function displayTenderList(tenders) {
+    const contentDiv = document.getElementById('tender-management-content');
+    if (!contentDiv) return;
+    
+    if (tenders.length === 0) {
+        contentDiv.innerHTML = `
+            <div class="no-data" style="text-align: center; padding: 3rem;">
+                <h3>No Tenders Found</h3>
+                <p style="color: #7f8c8d; margin-bottom: 2rem;">You haven't created any tenders yet.</p>
+                <button onclick="document.querySelector('.nav-link[data-section=\\"create-tender\\"]').click()" class="btn btn-primary">
+                    Create Your First Tender
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    const tendersHTML = `
+        <div class="tenders-container">
+            <div class="tenders-header">
+                <h3>All Tenders (${tenders.length})</h3>
+                <div class="tenders-actions">
+                    <button onclick="loadTenderManagementContent()" class="btn btn-secondary">Refresh</button>
+                    <button onclick="document.querySelector('.nav-link[data-section=\\"create-tender\\"]').click()" class="btn btn-primary">
+                        Create New Tender
+                    </button>
+                </div>
+            </div>
+            
+            <div class="tenders-grid">
+                ${tenders.map(tender => `
+                    <div class="tender-card" data-tender-id="${tender.id}">
+                        <div class="tender-header">
+                            <div class="tender-number">${tender.tender_number}</div>
+                            <div class="tender-status status-${tender.status}">${tender.status.toUpperCase()}</div>
+                        </div>
+                        <div class="tender-content">
+                            <h4 class="tender-title">${tender.title}</h4>
+                            <p class="tender-description">${tender.description ? tender.description.substring(0, 100) + '...' : 'No description'}</p>
+                            <div class="tender-details">
+                                <div class="detail-item">
+                                    <span class="label">Type:</span>
+                                    <span class="value">${tender.type || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Category:</span>
+                                    <span class="value">${tender.category || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Episodes:</span>
+                                    <span class="value">${tender.total_episodes || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Budget:</span>
+                                    <span class="value">RM ${tender.total_budget}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Deadline:</span>
+                                    <span class="value">${tender.submission_deadline ? new Date(tender.submission_deadline).toLocaleDateString() : 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Created:</span>
+                                    <span class="value">${tender.created_at}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tender-actions">
+                            <button onclick="viewTender(${tender.id})" class="btn btn-sm btn-primary">View</button>
+                            <button onclick="editTender(${tender.id})" class="btn btn-sm btn-secondary">Edit</button>
+                            <button onclick="deleteTender(${tender.id})" class="btn btn-sm btn-danger">Delete</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        
+        <style>
+        .tenders-container {
+            padding: 1rem;
+        }
+        
+        .tenders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e8f4f8;
+        }
+        
+        .tenders-header h3 {
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .tenders-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .tenders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .tender-card {
+            background: white;
+            border: 1px solid #e8f4f8;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .tender-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tender-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tender-number {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .tender-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-draft {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .status-published {
+            background: rgba(46, 204, 113, 0.3);
+        }
+        
+        .status-closed {
+            background: rgba(231, 76, 60, 0.3);
+        }
+        
+        .tender-content {
+            padding: 1.5rem;
+        }
+        
+        .tender-title {
+            color: #2c3e50;
+            margin: 0 0 1rem 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .tender-description {
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+        
+        .tender-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .detail-item .label {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .detail-item .value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .tender-actions {
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .loading-message, .error-message {
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .tenders-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tenders-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .tenders-actions {
+                justify-content: center;
+            }
+        }
+        </style>
+    `;
+    
+    contentDiv.innerHTML = tendersHTML;
+}
+
+function viewTender(tenderId) {
+    console.log('Viewing tender:', tenderId);
+    alert(`View tender functionality would be implemented here for tender ID: ${tenderId}`);
+}
+
+function editTender(tenderId) {
+    console.log('Editing tender:', tenderId);
+    alert(`Edit tender functionality would be implemented here for tender ID: ${tenderId}`);
+}
+
+function deleteTender(tenderId) {
+    if (confirm('Are you sure you want to delete this tender? This action cannot be undone.')) {
+        console.log('Deleting tender:', tenderId);
+        alert(`Delete tender functionality would be implemented here for tender ID: ${tenderId}`);
+    }
+}
+
+function loadVendorManagementContent() {
+    console.log('loadVendorManagementContent called');
+    // TODO: Implement vendor management content
+}
+
+function loadEvaluationContent() {
+    console.log('loadEvaluationContent called');
+    // TODO: Implement evaluation content
+}
+
+function loadResultsContent() {
+    console.log('loadResultsContent called');
+    // TODO: Implement results content
+}
+
+function loadNotificationsContent() {
+    console.log('loadNotificationsContent called');
+    // TODO: Implement notifications content
+}
+
+function loadDashboardStats() {
+    fetch('/tender-management/ajax/dashboard-stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateStatsDisplay(data.stats);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading dashboard stats:', error);
+        });
+}
+
+function updateStatsDisplay(stats) {
+    const activeTenders = document.getElementById('active-tenders');
+    const myProposals = document.getElementById('my-proposals-count');
+    const totalProposals = document.getElementById('total-proposals');
+    const pendingEvaluations = document.getElementById('pending-evaluations');
+    
+    if (activeTenders) activeTenders.textContent = stats.active_tenders || 0;
+    if (myProposals) myProposals.textContent = stats.my_proposals || 0;
+    if (totalProposals) totalProposals.textContent = stats.total_proposals || 0;
+    if (pendingEvaluations) pendingEvaluations.textContent = stats.pending_evaluations || 0;
+}
+
+function loadRecentActivities() {
+    fetch('/tender-management/ajax/recent-activities')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.activities.length > 0) {
+                displayRecentActivities(data.activities);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading recent activities:', error);
+        });
+}
+
+function displayRecentActivities(activities) {
+    const activitiesList = document.getElementById('recent-activities');
+    if (!activitiesList) return;
+    
+    activitiesList.innerHTML = activities.map(activity => `
+        <div class="activity-item">
+            <div class="activity-icon">${getActivityIcon(activity.type)}</div>
+            <div class="activity-content">
+                <p>${activity.message}</p>
+                <span class="activity-time">${activity.time}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function getActivityIcon(type) {
+    const icons = {
+        'tender': '📋',
+        'proposal': '📝',
+        'evaluation': '📊',
+        'notification': '🔔',
+        'default': 'ℹ️'
+    };
+    return icons[type] || icons.default;
+}
+
+function loadUpcomingDeadlines() {
+    fetch('/tender-management/ajax/upcoming-deadlines')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.deadlines.length > 0) {
+                displayUpcomingDeadlines(data.deadlines);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading upcoming deadlines:', error);
+        });
+}
+
+function displayUpcomingDeadlines(deadlines) {
+    const deadlinesList = document.getElementById('upcoming-deadlines');
+    if (!deadlinesList) return;
+    
+    deadlinesList.innerHTML = deadlines.map(deadline => `
+        <div class="activity-item">
+            <div class="activity-icon">⏰</div>
+            <div class="activity-content">
+                <p>${deadline.title}</p>
+                <span class="activity-time">${deadline.deadline}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Additional helper functions - moved to global scope
+// calculateTotal function moved to beginning of script for global availability
+
+function saveDraft() {
+    saveTender('draft');
+}
+
+function initializeTenderForm() {
+    const form = document.getElementById('tender-creation-form');
+    if (!form) return;
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveTender('published');
+    });
+}
+
+function saveTender(status) {
+    const form = document.getElementById('tender-creation-form');
+    if (!form) return;
+    
+    const formData = new FormData(form);
+    formData.append('status', status);
+    
+    // Basic validation
+    const requiredFields = ['tender_number', 'tender_title', 'tender_type', 'tender_category', 
+                           'episode_duration', 'total_episodes', 'budget_per_episode', 
+                           'submission_deadline', 'production_start', 'production_end'];
+    
+    const missingFields = [];
+    requiredFields.forEach(fieldName => {
+        const field = form.querySelector('[name="' + fieldName + '"]');
+        if (!field || !field.value.trim()) {
+            missingFields.push(fieldName.replace(/_/g, ' ').replace(/\\b\\w/g, l => l.toUpperCase()));
+        }
+    });
+    
+    if (missingFields.length > 0 && status === 'published') {
+        alert('Please fill in all required fields: ' + missingFields.join(', '));
+        return;
+    }
+    
+    // Show loading
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Saving...';
+    submitBtn.disabled = true;
+    
+    // Send to server
+    fetch('/ajax/tender/save', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(status === 'draft' ? 'Draft saved successfully!' : 'Tender published successfully!');
+            if (status === 'published') {
+                // Redirect to manage tenders or reload dashboard
+                loadDashboardStats();
+                // Switch to dashboard view
+                document.querySelector('.nav-link[data-section="dashboard"]').click();
+            }
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while saving the tender.');
+    })
+    .finally(() => {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    });
+}
+
+function loadFullForm() {
+    console.log('createTenderFormHTML called');
+    
+    return `
+        <form id="tender-creation-form" class="tender-form">
+            <div class="form-grid">
+                <!-- Left Column - Main Form -->
+                <div class="form-main">
+                    <div class="form-section">
+                        <h3>Basic Information</h3>
+                        
+                        <div class="form-group">
+                            <label for="tender_number">Tender Number *</label>
+                            <input type="text" id="tender_number" name="tender_number" required 
+                                   placeholder="e.g., TND-2025-001" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tender_title">Tender Title *</label>
+                            <input type="text" id="tender_title" name="tender_title" required 
+                                   placeholder="Enter tender title" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tender_description">Description</label>
+                            <textarea id="tender_description" name="tender_description" rows="4" 
+                                      placeholder="Detailed description of the tender" class="form-control"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tender_type">Tender Type *</label>
+                                <select id="tender_type" name="tender_type" required class="form-control">
+                                    <option value="">Select Type</option>
+                                    <option value="NEW">NEW</option>
+                                    <option value="CONTINUATION SERIES">CONTINUATION SERIES</option>
+                                    <option value="OTHERS">OTHERS</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="tender_category">Category *</label>
+                                <select id="tender_category" name="tender_category" required class="form-control">
+                                    <option value="">Select Category</option>
+                                    <option value="DRAMA">DRAMA</option>
+                                    <option value="DOCUMENTARY">DOCUMENTARY</option>
+                                    <option value="NEWS">NEWS</option>
+                                    <option value="ENTERTAINMENT">ENTERTAINMENT</option>
+                                    <option value="EDUCATIONAL">EDUCATIONAL</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="VARIETY">VARIETY</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Production Details</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="episode_duration">Episode Duration *</label>
+                                <select id="episode_duration" name="episode_duration" required class="form-control">
+                                    <option value="">Select Duration</option>
+                                    <option value="30 MINUTES">30 MINUTES</option>
+                                    <option value="60 MINUTES">60 MINUTES</option>
+                                    <option value="90 MINUTES">90 MINUTES</option>
+                                    <option value="120 MINUTES">120 MINUTES</option>
+                                    <option value="OTHER">OTHER</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="total_episodes">Total Episodes *</label>
+                                <input type="number" id="total_episodes" name="total_episodes" required 
+                                       min="1" placeholder="e.g., 13" class="form-control" onchange="calculateTotal()">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="budget_per_episode">Budget Per Episode (RM) *</label>
+                                <input type="number" id="budget_per_episode" name="budget_per_episode" required 
+                                       min="0" step="0.01" placeholder="e.g., 50000.00" class="form-control" onchange="calculateTotal()">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="total_budget">Total Budget (RM)</label>
+                                <input type="number" id="total_budget" name="total_budget" readonly 
+                                       class="form-control readonly-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Timeline</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="submission_deadline">Submission Deadline *</label>
+                                <input type="datetime-local" id="submission_deadline" name="submission_deadline" required class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="evaluation_period">Evaluation Period</label>
+                                <input type="text" id="evaluation_period" name="evaluation_period" 
+                                       placeholder="e.g., 2 weeks" class="form-control">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="production_start">Production Start Date *</label>
+                                <input type="date" id="production_start" name="production_start" required class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="production_end">Production End Date *</label>
+                                <input type="date" id="production_end" name="production_end" required class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Requirements</h3>
+                        
+                        <div class="form-group">
+                            <label for="technical_requirements">Technical Requirements</label>
+                            <textarea id="technical_requirements" name="technical_requirements" rows="4" 
+                                      placeholder="Specify technical requirements..." class="form-control"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content_requirements">Content Requirements</label>
+                            <textarea id="content_requirements" name="content_requirements" rows="4" 
+                                      placeholder="Specify content requirements..." class="form-control"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
+                        <button type="submit" class="btn btn-primary">Publish Tender</button>
+                    </div>
+                </div>
+
+                <!-- Right Column - Requirements Sidebar -->
+                <div class="form-sidebar">
+                    <div class="requirements-panel">
+                        <h3>📋 Tender Requirements</h3>
+                        
+                        <div class="requirement-section">
+                            <h4>📄 Documentation Required</h4>
+                            <ul>
+                                <li>Company Registration Certificate</li>
+                                <li>Tax Clearance Certificate</li>
+                                <li>Financial Statements (Last 3 years)</li>
+                                <li>Portfolio/Previous Work Samples</li>
+                                <li>Project Proposal</li>
+                                <li>Budget Breakdown</li>
+                            </ul>
+                        </div>
+
+                        <div class="requirement-section">
+                            <h4>✅ Eligibility Criteria</h4>
+                            <ul>
+                                <li>Must be a registered Malaysian company</li>
+                                <li>Minimum 3 years experience in media production</li>
+                                <li>Valid broadcasting licenses</li>
+                                <li>Compliance with MCMC regulations</li>
+                                <li>No outstanding government dues</li>
+                            </ul>
+                        </div>
+
+                        <div class="requirement-section">
+                            <h4>⚡ Technical Specifications</h4>
+                            <ul>
+                                <li>HD/4K video production capability</li>
+                                <li>Professional audio equipment</li>
+                                <li>Post-production facilities</li>
+                                <li>Broadcast-ready delivery formats</li>
+                                <li>Quality assurance processes</li>
+                            </ul>
+                        </div>
+
+                        <div class="requirement-section">
+                            <h4>📊 Evaluation Criteria</h4>
+                            <ul>
+                                <li><strong>Technical Capability (30%)</strong></li>
+                                <li><strong>Creative Proposal (25%)</strong></li>
+                                <li><strong>Budget & Cost (20%)</strong></li>
+                                <li><strong>Experience & Portfolio (15%)</strong></li>
+                                <li><strong>Timeline & Delivery (10%)</strong></li>
+                            </ul>
+                        </div>
+
+                        <div class="info-box">
+                            <h4>ℹ️ Important Notes</h4>
+                            <p>All submissions must comply with Malaysian content guidelines and broadcasting standards.</p>
+                            <p><strong>Deadline:</strong> Submissions after the deadline will not be considered.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <style>
+        .tender-form {
+            max-width: 100%;
+            margin: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .form-main {
+            background: white;
+            padding: 0;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e8f4f8;
+            border-radius: 8px;
+            background: #fafbfc;
+        }
+
+        .form-section h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e8f4f8;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .readonly-field {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            padding: 2rem 1.5rem;
+            background: white;
+            border-top: 1px solid #e8f4f8;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+        .requirements-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        }
+
+        .requirements-panel h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .requirement-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .requirement-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .requirement-section h4 {
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+
+        .requirement-section ul {
+            margin: 0;
+            padding-left: 1.2rem;
+            list-style-type: disc;
+        }
+
+        .requirement-section li {
+            margin-bottom: 0.3rem;
+            line-height: 1.4;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .info-box h4 {
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .info-box p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-sidebar {
+                order: -1;
+                position: relative;
+                top: auto;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+        </style>
+    `;
+}
+        <div class="form-grid">
+            <!-- Left Column - Main Form -->
+            <div class="form-main">
+                <div class="form-section">
+                    <h3>Basic Information</h3>
+                    
+                    <div class="form-group">
+                        <label for="tender_number">Tender Number *</label>
+                        <input type="text" id="tender_number" name="tender_number" required 
+                               placeholder="e.g., TND-2025-001" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tender_title">Tender Title *</label>
+                        <input type="text" id="tender_title" name="tender_title" required 
+                               placeholder="Enter tender title" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tender_description">Description</label>
+                        <textarea id="tender_description" name="tender_description" rows="4" 
+                                  placeholder="Detailed description of the tender" class="form-control"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tender_type">Tender Type *</label>
+                            <select id="tender_type" name="tender_type" required class="form-control">
+                                <option value="">Select Type</option>
+                                <option value="NEW">NEW</option>
+                                <option value="CONTINUATION SERIES">CONTINUATION SERIES</option>
+                                <option value="OTHERS">OTHERS</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tender_category">Category *</label>
+                            <select id="tender_category" name="tender_category" required class="form-control">
+                                <option value="">Select Category</option>
+                                <option value="DRAMA">DRAMA</option>
+                                <option value="DOCUMENTARY">DOCUMENTARY</option>
+                                <option value="NEWS">NEWS</option>
+                                <option value="ENTERTAINMENT">ENTERTAINMENT</option>
+                                <option value="EDUCATIONAL">EDUCATIONAL</option>
+                                <option value="SPORTS">SPORTS</option>
+                                <option value="VARIETY">VARIETY</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Production Details</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="episode_duration">Episode Duration *</label>
+                            <select id="episode_duration" name="episode_duration" required class="form-control">
+                                <option value="">Select Duration</option>
+                                <option value="30 MINUTES">30 MINUTES</option>
+                                <option value="60 MINUTES">60 MINUTES</option>
+                                <option value="90 MINUTES">90 MINUTES</option>
+                                <option value="120 MINUTES">120 MINUTES</option>
+                                <option value="OTHER">OTHER</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="total_episodes">Total Episodes *</label>
+                            <input type="number" id="total_episodes" name="total_episodes" required 
+                                   min="1" placeholder="e.g., 13" class="form-control" onchange="calculateTotal()">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="budget_per_episode">Budget Per Episode (RM) *</label>
+                            <input type="number" id="budget_per_episode" name="budget_per_episode" required 
+                                   min="0" step="0.01" placeholder="e.g., 50000.00" class="form-control" onchange="calculateTotal()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="total_budget">Total Budget (RM)</label>
+                            <input type="number" id="total_budget" name="total_budget" readonly 
+                                   class="form-control readonly-field">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Timeline</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="submission_deadline">Submission Deadline *</label>
+                            <input type="datetime-local" id="submission_deadline" name="submission_deadline" required class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="evaluation_period">Evaluation Period</label>
+                            <input type="text" id="evaluation_period" name="evaluation_period" 
+                                   placeholder="e.g., 2 weeks" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="production_start">Production Start Date *</label>
+                            <input type="date" id="production_start" name="production_start" required class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="production_end">Production End Date *</label>
+                            <input type="date" id="production_end" name="production_end" required class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Requirements</h3>
+                    
+                    <div class="form-group">
+                        <label for="technical_requirements">Technical Requirements</label>
+                        <textarea id="technical_requirements" name="technical_requirements" rows="4" 
+                                  placeholder="Specify technical requirements..." class="form-control"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="content_requirements">Content Requirements</label>
+                        <textarea id="content_requirements" name="content_requirements" rows="4" 
+                                  placeholder="Specify content requirements..." class="form-control"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
+                    <button type="submit" class="btn btn-primary">Publish Tender</button>
+                </div>
+            </div>
+
+            <!-- Right Column - Requirements Sidebar -->
+            <div class="form-sidebar">
+                <div class="requirements-panel">
+                    <h3>📋 Tender Requirements</h3>
+                    
+                    <div class="requirement-section">
+                        <h4>📄 Documentation Required</h4>
+                        <ul>
+                            <li>Company Registration Certificate</li>
+                            <li>Tax Clearance Certificate</li>
+                            <li>Financial Statements (Last 3 years)</li>
+                            <li>Portfolio/Previous Work Samples</li>
+                            <li>Project Proposal</li>
+                            <li>Budget Breakdown</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-section">
+                        <h4>✅ Eligibility Criteria</h4>
+                        <ul>
+                            <li>Must be a registered Malaysian company</li>
+                            <li>Minimum 3 years experience in media production</li>
+                            <li>Valid broadcasting licenses</li>
+                            <li>Compliance with MCMC regulations</li>
+                            <li>No outstanding government dues</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-section">
+                        <h4>⚡ Technical Specifications</h4>
+                        <ul>
+                            <li>HD/4K video production capability</li>
+                            <li>Professional audio equipment</li>
+                            <li>Post-production facilities</li>
+                            <li>Broadcast-ready delivery formats</li>
+                            <li>Quality assurance processes</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-section">
+                        <h4>📊 Evaluation Criteria</h4>
+                        <ul>
+                            <li><strong>Technical Capability (30%)</strong></li>
+                            <li><strong>Creative Proposal (25%)</strong></li>
+                            <li><strong>Budget & Cost (20%)</strong></li>
+                            <li><strong>Experience & Portfolio (15%)</strong></li>
+                            <li><strong>Timeline & Delivery (10%)</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>ℹ️ Important Notes</h4>
+                        <p>All submissions must comply with Malaysian content guidelines and broadcasting standards.</p>
+                        <p><strong>Deadline:</strong> Submissions after the deadline will not be considered.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <style>
+    .tender-form {
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+
+    .form-main {
+        background: white;
+        padding: 0;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border: 1px solid #e8f4f8;
+        border-radius: 8px;
+        background: #fafbfc;
+    }
+
+    .form-section h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 0.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e8f4f8;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        transition: border-color 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .readonly-field {
+        background-color: #f8f9fa;
+        color: #6c757d;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        padding: 2rem 1.5rem;
+        background: white;
+        border-top: 1px solid #e8f4f8;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #95a5a6;
+        color: white;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-sidebar {
+        position: sticky;
+        top: 2rem;
+        height: fit-content;
+    }
+
+    .requirements-panel {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    }
+
+    .requirements-panel h3 {
+        margin-bottom: 1.5rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .requirement-section {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .requirement-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .requirement-section h4 {
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        font-weight: 600;
+        opacity: 0.95;
+    }
+
+    .requirement-section ul {
+        margin: 0;
+        padding-left: 1.2rem;
+        list-style-type: disc;
+    }
+
+    .requirement-section li {
+        margin-bottom: 0.3rem;
+        line-height: 1.4;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .info-box {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .info-box h4 {
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .info-box p {
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        opacity: 0.9;
+    }
+
+    .info-box p:last-child {
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 1024px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-sidebar {
+            order: -1;
+            position: relative;
+            top: auto;
+        }
+        
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+    }
+    </style>`;
+}
+
+});
+</script>
+
+<script>
+// Additional helper functions for form functionality
+// calculateTotal function removed - using enhanced version defined earlier
+
+function saveDraft() {
+    saveTender('draft');
+}
+
+function initializeTenderForm() {
+    const form = document.getElementById('tender-creation-form');
+    if (!form) return;
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveTender('published');
+    });
+}
+
+function loadTenderManagementContent() {
+    console.log('Loading tender management content...');
+    const contentDiv = document.getElementById('tender-management-content');
+    if (!contentDiv) {
+        console.error('tender-management-content div not found!');
+        return;
+    }
+    
+    // Show loading state immediately
+    contentDiv.innerHTML = `
+        <div class="loading-message" style="text-align: center; padding: 3rem;">
+            <div class="spinner"></div>
+            <p>Loading tender data...</p>
+        </div>
+        <style>
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        </style>
+    `;
+    
+    // Fetch tender data from server
+    fetch('/ajax/tenders/list')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Tender data received:', data);
+            if (data.success) {
+                displayTenderList(data.tenders);
+            } else {
+                contentDiv.innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 2rem; color: #e74c3c;">
+                        <h3>Error Loading Tenders</h3>
+                        <p>${data.message}</p>
+                        <button onclick="loadTenderManagementContent()" class="btn btn-primary">Retry</button>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading tenders:', error);
+            contentDiv.innerHTML = `
+                <div class="error-message" style="text-align: center; padding: 2rem; color: #e74c3c;">
+                    <h3>Error Loading Tenders</h3>
+                    <p>Failed to load tender data. Please try again.</p>
+                    <button onclick="loadTenderManagementContent()" class="btn btn-primary">Retry</button>
+                </div>
+            `;
+        });
+}
+
+function displayTenderList(tenders) {
+    const contentDiv = document.getElementById('tender-management-content');
+    if (!contentDiv) return;
+    
+    if (tenders.length === 0) {
+        contentDiv.innerHTML = `
+            <div class="no-data" style="text-align: center; padding: 3rem;">
+                <h3>No Tenders Found</h3>
+                <p style="color: #7f8c8d; margin-bottom: 2rem;">You haven't created any tenders yet.</p>
+                <button onclick="document.querySelector('.nav-link[data-section=\\"create-tender\\"]').click()" class="btn btn-primary">
+                    Create Your First Tender
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    const tendersHTML = `
+        <div class="tenders-container">
+            <div class="tenders-header">
+                <h3>All Tenders (${tenders.length})</h3>
+                <div class="tenders-actions">
+                    <button onclick="loadTenderManagementContent()" class="btn btn-secondary">Refresh</button>
+                    <button onclick="document.querySelector('.nav-link[data-section=\\"create-tender\\"]').click()" class="btn btn-primary">
+                        Create New Tender
+                    </button>
+                </div>
+            </div>
+            
+            <div class="tenders-grid">
+                ${tenders.map(tender => `
+                    <div class="tender-card" data-tender-id="${tender.id}">
+                        <div class="tender-header">
+                            <div class="tender-number">${tender.tender_number}</div>
+                            <div class="tender-status status-${tender.status}">${tender.status.toUpperCase()}</div>
+                        </div>
+                        <div class="tender-content">
+                            <h4 class="tender-title">${tender.title}</h4>
+                            <p class="tender-description">${tender.description ? tender.description.substring(0, 100) + '...' : 'No description'}</p>
+                            <div class="tender-details">
+                                <div class="detail-item">
+                                    <span class="label">Type:</span>
+                                    <span class="value">${tender.type || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Category:</span>
+                                    <span class="value">${tender.category || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Episodes:</span>
+                                    <span class="value">${tender.total_episodes || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Budget:</span>
+                                    <span class="value">RM ${tender.total_budget}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Deadline:</span>
+                                    <span class="value">${tender.submission_deadline ? new Date(tender.submission_deadline).toLocaleDateString() : 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Created:</span>
+                                    <span class="value">${tender.created_at}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tender-actions">
+                            <button onclick="viewTender(${tender.id})" class="btn-action btn-view">
+                                📄 View
+                            </button>
+                            <button onclick="editTender(${tender.id})" class="btn-action btn-edit">
+                                ✏️ Edit
+                            </button>
+                            <button onclick="deleteTender(${tender.id})" class="btn-action btn-delete">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        
+        <style>
+        .tenders-container {
+            max-width: 100%;
+            margin: 0;
+        }
+        
+        .tenders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem 0;
+            border-bottom: 2px solid #e8f4f8;
+        }
+        
+        .tenders-header h3 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .tenders-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .tenders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .tender-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .tender-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #3498db;
+        }
+        
+        .tender-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tender-number {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .tender-status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .tender-content {
+            padding: 1.5rem;
+        }
+        
+        .tender-title {
+            color: #2c3e50;
+            margin: 0 0 1rem 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        
+        .tender-description {
+            color: #7f8c8d;
+            margin: 0 0 1.5rem 0;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        
+        .tender-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+        
+        .detail-item .label {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .detail-item .value {
+            color: #2c3e50;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .tender-actions {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .btn-action {
+            flex: 1;
+            padding: 0.6rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn-view {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-edit {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .tenders-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tenders-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .tenders-actions {
+                justify-content: center;
+            }
+            
+            .tender-details {
+                grid-template-columns: 1fr;
+            }
+        }
+        </style>
+    `;
+    
+    contentDiv.innerHTML = tendersHTML;
+}
+
+function viewTender(tenderId) {
+    console.log('Viewing tender:', tenderId);
+    // For now, just show tender details in a modal or expand the card
+    alert(`View tender functionality would be implemented here for tender ID: ${tenderId}`);
+}
+
+function editTender(tenderId) {
+    console.log('Editing tender:', tenderId);
+    // For now, just show edit functionality
+    alert(`Edit tender functionality would be implemented here for tender ID: ${tenderId}`);
+}
+
+function deleteTender(tenderId) {
+    if (confirm('Are you sure you want to delete this tender? This action cannot be undone.')) {
+        console.log('Deleting tender:', tenderId);
+        // Implement delete functionality here
+        alert(`Delete tender functionality would be implemented here for tender ID: ${tenderId}`);
+    }
+}
+
+function loadVendorManagementContent() {
+    console.log('Loading vendor management content...');
+}
+
+function loadEvaluationContent() {
+    console.log('Loading evaluation content...');
+}
+
+function loadResultsContent() {
+    console.log('Loading results content...');
+}
+
+function loadNotificationsContent() {
+    const contentDiv = document.getElementById('notifications-content');
+    if (!contentDiv) return;
+    
+    contentDiv.innerHTML = `
+        <div style="text-align: center; padding: 3rem;">
+            <h3>Notifications</h3>
+            <p style="color: #7f8c8d;">No new notifications</p>
+        </div>
+    `;
+}
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Navigation functionality
+    const navLinks = document.querySelectorAll('.nav-link[data-section]');
+    const contentSections = document.querySelectorAll('.content-section');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetSection = this.getAttribute('data-section');
+            
+            // Update active nav item
+            document.querySelector('.nav-item.active').classList.remove('active');
+            this.parentElement.classList.add('active');
+            
+            // Show target section
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            const targetElement = document.getElementById(targetSection + '-section');
+            if (targetElement) {
+                targetElement.classList.add('active');
+                
+                // Load content if needed
+                loadSectionContent(targetSection);
+            }
+        });
+    });
+    
+    // Load initial dashboard data
+    loadDashboardStats();
+    loadRecentActivities();
+    loadUpcomingDeadlines();
+    
+    // Search functionality
+    const searchInput = document.getElementById('tender-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            filterTenders();
+        });
+    }
+    
+    // Filter functionality
+    const filterSelect = document.getElementById('tender-filter');
+    if (filterSelect) {
+        filterSelect.addEventListener('change', function() {
+            filterTenders();
+        });
+    }
+});
+
+function loadSectionContent(section) {
+    const contentDiv = document.getElementById(section + '-content');
+    if (!contentDiv) return;
+    
+    switch(section) {
+        case 'create-tender':
+            loadCreateTenderContent();
+            break;
+        case 'tender-management':
+            loadTenderManagementContent();
+            break;
+        case 'vendor-registration':
+            loadVendorRegistrationForm();
+            break;
+        case 'available-tenders':
+            loadAvailableTenders();
+            break;
+        case 'evaluation':
+            loadEvaluationContent();
+            break;
+        case 'results':
+            loadResultsContent();
+            break;
+        case 'notifications':
+            loadNotifications();
+            break;
+    }
+}
+
+function loadDashboardStats() {
+    // Load dashboard statistics via AJAX
+    fetch('/tender-management/ajax/dashboard-stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateStatsDisplay(data.stats);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading dashboard stats:', error);
+        });
+}
+
+function updateStatsDisplay(stats) {
+    const activeTenders = document.getElementById('active-tenders');
+    const myProposals = document.getElementById('my-proposals-count');
+    const totalProposals = document.getElementById('total-proposals');
+    const pendingEvaluations = document.getElementById('pending-evaluations');
+    
+    if (activeTenders) activeTenders.textContent = stats.active_tenders || 0;
+    if (myProposals) myProposals.textContent = stats.my_proposals || 0;
+    if (totalProposals) totalProposals.textContent = stats.total_proposals || 0;
+    if (pendingEvaluations) pendingEvaluations.textContent = stats.pending_evaluations || 0;
+}
+
+function loadRecentActivities() {
+    // Load recent activities via AJAX
+    fetch('/tender-management/ajax/recent-activities')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayRecentActivities(data.activities);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading recent activities:', error);
+        });
+}
+
+function displayRecentActivities(activities) {
+    const activitiesList = document.getElementById('recent-activities');
+    if (!activitiesList || activities.length === 0) return;
+    
+    activitiesList.innerHTML = activities.map(activity => `
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="icon-${activity.type}"></i>
+            </div>
+            <div class="activity-content">
+                <p>${activity.message}</p>
+                <span class="activity-time">${activity.time}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function loadUpcomingDeadlines() {
+    // Load upcoming deadlines via AJAX
+    fetch('/tender-management/ajax/upcoming-deadlines')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayUpcomingDeadlines(data.deadlines);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading upcoming deadlines:', error);
+        });
+}
+
+function displayUpcomingDeadlines(deadlines) {
+    const deadlinesList = document.getElementById('upcoming-deadlines');
+    if (!deadlinesList) return;
+    
+    if (deadlines.length === 0) {
+        deadlinesList.innerHTML = '<div class="no-data">No upcoming deadlines</div>';
+        return;
+    }
+    
+    deadlinesList.innerHTML = deadlines.map(deadline => `
+        <div class="deadline-item">
+            <div class="deadline-title">${deadline.title}</div>
+            <div class="deadline-date">${deadline.deadline}</div>
+        </div>
+    `).join('');
+}
+
+function loadVendorRegistrationForm() {
+    // Load vendor registration form content
+    const contentDiv = document.getElementById('vendor-registration-content');
+    if (!contentDiv) return;
+    
+    contentDiv.innerHTML = `
+        <div class="form-loading">
+            <div class="spinner"></div>
+            <p>Loading company registration form...</p>
+        </div>
+    `;
+    
+    fetch('/user-management/get-company-details')
+        .then(response => response.text())
+        .then(html => {
+            contentDiv.innerHTML = html;
+            initializeCompanyForm();
+        })
+        .catch(error => {
+            console.error('Error loading vendor registration form:', error);
+            contentDiv.innerHTML = '<div class="error-message">Error loading form. Please try again.</div>';
+        });
+}
+
+function loadAvailableTenders() {
+    // Load available tenders
+    const contentDiv = document.getElementById('available-tenders-content');
+    if (!contentDiv) return;
+    
+    contentDiv.innerHTML = `
+        <div class="loading-message">
+            <div class="spinner"></div>
+            <p>Loading available tenders...</p>
+        </div>
+    `;
+    
+    fetch('/tender-management/tender-list')
+        .then(response => response.text())
+        .then(html => {
+            contentDiv.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error loading available tenders:', error);
+            contentDiv.innerHTML = '<div class="error-message">Error loading tenders. Please try again.</div>';
+        });
+}
+
+function filterTenders() {
+    const searchTerm = document.getElementById('tender-search').value.toLowerCase();
+    const filterCategory = document.getElementById('tender-filter').value;
+    
+    // Implementation for filtering tenders
+    // This would filter the displayed tender list based on search and category
+}
+
+// Utility functions for form initialization
+function initializeTenderForm() {
+    // Initialize tender form functionality
+    console.log('Tender form initialized');
+}
+
+function initializeCompanyForm() {
+    // Initialize company form functionality
+    console.log('Company form initialized');
+}
+</script>
+
+<div class="tender-dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="logo-section">
+        <h1 class="dashboard-title">Tender Management System</h1>
+      </div>
+      <div class="user-section">
+        <span class="welcome-text">Welcome, {{ user.getDisplayName() }}</span>
+        <div class="user-roles">
+          {% for role in user_roles %}
+            {% if role != 'authenticated' %}
+              <span class="role-badge">{{ role|title }}</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="tender-navigation">
+    <ul class="nav-menu">
+      <li class="nav-item active">
+        <a href="#dashboard" class="nav-link" data-section="dashboard">
+          <span class="nav-icon">🏠</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      
+      {% if is_admin %}
+        <li class="nav-item">
+          <a href="#create-tender" class="nav-link" data-section="create-tender">
+            <span class="nav-icon">➕</span>
+            <span>Create Tender</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#tender-management" class="nav-link" data-section="tender-management">
+            <span class="nav-icon">📋</span>
+            <span>Manage Tenders</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#vendor-management" class="nav-link" data-section="vendor-management">
+            <span class="nav-icon">👥</span>
+            <span>Vendor Management</span>
+          </a>
+        </li>
+      {% endif %}
+      
+      {% if is_vendor %}
+        <li class="nav-item">
+          <a href="#vendor-registration" class="nav-link" data-section="vendor-registration">
+            <span class="nav-icon">📝</span>
+            <span>Company Registration</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#available-tenders" class="nav-link" data-section="available-tenders">
+            <span class="nav-icon">🔍</span>
+            <span>Available Tenders</span>
+          </a>
+        </li>
+      {% endif %}
+      
+      {% if is_evaluator or is_admin %}
+        <li class="nav-item">
+          <a href="#evaluation" class="nav-link" data-section="evaluation">
+            <span class="nav-icon">📊</span>
+            <span>Evaluation</span>
+          </a>
+        </li>
+      {% endif %}
+      
+      <li class="nav-item">
+        <a href="#results" class="nav-link" data-section="results">
+          <span class="nav-icon">🏆</span>
+          <span>Results</span>
+        </a>
+      </li>
+      
+      <li class="nav-item">
+        <a href="#notifications" class="nav-link" data-section="notifications">
+          <span class="nav-icon">🔔</span>
+          <span>Notifications</span>
+          <span class="notification-count" id="notification-count">0</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <main class="tender-content">
+    <div class="content-section active" id="dashboard-section">
+      <div class="section-header">
+        <h2>Dashboard Overview</h2>
+      </div>
+      
+      <div class="dashboard-stats">
+        <div class="stat-card">
+          <span class="stat-number" id="active-tenders">0</span>
+          <div class="stat-label">Active Tenders</div>
+        </div>
+        {% if is_vendor %}
+          <div class="stat-card">
+            <span class="stat-number" id="my-proposals-count">0</span>
+            <div class="stat-label">My Proposals</div>
+          </div>
+        {% endif %}
+        {% if is_admin %}
+          <div class="stat-card">
+            <span class="stat-number" id="total-proposals">0</span>
+            <div class="stat-label">Total Proposals</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" id="pending-evaluations">0</span>
+            <div class="stat-label">Pending Evaluations</div>
+          </div>
+        {% endif %}
+      </div>
+      
+      <div class="dashboard-widgets">
+        <div class="widget recent-activities">
+          <h3>Recent Activities</h3>
+          <div class="activities-list" id="recent-activities">
+            <div class="activity-item">
+              <div class="activity-icon">ℹ️</div>
+              <div class="activity-content">
+                <p>Welcome to the Tender Management System</p>
+                <span class="activity-time">Just now</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="widget upcoming-deadlines">
+          <h3>Upcoming Deadlines</h3>
+          <div class="deadlines-list" id="upcoming-deadlines">
+            <div class="no-data">No upcoming deadlines</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Tender Section (Admin only) -->
+    {% if is_admin %}
+    <div class="content-section" id="create-tender-section">
+      <div class="section-header">
+        <h2>Create New Tender</h2>
+      </div>
+      <div id="create-tender-content">
+        <form id="tender-creation-form" class="tender-form">
+          <div class="form-grid">
+            <!-- Left Column - Main Form -->
+            <div class="form-main">
+              <div class="form-section">
+                <h3>Basic Information</h3>
+                
+                <div class="form-group">
+                  <label for="tender_number">Tender Number *</label>
+                  <input type="text" id="tender_number" name="tender_number" required 
+                         placeholder="e.g., TND-2025-001" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                  <label for="tender_title">Tender Title *</label>
+                  <input type="text" id="tender_title" name="tender_title" required 
+                         placeholder="Enter tender title" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                  <label for="tender_description">Description</label>
+                  <textarea id="tender_description" name="tender_description" rows="4" 
+                            placeholder="Describe the tender requirements..." class="form-control"></textarea>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="tender_type">Tender Type *</label>
+                    <select id="tender_type" name="tender_type" required class="form-control">
+                      <option value="">Select Type</option>
+                      <option value="open">Open Tender</option>
+                      <option value="selective">Selective Tender</option>
+                      <option value="negotiated">Negotiated Tender</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="tender_category">Category *</label>
+                    <select id="tender_category" name="tender_category" required class="form-control">
+                      <option value="">Select Category</option>
+                      <option value="drama">Drama Series</option>
+                      <option value="documentary">Documentary</option>
+                      <option value="variety">Variety Show</option>
+                      <option value="news">News Program</option>
+                      <option value="educational">Educational Content</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>Production Details</h3>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="episode_duration">Episode Duration *</label>
+                    <select id="episode_duration" name="episode_duration" required class="form-control">
+                      <option value="">Select Duration</option>
+                      <option value="30">30 minutes</option>
+                      <option value="60">60 minutes</option>
+                      <option value="90">90 minutes</option>
+                      <option value="120">2 hours</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="total_episodes">Total Episodes *</label>
+                    <input type="number" id="total_episodes" name="total_episodes" required 
+                           placeholder="e.g., 13" class="form-control" onchange="calculateTotal()" oninput="calculateTotal()">
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="budget_per_episode">Budget Per Episode (RM) *</label>
+                    <input type="number" id="budget_per_episode" name="budget_per_episode" required 
+                           placeholder="e.g., 50000" class="form-control" onchange="calculateTotal()" oninput="calculateTotal()" step="0.01">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="total_budget">Total Budget (RM)</label>
+                    <input type="number" id="total_budget" name="total_budget" readonly 
+                           class="form-control readonly-field">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>Timeline</h3>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="submission_deadline">Submission Deadline *</label>
+                    <input type="datetime-local" id="submission_deadline" name="submission_deadline" required class="form-control">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="evaluation_period">Evaluation Period</label>
+                    <input type="text" id="evaluation_period" name="evaluation_period" 
+                           placeholder="e.g., 2 weeks" class="form-control">
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="production_start">Production Start Date *</label>
+                    <input type="date" id="production_start" name="production_start" required class="form-control">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="production_end">Production End Date *</label>
+                    <input type="date" id="production_end" name="production_end" required class="form-control">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>Requirements</h3>
+                
+                <div class="form-group">
+                  <label for="technical_requirements">Technical Requirements</label>
+                  <textarea id="technical_requirements" name="technical_requirements" rows="4" 
+                            placeholder="Specify technical requirements..." class="form-control"></textarea>
+                </div>
+                
+                <div class="form-group">
+                  <label for="content_requirements">Content Requirements</label>
+                  <textarea id="content_requirements" name="content_requirements" rows="4" 
+                            placeholder="Specify content requirements..." class="form-control"></textarea>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
+                <button type="submit" class="btn btn-primary">Publish Tender</button>
+              </div>
+            </div>
+
+            <!-- Right Column - Requirements Sidebar -->
+            <div class="form-sidebar">
+              <div class="requirements-panel">
+                <h3>📋 Tender Requirements</h3>
+                
+                <div class="requirement-section">
+                  <h4>📄 Documentation Required</h4>
+                  <ul>
+                    <li>Company Registration Certificate</li>
+                    <li>Tax Clearance Certificate</li>
+                    <li>Financial Statements (Last 3 years)</li>
+                    <li>Portfolio/Previous Work Samples</li>
+                    <li>Project Proposal</li>
+                    <li>Budget Breakdown</li>
+                  </ul>
+                </div>
+
+                <div class="requirement-section">
+                  <h4>✅ Eligibility Criteria</h4>
+                  <ul>
+                    <li>Must be a registered Malaysian company</li>
+                    <li>Minimum 3 years experience in media production</li>
+                    <li>Valid broadcasting licenses</li>
+                    <li>Compliance with MCMC regulations</li>
+                    <li>No outstanding government dues</li>
+                  </ul>
+                </div>
+
+                <div class="requirement-section">
+                  <h4>⚡ Technical Specifications</h4>
+                  <ul>
+                    <li>HD/4K video production capability</li>
+                    <li>Professional audio equipment</li>
+                    <li>Post-production facilities</li>
+                    <li>Broadcast-ready delivery formats</li>
+                    <li>Quality assurance processes</li>
+                  </ul>
+                </div>
+
+                <div class="requirement-section">
+                  <h4>📊 Evaluation Criteria</h4>
+                  <ul>
+                    <li><strong>Technical Capability (30%)</strong></li>
+                    <li><strong>Creative Proposal (25%)</strong></li>
+                    <li><strong>Budget & Cost (20%)</strong></li>
+                    <li><strong>Experience & Portfolio (15%)</strong></li>
+                    <li><strong>Timeline & Delivery (10%)</strong></li>
+                  </ul>
+                </div>
+
+                <div class="info-box">
+                  <h4>ℹ️ Important Notes</h4>
+                  <p>All submissions must comply with Malaysian content guidelines and broadcasting standards.</p>
+                  <p><strong>Deadline:</strong> Submissions after the deadline will not be considered.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <style>
+        .tender-form {
+          max-width: 100%;
+          margin: 0;
+        }
+
+        .form-grid {
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          gap: 2rem;
+        }
+
+        .form-main {
+          background: white;
+          padding: 0;
+        }
+
+        .form-section {
+          margin-bottom: 2rem;
+          padding: 1.5rem;
+          border: 1px solid #e8f4f8;
+          border-radius: 8px;
+          background: #fafbfc;
+        }
+
+        .form-section h3 {
+          color: #2c3e50;
+          margin-bottom: 1rem;
+          font-size: 1.2rem;
+          font-weight: 600;
+          border-bottom: 2px solid #3498db;
+          padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+          margin-bottom: 1rem;
+        }
+
+        .form-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+
+        .form-group label {
+          display: block;
+          margin-bottom: 0.5rem;
+          font-weight: 600;
+          color: #2c3e50;
+        }
+
+        .form-control {
+          width: 100%;
+          padding: 0.75rem;
+          border: 2px solid #e8f4f8;
+          border-radius: 6px;
+          font-size: 0.9rem;
+          transition: border-color 0.3s ease;
+          box-sizing: border-box;
+        }
+
+        .form-control:focus {
+          outline: none;
+          border-color: #3498db;
+          box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .readonly-field {
+          background-color: #f8f9fa;
+          color: #6c757d;
+        }
+
+        .form-actions {
+          display: flex;
+          gap: 1rem;
+          justify-content: flex-end;
+          padding: 2rem 1.5rem;
+          background: white;
+          border-top: 1px solid #e8f4f8;
+          margin-top: 2rem;
+        }
+
+        .btn {
+          padding: 0.75rem 2rem;
+          border: none;
+          border-radius: 6px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          text-decoration: none;
+          display: inline-block;
+          text-align: center;
+        }
+
+        .btn-primary {
+          background: linear-gradient(45deg, #3498db, #2980b9);
+          color: white;
+        }
+
+        .btn-secondary {
+          background: #95a5a6;
+          color: white;
+        }
+
+        .btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-sidebar {
+          position: sticky;
+          top: 2rem;
+          height: fit-content;
+        }
+
+        .requirements-panel {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 1.5rem;
+          border-radius: 12px;
+          box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        }
+
+        .requirements-panel h3 {
+          margin-bottom: 1.5rem;
+          font-size: 1.3rem;
+          font-weight: 700;
+        }
+
+        .requirement-section {
+          margin-bottom: 1.5rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .requirement-section:last-child {
+          border-bottom: none;
+          margin-bottom: 0;
+        }
+
+        .requirement-section h4 {
+          margin-bottom: 0.75rem;
+          font-size: 1rem;
+          font-weight: 600;
+          opacity: 0.95;
+        }
+
+        .requirement-section ul {
+          margin: 0;
+          padding-left: 1.2rem;
+          list-style-type: disc;
+        }
+
+        .requirement-section li {
+          margin-bottom: 0.3rem;
+          line-height: 1.4;
+          font-size: 0.9rem;
+          opacity: 0.9;
+        }
+
+        .info-box {
+          background: rgba(255, 255, 255, 0.1);
+          padding: 1rem;
+          border-radius: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .info-box h4 {
+          margin-bottom: 0.75rem;
+          font-size: 1rem;
+          font-weight: 600;
+        }
+
+        .info-box p {
+          margin-bottom: 0.5rem;
+          font-size: 0.9rem;
+          line-height: 1.4;
+          opacity: 0.9;
+        }
+
+        .info-box p:last-child {
+          margin-bottom: 0;
+        }
+
+        @media (max-width: 1024px) {
+          .form-grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .form-sidebar {
+            order: -1;
+            position: relative;
+            top: auto;
+          }
+          
+          .form-row {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .form-actions {
+            flex-direction: column;
+          }
+          
+          .btn {
+            width: 100%;
+          }
+        }
+        </style>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Tender Management Section (Admin only) -->
+    {% if is_admin %}
+    <div class="content-section" id="tender-management-section">
+      <div class="section-header">
+        <h2>Manage Tenders</h2>
+      </div>
+      <div id="tender-management-content">
+        
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Additional sections for other features -->
+    <div class="content-section" id="notifications-section">
+      <div class="section-header">
+        <h2>Notifications</h2>
+      </div>
+      <div id="notifications-content">
+        <div class="no-data">No notifications</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function saveTender(status) {
+    console.log('saveTender called with status:', status);
+    const form = document.getElementById('tender-creation-form');
+    if (!form) {
+        console.error('Form not found!');
+        return;
+    }
+    
+    const formData = new FormData(form);
+    formData.append('status', status);
+    
+    // Debug: Log original form data
+    console.log('Original form data:');
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+    
+    // Map form field names to match controller expectations
+    if (formData.get('tender_title')) {
+        formData.set('title', formData.get('tender_title'));
+    }
+    if (formData.get('tender_type')) {
+        formData.set('type', formData.get('tender_type'));
+    }
+    if (formData.get('tender_category')) {
+        formData.set('category', formData.get('tender_category'));
+    }
+    if (formData.get('tender_description')) {
+        formData.set('description', formData.get('tender_description'));
+    }
+    
+    // Debug: Log mapped form data
+    console.log('Mapped form data:');
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+    
+    // Basic validation
+    const requiredFields = ['tender_number', 'tender_title', 'tender_type', 'tender_category', 
+                           'episode_duration', 'total_episodes', 'budget_per_episode', 
+                           'submission_deadline', 'production_start', 'production_end'];
+    
+    const missingFields = [];
+    requiredFields.forEach(fieldName => {
+        const field = form.querySelector('[name="' + fieldName + '"]');
+        if (!field || !field.value.trim()) {
+            missingFields.push(fieldName.replace(/_/g, ' ').replace(/\\b\\w/g, l => l.toUpperCase()));
+        }
+    });
+    
+    if (missingFields.length > 0 && status === 'published') {
+        alert('Please fill in all required fields: ' + missingFields.join(', '));
+        return;
+    }
+    
+    // Show loading
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Saving...';
+    submitBtn.disabled = true;
+    
+    console.log('Sending to server...');
+    
+    // Send to server
+    fetch('/ajax/tender/save', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        console.log('Response received:', response);
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+            alert(status === 'draft' ? 'Draft saved successfully!' : 'Tender published successfully!');
+            if (status === 'published') {
+                // Redirect to manage tenders or reload dashboard
+                loadDashboardStats();
+                // Switch to dashboard view
+                const dashboardLink = document.querySelector('.nav-link[data-section="dashboard"]');
+                if (dashboardLink) {
+                    dashboardLink.click();
+                }
+            }
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while saving the tender.');
+    })
+    .finally(() => {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    });
+}
+
+// Initialize the form when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        const form = document.getElementById('tender-creation-form');
+        if (form) {
+            console.log('Initializing tender form...');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveTender('published');
+            });
+            
+            // Test calculation function
+            console.log('Testing calculateTotal function...');
+            if (typeof calculateTotal === 'function') {
+                console.log('calculateTotal function is available');
+                calculateTotal(); // Trigger initial calculation
+            } else {
+                console.error('calculateTotal function not found!');
+            }
+            
+            // Add event listeners to ensure calculation works
+            const episodesField = document.getElementById('total_episodes');
+            const budgetField = document.getElementById('budget_per_episode');
+            
+            if (episodesField) {
+                episodesField.addEventListener('input', calculateTotal);
+                episodesField.addEventListener('change', calculateTotal);
+            }
+            
+            if (budgetField) {
+                budgetField.addEventListener('input', calculateTotal);
+                budgetField.addEventListener('change', calculateTotal);
+            }
+        }
+    }, 500);
+});
+</script>
+

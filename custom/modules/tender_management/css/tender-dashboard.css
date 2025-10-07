@@ -1,0 +1,9 @@
+/* Tender Dashboard Styles */
+.tender-dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* The styles are already included in the template file for now */
+/* This file exists to satisfy the library dependency */

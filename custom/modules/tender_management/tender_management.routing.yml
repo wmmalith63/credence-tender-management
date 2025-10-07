@@ -1,0 +1,154 @@
+# Tender Management Routes
+
+# Main tender management dashboard
+tender_management.dashboard:
+  path: '/tender-management'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::dashboard'
+    _title: 'Tender Management Dashboard'
+  requirements:
+    _permission: 'access tender management'
+
+# Alternative dashboard route
+tender_management.dashboard_alt:
+  path: '/tender-management/dashboard'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::dashboard'
+    _title: 'Tender Management Dashboard'
+  requirements:
+    _permission: 'access tender management'
+
+# Vendor registration
+tender_management.vendor_registration:
+  path: '/tender-management/vendor-registration'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::vendorRegistration'
+    _title: 'Vendor Registration'
+  requirements:
+    _permission: 'register as vendor'
+
+# Tender creation
+tender_management.create_tender:
+  path: '/tender-management/create-tender'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::createTender'
+    _title: 'Create Tender'
+  requirements:
+    _permission: 'create tenders'
+
+# Tender list
+tender_management.tender_list:
+  path: '/tender-management/tenders'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::tenderList'
+    _title: 'Tender List'
+  requirements:
+    _permission: 'view tenders'
+
+# Tender details
+tender_management.tender_details:
+  path: '/tender-management/tender/{tender_id}'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::tenderDetails'
+    _title: 'Tender Details'
+  requirements:
+    _permission: 'view tender details'
+
+# Evaluation management
+tender_management.evaluation:
+  path: '/tender-management/evaluation'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::evaluation'
+    _title: 'Tender Evaluation'
+  requirements:
+    _permission: 'evaluate tenders'
+
+# Result management
+tender_management.results:
+  path: '/tender-management/results'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::results'
+    _title: 'Tender Results'
+  requirements:
+    _permission: 'manage tender results'
+
+# AJAX endpoints
+tender_management.ajax_save_tender:
+  path: '/ajax/tender/save'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::saveTender'
+  requirements:
+    _permission: 'create tenders'
+    _access: 'TRUE'
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_get_tenders:
+  path: '/ajax/tenders/list'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::getTenders'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_get_tender:
+  path: '/ajax/tender/get/{tender_id}'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::getTender'
+  requirements:
+    _permission: 'view tenders'
+    _access: 'TRUE'
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_submit_proposal:
+  path: '/ajax/proposal/submit'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::saveProposal'
+  requirements:
+    _permission: 'submit proposals'
+    _access: 'TRUE'
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_save_evaluation:
+  path: '/ajax/evaluation/save'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::saveEvaluation'
+  requirements:
+    _permission: 'evaluate tenders'
+    _access: 'TRUE'
+  options:
+    _admin_route: FALSE
+
+# Dashboard AJAX endpoints
+tender_management.ajax_dashboard_stats:
+  path: '/tender-management/ajax/dashboard-stats'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::getDashboardStats'
+  requirements:
+    _permission: 'access tender management'
+    _access: 'TRUE'
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_recent_activities:
+  path: '/tender-management/ajax/recent-activities'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::getRecentActivities'
+  requirements:
+    _permission: 'access tender management'
+    _access: 'TRUE'
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_upcoming_deadlines:
+  path: '/tender-management/ajax/upcoming-deadlines'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::getUpcomingDeadlines'
+  requirements:
+    _permission: 'access tender management'
+    _access: 'TRUE'
+  options:
+    _admin_route: FALSE

@@ -1,0 +1,38 @@
+# Tender Management Permissions
+
+access tender management:
+  title: 'Access tender management system'
+  description: 'Allow users to access the tender management dashboard'
+
+register as vendor:
+  title: 'Register as vendor'
+  description: 'Allow users to register as vendors in the system'
+
+create tenders:
+  title: 'Create tenders'
+  description: 'Allow users to create new tenders'
+
+view tenders:
+  title: 'View tenders'
+  description: 'Allow users to view tender listings'
+
+view tender details:
+  title: 'View tender details'
+  description: 'Allow users to view detailed tender information'
+
+submit proposals:
+  title: 'Submit proposals'
+  description: 'Allow vendors to submit proposals for tenders'
+
+evaluate tenders:
+  title: 'Evaluate tenders'
+  description: 'Allow users to evaluate tender proposals'
+
+manage tender results:
+  title: 'Manage tender results'
+  description: 'Allow users to manage and publish tender results'
+
+administer tender management:
+  title: 'Administer tender management'
+  description: 'Full administrative access to tender management system'
+  restrict access: TRUE

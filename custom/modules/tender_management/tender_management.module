@@ -1,0 +1,166 @@
+<?php
+
+/**
+ * @file
+ * Contains tender_management.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function tender_management_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.tender_management':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Tender Management module provides comprehensive tender management functionality including vendor registration, tender creation, evaluation, and results management.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function tender_management_theme() {
+  return [
+    'tender_dashboard' => [
+      'variables' => [
+        'user_roles' => [],
+        'is_admin' => FALSE,
+        'is_evaluator' => FALSE,
+        'is_vendor' => FALSE,
+      ],
+      'template' => 'tender-dashboard',
+    ],
+    'vendor_registration' => [
+      'variables' => [
+        'company_data' => NULL,
+      ],
+      'template' => 'vendor-registration',
+    ],
+    'create_tender' => [
+      'variables' => [
+        'tender_data' => NULL,
+      ],
+      'template' => 'create-tender',
+    ],
+    'tender_list' => [
+      'variables' => [
+        'tenders' => [],
+        'is_admin' => FALSE,
+      ],
+      'template' => 'tender-list',
+    ],
+    'tender_details' => [
+      'variables' => [
+        'tender' => NULL,
+        'user_proposal' => NULL,
+        'proposals' => [],
+        'is_admin' => FALSE,
+        'is_vendor' => FALSE,
+        'user_id' => 0,
+      ],
+      'template' => 'tender-details',
+    ],
+    'tender_evaluation' => [
+      'variables' => [
+        'proposals' => [],
+      ],
+      'template' => 'tender-evaluation',
+    ],
+    'tender_results' => [
+      'variables' => [
+        'tenders' => [],
+        'is_admin' => FALSE,
+      ],
+      'template' => 'tender-results',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_user_login().
+ */
+function tender_management_user_login($account) {
+  // Create notification for user login
+  $database = \Drupal::database();
+  
+  try {
+    $database->insert('tender_notifications')
+      ->fields([
+        'recipient_id' => $account->id(),
+        'notification_type' => 'login',
+        'title' => 'Welcome back!',
+        'message' => 'You have successfully logged into the Tender Management System.',
+        'is_read' => 0,
+        'created_at' => date('Y-m-d H:i:s'),
+      ])
+      ->execute();
+  } catch (\Exception $e) {
+    \Drupal::logger('tender_management')->error('Error creating login notification: @error', ['@error' => $e->getMessage()]);
+  }
+}
+
+/**
+ * Implements hook_cron().
+ */
+function tender_management_cron() {
+  // Check for tender deadlines and send notifications
+  $database = \Drupal::database();
+  $current_time = new \DateTime();
+  $reminder_time = clone $current_time;
+  $reminder_time->add(new \DateInterval('P1D')); // 24 hours from now
+  
+  try {
+    // Get tenders with deadlines in the next 24 hours
+    $tenders = $database->select('tenders', 't')
+      ->fields('t', ['id', 'title', 'submission_deadline', 'created_by'])
+      ->condition('status', 'published')
+      ->condition('submission_deadline', $current_time->format('Y-m-d H:i:s'), '>')
+      ->condition('submission_deadline', $reminder_time->format('Y-m-d H:i:s'), '<=')
+      ->execute()
+      ->fetchAll();
+    
+    foreach ($tenders as $tender) {
+      // Check if reminder already sent
+      $existing_notification = $database->select('tender_notifications', 'tn')
+        ->condition('tender_id', $tender->id)
+        ->condition('notification_type', 'deadline_reminder')
+        ->condition('recipient_id', $tender->created_by)
+        ->countQuery()
+        ->execute()
+        ->fetchField();
+      
+      if (!$existing_notification) {
+        // Send reminder notification
+        $database->insert('tender_notifications')
+          ->fields([
+            'tender_id' => $tender->id,
+            'recipient_id' => $tender->created_by,
+            'notification_type' => 'deadline_reminder',
+            'title' => 'Tender Deadline Reminder',
+            'message' => "The tender '{$tender->title}' deadline is approaching in 24 hours.",
+            'is_read' => 0,
+            'created_at' => date('Y-m-d H:i:s'),
+          ])
+          ->execute();
+      }
+    }
+    
+    // Clean up old notifications (older than 30 days)
+    $cleanup_date = clone $current_time;
+    $cleanup_date->sub(new \DateInterval('P30D'));
+    
+    $database->delete('tender_notifications')
+      ->condition('created_at', $cleanup_date->format('Y-m-d H:i:s'), '<')
+      ->condition('is_read', 1)
+      ->execute();
+      
+  } catch (\Exception $e) {
+    \Drupal::logger('tender_management')->error('Error in tender management cron: @error', ['@error' => $e->getMessage()]);
+  }
+}

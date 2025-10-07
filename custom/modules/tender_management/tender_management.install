@@ -1,0 +1,447 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Tender Management module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function tender_management_install() {
+  $database = \Drupal::database();
+  
+  // Create tenders table
+  $tenders_schema = [
+    'description' => 'Stores tender information',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique tender ID.',
+      ],
+      'tender_number' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        'description' => 'Unique tender number.',
+      ],
+      'title' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Tender title.',
+      ],
+      'description' => [
+        'type' => 'text',
+        'description' => 'Tender description.',
+      ],
+      'type' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'description' => 'Tender type (CONTINUATION SERIES, NEW, OTHERS).',
+      ],
+      'category' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'description' => 'Tender category (DRAMA, DOCUMENTARY, etc.).',
+      ],
+      'episode_duration' => [
+        'type' => 'varchar',
+        'length' => 20,
+        'description' => 'Duration per episode.',
+      ],
+      'total_episodes' => [
+        'type' => 'int',
+        'description' => 'Total number of episodes.',
+      ],
+      'budget_per_episode' => [
+        'type' => 'numeric',
+        'precision' => 15,
+        'scale' => 2,
+        'description' => 'Budget per episode.',
+      ],
+      'total_budget' => [
+        'type' => 'numeric',
+        'precision' => 15,
+        'scale' => 2,
+        'description' => 'Total budget.',
+      ],
+      'submission_deadline' => [
+        'type' => 'datetime',
+        'mysql_type' => 'timestamp',
+        'pgsql_type' => 'timestamp',
+        'description' => 'Submission deadline.',
+      ],
+      'evaluation_period' => [
+        'type' => 'varchar',
+        'length' => 100,
+        'description' => 'Evaluation period description.',
+      ],
+      'production_start' => [
+        'type' => 'datetime',
+        'mysql_type' => 'date',
+        'pgsql_type' => 'date',
+        'description' => 'Production start date.',
+      ],
+      'production_end' => [
+        'type' => 'datetime',
+        'mysql_type' => 'date',
+        'pgsql_type' => 'date',
+        'description' => 'Production end date.',
+      ],
+      'technical_requirements' => [
+        'type' => 'text',
+        'description' => 'Technical requirements.',
+      ],
+      'content_requirements' => [
+        'type' => 'text',
+        'description' => 'Content requirements.',
+      ],
+      'status' => [
+        'type' => 'varchar',
+        'length' => 20,
+        'not null' => TRUE,
+        'default' => 'draft',
+        'description' => 'Tender status (draft, published, closed, evaluated).',
+      ],
+      'created_by' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'User ID who created the tender.',
+      ],
+      'created_at' => [
+        'type' => 'datetime',
+        'mysql_type' => 'timestamp',
+        'pgsql_type' => 'timestamp',
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Timestamp when tender was created.',
+      ],
+      'updated_at' => [
+        'type' => 'datetime',
+        'mysql_type' => 'timestamp',
+        'pgsql_type' => 'timestamp',
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Timestamp when tender was last updated.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'tender_number' => ['tender_number'],
+    ],
+    'indexes' => [
+      'status' => ['status'],
+      'created_by' => ['created_by'],
+      'submission_deadline' => ['submission_deadline'],
+    ],
+    'foreign keys' => [
+      'creator' => [
+        'table' => 'users',
+        'columns' => ['created_by' => 'uid'],
+      ],
+    ],
+  ];
+  
+  $database->schema()->createTable('tenders', $tenders_schema);
+  
+  // Create tender_proposals table
+  $proposals_schema = [
+    'description' => 'Stores tender proposal submissions',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique proposal ID.',
+      ],
+      'tender_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Tender ID this proposal is for.',
+      ],
+      'vendor_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'User ID of the vendor submitting proposal.',
+      ],
+      'company_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'description' => 'Company ID from content_producers table.',
+      ],
+      'proposal_title' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Proposal title.',
+      ],
+      'proposal_description' => [
+        'type' => 'text',
+        'description' => 'Detailed proposal description.',
+      ],
+      'proposed_budget' => [
+        'type' => 'numeric',
+        'precision' => 15,
+        'scale' => 2,
+        'description' => 'Proposed budget.',
+      ],
+      'timeline' => [
+        'type' => 'text',
+        'description' => 'Proposed timeline.',
+      ],
+      'technical_approach' => [
+        'type' => 'text',
+        'description' => 'Technical approach description.',
+      ],
+      'team_details' => [
+        'type' => 'text',
+        'description' => 'Team details and experience.',
+      ],
+      'attachments' => [
+        'type' => 'text',
+        'description' => 'JSON array of attachment file paths.',
+      ],
+      'status' => [
+        'type' => 'varchar',
+        'length' => 20,
+        'not null' => TRUE,
+        'default' => 'draft',
+        'description' => 'Proposal status (draft, submitted, under_review, approved, rejected).',
+      ],
+      'evaluation_score' => [
+        'type' => 'numeric',
+        'precision' => 5,
+        'scale' => 2,
+        'description' => 'Evaluation score.',
+      ],
+      'evaluator_comments' => [
+        'type' => 'text',
+        'description' => 'Comments from evaluators.',
+      ],
+      'submitted_at' => [
+        'type' => 'datetime',
+        'mysql_type' => 'timestamp',
+        'pgsql_type' => 'timestamp',
+        'description' => 'Timestamp when proposal was submitted.',
+      ],
+      'created_at' => [
+        'type' => 'datetime',
+        'mysql_type' => 'timestamp',
+        'pgsql_type' => 'timestamp',
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Timestamp when proposal was created.',
+      ],
+      'updated_at' => [
+        'type' => 'datetime',
+        'mysql_type' => 'timestamp',
+        'pgsql_type' => 'timestamp',
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Timestamp when proposal was last updated.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'tender_id' => ['tender_id'],
+      'vendor_id' => ['vendor_id'],
+      'status' => ['status'],
+      'evaluation_score' => ['evaluation_score'],
+    ],
+    'foreign keys' => [
+      'tender' => [
+        'table' => 'tenders',
+        'columns' => ['tender_id' => 'id'],
+      ],
+      'vendor' => [
+        'table' => 'users',
+        'columns' => ['vendor_id' => 'uid'],
+      ],
+      'company' => [
+        'table' => 'content_producers',
+        'columns' => ['company_id' => 'id'],
+      ],
+    ],
+  ];
+  
+  $database->schema()->createTable('tender_proposals', $proposals_schema);
+  
+  // Create tender_evaluations table
+  $evaluations_schema = [
+    'description' => 'Stores tender evaluation criteria and scores',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique evaluation ID.',
+      ],
+      'proposal_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Proposal ID being evaluated.',
+      ],
+      'evaluator_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'User ID of the evaluator.',
+      ],
+      'criteria_name' => [
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+        'description' => 'Evaluation criteria name.',
+      ],
+      'criteria_weight' => [
+        'type' => 'numeric',
+        'precision' => 5,
+        'scale' => 2,
+        'description' => 'Weight percentage for this criteria.',
+      ],
+      'score' => [
+        'type' => 'numeric',
+        'precision' => 5,
+        'scale' => 2,
+        'description' => 'Score given for this criteria.',
+      ],
+      'max_score' => [
+        'type' => 'numeric',
+        'precision' => 5,
+        'scale' => 2,
+        'default' => 100,
+        'description' => 'Maximum possible score.',
+      ],
+      'comments' => [
+        'type' => 'text',
+        'description' => 'Evaluator comments for this criteria.',
+      ],
+      'evaluation_date' => [
+        'type' => 'datetime',
+        'mysql_type' => 'timestamp',
+        'pgsql_type' => 'timestamp',
+        'description' => 'Date of evaluation.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'proposal_id' => ['proposal_id'],
+      'evaluator_id' => ['evaluator_id'],
+      'criteria_name' => ['criteria_name'],
+    ],
+    'foreign keys' => [
+      'proposal' => [
+        'table' => 'tender_proposals',
+        'columns' => ['proposal_id' => 'id'],
+      ],
+      'evaluator' => [
+        'table' => 'users',
+        'columns' => ['evaluator_id' => 'uid'],
+      ],
+    ],
+  ];
+  
+  $database->schema()->createTable('tender_evaluations', $evaluations_schema);
+  
+  // Create tender_notifications table
+  $notifications_schema = [
+    'description' => 'Stores tender-related notifications',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique notification ID.',
+      ],
+      'tender_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'description' => 'Related tender ID.',
+      ],
+      'recipient_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'User ID of notification recipient.',
+      ],
+      'notification_type' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        'description' => 'Type of notification.',
+      ],
+      'title' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Notification title.',
+      ],
+      'message' => [
+        'type' => 'text',
+        'description' => 'Notification message.',
+      ],
+      'is_read' => [
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Read status.',
+      ],
+      'created_at' => [
+        'type' => 'datetime',
+        'mysql_type' => 'timestamp',
+        'pgsql_type' => 'timestamp',
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Timestamp when notification was created.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'tender_id' => ['tender_id'],
+      'recipient_id' => ['recipient_id'],
+      'notification_type' => ['notification_type'],
+      'is_read' => ['is_read'],
+    ],
+    'foreign keys' => [
+      'tender' => [
+        'table' => 'tenders',
+        'columns' => ['tender_id' => 'id'],
+      ],
+      'recipient' => [
+        'table' => 'users',
+        'columns' => ['recipient_id' => 'uid'],
+      ],
+    ],
+  ];
+  
+  $database->schema()->createTable('tender_notifications', $notifications_schema);
+  
+  \Drupal::messenger()->addMessage(t('Tender Management module installed successfully. Database tables created.'));
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function tender_management_uninstall() {
+  $database = \Drupal::database();
+  
+  // Drop custom tables
+  $tables = [
+    'tender_notifications',
+    'tender_evaluations', 
+    'tender_proposals',
+    'tenders'
+  ];
+  
+  foreach ($tables as $table) {
+    if ($database->schema()->tableExists($table)) {
+      $database->schema()->dropTable($table);
+    }
+  }
+  
+  \Drupal::messenger()->addMessage(t('Tender Management module uninstalled successfully. Database tables removed.'));
+}
