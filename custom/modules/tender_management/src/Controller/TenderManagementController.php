@@ -7,6 +7,7 @@ use Drupal\Core\Database\Connection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Session\AccountInterface;
 
@@ -65,6 +66,9 @@ class TenderManagementController extends ControllerBase {
     // Get user role-based data
     $user_roles = $this->currentUser->getRoles();
     $is_admin = in_array('administrator', $user_roles) || in_array('tender_admin', $user_roles);
+    $is_ukk = in_array('ukk', $user_roles);
+    $is_jpsd = in_array('jpsd', $user_roles);
+    $is_panel = in_array('panel', $user_roles);
     $is_evaluator = in_array('tender_evaluator', $user_roles);
     $is_vendor = in_array('vendor', $user_roles) || in_array('content_producer', $user_roles);
     
@@ -72,6 +76,9 @@ class TenderManagementController extends ControllerBase {
       '#theme' => 'tender_dashboard',
       '#user_roles' => $user_roles,
       '#is_admin' => $is_admin,
+      '#is_ukk' => $is_ukk,
+      '#is_jpsd' => $is_jpsd,
+      '#is_panel' => $is_panel,
       '#is_evaluator' => $is_evaluator,
       '#is_vendor' => $is_vendor,
       '#attached' => [
@@ -98,6 +105,14 @@ class TenderManagementController extends ControllerBase {
     ];
 
     return $build;
+  }
+
+  /**
+   * Vendor Management page - redirects to Drupal user management.
+   */
+  public function vendorManagement() {
+    // Create a redirect response to the Drupal user management page
+    return new RedirectResponse('/admin/people');
   }
 
   /**

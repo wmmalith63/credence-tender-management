@@ -2,7 +2,6 @@ user_management.login_register:
   path: '/login'
   defaults:
     _form: '\Drupal\user_management\Form\LoginRegistrationForm'
-    _title: 'Login / Register - e-TVCMS'
   requirements:
     _access: 'TRUE'
 
@@ -10,7 +9,6 @@ user_management.auth:
   path: '/auth'
   defaults:
     _form: '\Drupal\user_management\Form\LoginRegistrationForm'
-    _title: 'Login / Register - e-TVCMS'
   requirements:
     _access: 'TRUE'
 

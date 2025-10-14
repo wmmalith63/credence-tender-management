@@ -254,10 +254,6 @@ class LoginRegistrationForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $triggering_element = $form_state->getTriggeringElement();
-    
-    // Debug output
-    $this->messenger()->addMessage($this->t('Form submitted! Trigger: @trigger', ['@trigger' => $triggering_element['#name']]));
-    
     if ($triggering_element['#name'] == 'login') {
       $this->handleLogin($form, $form_state);
     } elseif ($triggering_element['#name'] == 'register') {

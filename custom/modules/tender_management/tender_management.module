@@ -23,6 +23,55 @@ function tender_management_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
+ * Implements hook_user_login().
+ */
+function tender_management_user_login($account) {
+  // Get user roles
+  $user_roles = $account->getRoles();
+  
+  // Define role-based redirections
+  $redirections = [
+    'ukk' => '/tender-management',
+    'jpsd' => '/tender-management', 
+    'panel' => '/tender-management',
+    'vendor' => '/user-management/dashboard',
+    'content_producer' => '/user-management/dashboard',
+    'administrator' => '/tender-management',
+    'tender_admin' => '/tender-management',
+  ];
+
+  // Check for role-based redirection
+  foreach ($redirections as $role => $redirect_path) {
+    if (in_array($role, $user_roles)) {
+      // Set the destination in the request to redirect after login
+      $request = \Drupal::request();
+      if (!$request->query->has('destination')) {
+        $request->query->set('destination', $redirect_path);
+      }
+      break; // Exit loop after first match
+    }
+  }
+  
+  // Create notification for user login
+  $database = \Drupal::database();
+  
+  try {
+    $database->insert('tender_notifications')
+      ->fields([
+        'recipient_id' => $account->id(),
+        'notification_type' => 'login',
+        'title' => 'Welcome back!',
+        'message' => 'You have successfully logged into the Tender Management System.',
+        'is_read' => 0,
+        'created_at' => date('Y-m-d H:i:s'),
+      ])
+      ->execute();
+  } catch (\Exception $e) {
+    \Drupal::logger('tender_management')->error('Error creating login notification: @error', ['@error' => $e->getMessage()]);
+  }
+}
+
+/**
  * Implements hook_theme().
  */
 function tender_management_theme() {
@@ -31,6 +80,9 @@ function tender_management_theme() {
       'variables' => [
         'user_roles' => [],
         'is_admin' => FALSE,
+        'is_ukk' => FALSE,
+        'is_jpsd' => FALSE,
+        'is_panel' => FALSE,
         'is_evaluator' => FALSE,
         'is_vendor' => FALSE,
       ],
@@ -80,29 +132,6 @@ function tender_management_theme() {
       'template' => 'tender-results',
     ],
   ];
-}
-
-/**
- * Implements hook_user_login().
- */
-function tender_management_user_login($account) {
-  // Create notification for user login
-  $database = \Drupal::database();
-  
-  try {
-    $database->insert('tender_notifications')
-      ->fields([
-        'recipient_id' => $account->id(),
-        'notification_type' => 'login',
-        'title' => 'Welcome back!',
-        'message' => 'You have successfully logged into the Tender Management System.',
-        'is_read' => 0,
-        'created_at' => date('Y-m-d H:i:s'),
-      ])
-      ->execute();
-  } catch (\Exception $e) {
-    \Drupal::logger('tender_management')->error('Error creating login notification: @error', ['@error' => $e->getMessage()]);
-  }
 }
 
 /**

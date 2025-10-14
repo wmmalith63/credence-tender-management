@@ -5,18 +5,35 @@ tender_management.dashboard:
   path: '/tender-management'
   defaults:
     _controller: '\Drupal\tender_management\Controller\TenderManagementController::dashboard'
-    _title: 'Tender Management Dashboard'
   requirements:
-    _permission: 'access tender management'
+    _permission: 'access content'
 
 # Alternative dashboard route
 tender_management.dashboard_alt:
   path: '/tender-management/dashboard'
   defaults:
     _controller: '\Drupal\tender_management\Controller\TenderManagementController::dashboard'
-    _title: 'Tender Management Dashboard'
   requirements:
     _permission: 'access tender management'
+
+# AJAX Routes for data saving
+tender_management.ajax_save_tender:
+  path: '/ajax/tender/save'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderAjaxController::saveTender'
+  requirements:
+    _access: 'TRUE'
+  methods: [POST]
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_save_vendor_application:
+  path: '/ajax/vendor/application/save'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderAjaxController::saveVendorApplication'
+  requirements:
+    _permission: 'access content'
+  methods: [POST]
 
 # Vendor registration
 tender_management.vendor_registration:
@@ -27,6 +44,15 @@ tender_management.vendor_registration:
   requirements:
     _permission: 'register as vendor'
 
+# Vendor management (redirects to Drupal user management)
+tender_management.vendor_management:
+  path: '/tender-management/vendor-management'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderManagementController::vendorManagement'
+    _title: 'Vendor Management'
+  requirements:
+    _permission: 'access tender management'
+
 # Tender creation
 tender_management.create_tender:
   path: '/tender-management/create-tender'
@@ -34,7 +60,7 @@ tender_management.create_tender:
     _controller: '\Drupal\tender_management\Controller\TenderManagementController::createTender'
     _title: 'Create Tender'
   requirements:
-    _permission: 'create tenders'
+    _permission: 'access content'
 
 # Tender list
 tender_management.tender_list:
@@ -73,15 +99,6 @@ tender_management.results:
     _permission: 'manage tender results'
 
 # AJAX endpoints
-tender_management.ajax_save_tender:
-  path: '/ajax/tender/save'
-  defaults:
-    _controller: '\Drupal\tender_management\Controller\TenderManagementController::saveTender'
-  requirements:
-    _permission: 'create tenders'
-    _access: 'TRUE'
-  options:
-    _admin_route: FALSE
 
 tender_management.ajax_get_tenders:
   path: '/ajax/tenders/list'
@@ -191,5 +208,76 @@ tender_management.ajax_delete_vendor:
     _permission: 'access tender management'
     _access: 'TRUE'
     _method: 'DELETE|POST'
+  options:
+    _admin_route: FALSE
+
+# AJAX Routes for tender operations
+tender_management.ajax_tenders_list:
+  path: '/ajax/tenders/list'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderAjaxController::getTendersList'
+  requirements:
+    _permission: 'access content'
+  methods: [GET]
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_tender_details:
+  path: '/ajax/tender/details/{tender_id}'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderAjaxController::getTenderDetails'
+  requirements:
+    _permission: 'access content'
+  methods: [GET]
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_tender_edit:
+  path: '/ajax/tender/edit/{tender_id}'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderAjaxController::getTenderForEdit'
+  requirements:
+    _permission: 'access content'
+  methods: [GET]
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_tender_update:
+  path: '/ajax/tender/update'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderAjaxController::updateTender'
+  requirements:
+    _permission: 'access content'
+  methods: [POST]
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_tender_publish:
+  path: '/ajax/tender/publish'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderAjaxController::publishTender'
+  requirements:
+    _permission: 'access content'
+  methods: [POST]
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_tender_delete:
+  path: '/ajax/tender/delete'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderAjaxController::deleteTender'
+  requirements:
+    _permission: 'access content'
+  methods: [DELETE, POST]
+  options:
+    _admin_route: FALSE
+
+tender_management.ajax_tender_close:
+  path: '/ajax/tender/close'
+  defaults:
+    _controller: '\Drupal\tender_management\Controller\TenderAjaxController::closeTender'
+  requirements:
+    _permission: 'access content'
+  methods: [POST]
   options:
     _admin_route: FALSE

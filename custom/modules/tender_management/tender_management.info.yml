@@ -12,4 +12,3 @@ dependencies:
   - drupal:rest
   - drupal:serialization
   - drupal:file
-  - credence:user_management

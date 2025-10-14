@@ -20,6 +20,22 @@ view tender details:
   title: 'View tender details'
   description: 'Allow users to view detailed tender information'
 
+edit tenders:
+  title: 'Edit tenders'
+  description: 'Allow users to edit existing tenders'
+
+update tenders:
+  title: 'Update tenders'
+  description: 'Allow users to update tender information'
+
+approve tenders:
+  title: 'Approve tenders'
+  description: 'Allow users to approve tenders for publication'
+
+publish tenders:
+  title: 'Publish tenders'
+  description: 'Allow users to publish approved tenders'
+
 submit proposals:
   title: 'Submit proposals'
   description: 'Allow vendors to submit proposals for tenders'

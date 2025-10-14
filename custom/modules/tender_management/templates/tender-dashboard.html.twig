@@ -6,6 +6,9 @@
  * Available variables:
  * - user_roles: Array of user roles
  * - is_admin: Boolean for admin access
+ * - is_ukk: Boolean for UKK role access
+ * - is_jpsd: Boolean for JPSD role access
+ * - is_panel: Boolean for PANEL role access
  * - is_evaluator: Boolean for evaluator access
  * - is_vendor: Boolean for vendor access
  */
@@ -311,6 +314,189 @@
     align-items: flex-start;
   }
 }
+
+/* Documents Checklist Styles */
+.documents-checklist {
+    margin-bottom: 1rem;
+}
+
+.document-category {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.document-category h4 {
+    margin: 0 0 1rem 0;
+    color: #495057;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 0.75rem;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.checkbox-item:hover {
+    background-color: rgba(52, 152, 219, 0.05);
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin: 0;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #3498db;
+}
+
+.checkbox-item .checkmark {
+    flex: 1;
+    user-select: none;
+}
+
+.form-help {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.form-actions-inline {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.btn-outline:hover {
+    background: #6c757d;
+    color: white;
+}
+
+/* Upload Area Styles */
+.upload-area {
+    margin-top: 1rem;
+}
+
+.upload-zone {
+    border: 2px dashed #3498db;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.upload-zone:hover,
+.upload-zone.drag-over {
+    border-color: #2980b9;
+    background: #e3f2fd;
+    transform: translateY(-2px);
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.upload-text {
+    font-size: 1.1rem;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.upload-text strong {
+    color: #3498db;
+}
+
+.upload-hint {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.uploaded-files {
+    margin-top: 1rem;
+}
+
+.uploaded-file {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.file-icon {
+    font-size: 1.2rem;
+}
+
+.file-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-name {
+    font-weight: 500;
+    color: #495057;
+}
+
+.file-size {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.file-remove {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.file-remove:hover {
+    background: #c82333;
+}
+
 </style>
 
 
@@ -503,13 +689,166 @@ function createTenderFormHTML() {
                         </div>
                     </div>
 
+                    <div class="form-section">
+                        <h3>Required Documents</h3>
+                        
+                        <div class="form-group">
+                            <label>Documents Required from Vendors *</label>
+                            <p class="form-help">Select all documents that vendors must submit with their proposals:</p>
+                            
+                            <div class="documents-checklist">
+                                <!-- Basic Company Documents -->
+                                <div class="document-category">
+                                    <h4>📋 Company Registration & Legal</h4>
+                                    <div class="checkbox-grid">
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Company Registration Certificate" checked>
+                                            <span class="checkmark"></span>
+                                            Company Registration Certificate (SSM)
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Business License">
+                                            <span class="checkmark"></span>
+                                            Business License
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Tax Clearance Certificate" checked>
+                                            <span class="checkmark"></span>
+                                            Tax Clearance Certificate (LHDN)
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Audited Financial Statements" checked>
+                                            <span class="checkmark"></span>
+                                            Audited Financial Statements (Last 3 years)
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Technical & Professional -->
+                                <div class="document-category">
+                                    <h4>🔧 Technical & Professional</h4>
+                                    <div class="checkbox-grid">
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Portfolio/Previous Work Samples" checked>
+                                            <span class="checkmark"></span>
+                                            Portfolio/Previous Work Samples
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Technical Specifications Compliance">
+                                            <span class="checkmark"></span>
+                                            Technical Specifications Compliance
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Quality Certifications (ISO)">
+                                            <span class="checkmark"></span>
+                                            Quality Certifications (ISO/SIRIM)
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Professional Team CVs">
+                                            <span class="checkmark"></span>
+                                            Professional Team CVs
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Proposals & Financial -->
+                                <div class="document-category">
+                                    <h4>💼 Proposals & Financial</h4>
+                                    <div class="checkbox-grid">
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Technical Proposal" checked>
+                                            <span class="checkmark"></span>
+                                            Technical Proposal
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Commercial Proposal" checked>
+                                            <span class="checkmark"></span>
+                                            Commercial Proposal
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Detailed Budget Breakdown">
+                                            <span class="checkmark"></span>
+                                            Detailed Budget Breakdown
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Bank Guarantee/Performance Bond">
+                                            <span class="checkmark"></span>
+                                            Bank Guarantee/Performance Bond
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Broadcasting Specific -->
+                                <div class="document-category">
+                                    <h4>📺 Broadcasting & Media Specific</h4>
+                                    <div class="checkbox-grid">
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Broadcasting License (MCMC)">
+                                            <span class="checkmark"></span>
+                                            Broadcasting License (MCMC)
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Content Production License">
+                                            <span class="checkmark"></span>
+                                            Content Production License
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Intellectual Property Rights">
+                                            <span class="checkmark"></span>
+                                            Intellectual Property Rights Documentation
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="required_documents[]" value="Equipment & Facility Details">
+                                            <span class="checkmark"></span>
+                                            Equipment & Facility Details
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions-inline">
+                                <button type="button" class="btn btn-outline btn-sm" onclick="selectAllDocuments()">Select All</button>
+                                <button type="button" class="btn btn-outline btn-sm" onclick="clearAllDocuments()">Clear All</button>
+                                <button type="button" class="btn btn-outline btn-sm" onclick="selectEssentialDocuments()">Essential Only</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="additional_notes">Additional Document Requirements/Instructions</label>
+                            <textarea id="additional_notes" name="additional_notes" rows="3" 
+                                      placeholder="Any specific requirements, formats, or additional instructions for document submission..." class="form-control"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Document Upload Section -->
+                    <div class="form-section">
+                        <h3>📁 Upload Supporting Documents</h3>
+                        <p class="help-text">Upload any supporting documents for this tender (PDF, DOC, DOCX, XLS, XLSX files only)</p>
+                        
+                        <div class="upload-area">
+                            <div class="upload-zone" id="uploadZone">
+                                <div class="upload-icon">📁</div>
+                                <div class="upload-text">
+                                    <strong>Click to upload</strong> or drag and drop files here
+                                </div>
+                                <div class="upload-hint">Maximum file size: 10MB per file</div>
+                                <input type="file" id="documentUpload" name="documents[]" multiple 
+                                       accept=".pdf,.doc,.docx,.xls,.xlsx" style="display: none;">
+                            </div>
+                            
+                            <div class="uploaded-files" id="uploadedFiles">
+                                <!-- Uploaded files will appear here -->
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
                         <button type="submit" class="btn btn-primary">Publish Tender</button>
                     </div>
                 </div>
 
-                <div class="form-sidebar">
+                <div class="form-sidebar">"
                     <div class="requirements-panel">
                         <h3>📋 Tender Requirements</h3>
                         
@@ -951,9 +1290,9 @@ function displayTenderList(tenders) {
                             </div>
                         </div>
                         <div class="tender-actions">
-                            <button onclick="viewTender(${tender.id})" class="btn btn-sm btn-primary">View</button>
-                            <button onclick="editTender(${tender.id})" class="btn btn-sm btn-secondary">Edit</button>
-                            <button onclick="deleteTender(${tender.id})" class="btn btn-sm btn-danger">Delete</button>
+                            <button onclick="viewTender('${tender.tender_number}')" class="btn btn-sm btn-primary">View</button>
+                            <button onclick="editTender('${tender.tender_number}')" class="btn btn-sm btn-edit">Edit</button>
+                            <button onclick="deleteTender('${tender.tender_number}')" class="btn btn-sm btn-danger">Delete</button>
                         </div>
                     </div>
                 `).join('')}
@@ -1099,6 +1438,15 @@ function displayTenderList(tenders) {
             background: #c0392b;
         }
         
+        .btn-edit {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #e67e22;
+        }
+        
         .loading-message, .error-message {
             text-align: center;
             padding: 3rem;
@@ -1142,24 +1490,72 @@ function displayTenderList(tenders) {
 
 function viewTender(tenderId) {
     console.log('Viewing tender:', tenderId);
-    alert(`View tender functionality would be implemented here for tender ID: ${tenderId}`);
+    viewTenderDetails(tenderId);
 }
 
 function editTender(tenderId) {
     console.log('Editing tender:', tenderId);
-    alert(`Edit tender functionality would be implemented here for tender ID: ${tenderId}`);
+    // First need to get the tender number for the edit function
+    // For now, we'll use the ID directly, but ideally we'd fetch the tender_number
+    
+    // If it's a number ID, we need to fetch the tender data first to get the tender_number
+    if (typeof tenderId === 'number' || /^\d+$/.test(tenderId)) {
+        // Fetch tender data to get the tender_number
+        fetch(`/ajax/tender/details/${tenderId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.tender) {
+                    // Call edit with the tender_number
+                    editTenderById(data.tender.tender_number || data.tender.id);
+                } else {
+                    // Fallback to using the ID directly
+                    editTenderById(tenderId);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching tender for edit:', error);
+                // Fallback to using the ID directly
+                editTenderById(tenderId);
+            });
+    } else {
+        // It's already a tender_number, use it directly
+        editTenderById(tenderId);
+    }
 }
 
 function deleteTender(tenderId) {
     if (confirm('Are you sure you want to delete this tender? This action cannot be undone.')) {
         console.log('Deleting tender:', tenderId);
-        alert(`Delete tender functionality would be implemented here for tender ID: ${tenderId}`);
+        
+        // Create form data
+        const formData = new FormData();
+        formData.append('tender_id', tenderId);
+        
+        fetch('/ajax/tender/delete', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Tender deleted successfully');
+                // Refresh the tender list
+                loadTenderManagementContent();
+            } else {
+                alert('Error deleting tender: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to delete tender. Please try again.');
+        });
     }
 }
 
 function loadVendorManagementContent() {
     console.log('loadVendorManagementContent called');
-    // TODO: Implement vendor management content
+    // Redirect to Drupal user management page
+    window.location.href = '/admin/people';
 }
 
 function loadEvaluationContent() {
@@ -1276,6 +1672,51 @@ function saveDraft() {
     saveTender('draft');
 }
 
+// Function for UKK users to save tender data (not draft, but saved data)
+function saveTenderData() {
+    // Validate required fields before saving
+    if (!validateTenderForm()) {
+        return;
+    }
+    
+    // Show confirmation message for UKK users
+    if (confirm('Save tender data? This will save all the information you have entered. The tender will not be published and will require admin approval.')) {
+        saveTender('ukk_saved');
+    }
+}
+
+// Function to validate tender form
+function validateTenderForm() {
+    const requiredFields = [
+        'tender_number',
+        'tender_title',
+        'tender_type',
+        'tender_category',
+        'episode_duration',
+        'total_episodes',
+        'budget_per_episode',
+        'submission_deadline',
+        'production_start',
+        'production_end'
+    ];
+    
+    const missingFields = [];
+    
+    requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field && (!field.value || field.value.trim() === '')) {
+            missingFields.push(field.previousElementSibling?.textContent || fieldId);
+        }
+    });
+    
+    if (missingFields.length > 0) {
+        alert(`Please fill in the following required fields:\n• ${missingFields.join('\n• ')}`);
+        return false;
+    }
+    
+    return true;
+}
+
 function initializeTenderForm() {
     const form = document.getElementById('tender-creation-form');
     if (!form) return;
@@ -1284,14 +1725,29 @@ function initializeTenderForm() {
         e.preventDefault();
         saveTender('published');
     });
+    
+    // Initialize file upload functionality
+    initializeFileUpload();
 }
 
 function saveTender(status) {
+    console.log('saveTender called with status:', status);
+    
     const form = document.getElementById('tender-creation-form');
-    if (!form) return;
+    if (!form) {
+        console.error('Form not found!');
+        return;
+    }
+    
+    console.log('Form found:', form);
     
     const formData = new FormData(form);
     formData.append('status', status);
+    
+    // Log form data for debugging
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
     
     // Basic validation
     const requiredFields = ['tender_number', 'tender_title', 'tender_type', 'tender_category', 
@@ -1317,19 +1773,44 @@ function saveTender(status) {
     submitBtn.textContent = 'Saving...';
     submitBtn.disabled = true;
     
+    console.log('Sending AJAX request to /ajax/tender/save');
+    
     // Send to server
     fetch('/ajax/tender/save', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response received:', response);
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         if (data.success) {
-            alert(status === 'draft' ? 'Draft saved successfully!' : 'Tender published successfully!');
+            let message = '';
+            switch(status) {
+                case 'draft':
+                    message = 'Draft saved successfully!';
+                    break;
+                case 'published':
+                    message = 'Tender published successfully!';
+                    break;
+                case 'ukk_saved':
+                    message = 'Tender data saved successfully! The tender has been saved and is pending admin review for publication.';
+                    break;
+                default:
+                    message = 'Tender saved successfully!';
+            }
+            alert(message);
+            
             if (status === 'published') {
                 // Redirect to manage tenders or reload dashboard
                 loadDashboardStats();
                 // Switch to dashboard view
+                document.querySelector('.nav-link[data-section="dashboard"]').click();
+            } else if (status === 'ukk_saved') {
+                // For UKK saved tenders, show success and maybe switch to dashboard
+                loadDashboardStats();
                 document.querySelector('.nav-link[data-section="dashboard"]').click();
             }
         } else {
@@ -1344,6 +1825,173 @@ function saveTender(status) {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     });
+}
+
+// Document Checkbox Management Functions
+function selectAllDocuments() {
+    const checkboxes = document.querySelectorAll('input[name="required_documents[]"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = true;
+    });
+}
+
+function clearAllDocuments() {
+    const checkboxes = document.querySelectorAll('input[name="required_documents[]"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+}
+
+function selectEssentialDocuments() {
+    // First clear all
+    clearAllDocuments();
+    
+    // Then select only essential documents
+    const essentialDocs = [
+        'Company Registration Certificate',
+        'Tax Clearance Certificate', 
+        'Audited Financial Statements',
+        'Technical Proposal',
+        'Commercial Proposal',
+        'Portfolio/Previous Work Samples'
+    ];
+    
+    const checkboxes = document.querySelectorAll('input[name="required_documents[]"]');
+    checkboxes.forEach(checkbox => {
+        if (essentialDocs.includes(checkbox.value)) {
+            checkbox.checked = true;
+        }
+    });
+}
+
+// File Upload Functions
+let uploadedFiles = [];
+
+function initializeFileUpload() {
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('documentUpload');
+    const uploadedFilesContainer = document.getElementById('uploadedFiles');
+    
+    if (!uploadZone || !fileInput) return;
+    
+    // Click to upload
+    uploadZone.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    // File selection
+    fileInput.addEventListener('change', handleFileSelection);
+    
+    // Drag and drop
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('drag-over');
+    });
+    
+    uploadZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('drag-over');
+    });
+    
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('drag-over');
+        
+        const files = e.dataTransfer.files;
+        handleFiles(files);
+    });
+}
+
+function handleFileSelection(e) {
+    handleFiles(e.target.files);
+}
+
+function handleFiles(files) {
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const allowedTypes = ['application/pdf', 'application/msword', 
+                         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                         'application/vnd.ms-excel',
+                         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    
+    Array.from(files).forEach(file => {
+        // Check file size
+        if (file.size > maxSize) {
+            alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+            return;
+        }
+        
+        // Check file type
+        if (!allowedTypes.includes(file.type) && !file.name.match(/\.(pdf|doc|docx|xls|xlsx)$/i)) {
+            alert(`File "${file.name}" is not a supported format. Please upload PDF, DOC, DOCX, XLS, or XLSX files.`);
+            return;
+        }
+        
+        // Check if file already exists
+        if (uploadedFiles.find(f => f.name === file.name && f.size === file.size)) {
+            alert(`File "${file.name}" is already uploaded.`);
+            return;
+        }
+        
+        // Add file to uploaded files
+        uploadedFiles.push(file);
+        displayUploadedFile(file);
+    });
+}
+
+function displayUploadedFile(file) {
+    const uploadedFilesContainer = document.getElementById('uploadedFiles');
+    if (!uploadedFilesContainer) return;
+    
+    const fileElement = document.createElement('div');
+    fileElement.className = 'uploaded-file';
+    fileElement.setAttribute('data-file-name', file.name);
+    
+    const fileIcon = getFileIcon(file.name);
+    const fileSize = formatFileSize(file.size);
+    
+    fileElement.innerHTML = `
+        <div class="file-info">
+            <span class="file-icon">${fileIcon}</span>
+            <div class="file-details">
+                <div class="file-name">${file.name}</div>
+                <div class="file-size">${fileSize}</div>
+            </div>
+        </div>
+        <button type="button" class="file-remove" onclick="removeUploadedFile('${file.name}')">Remove</button>
+    `;
+    
+    uploadedFilesContainer.appendChild(fileElement);
+}
+
+function removeUploadedFile(fileName) {
+    // Remove from uploadedFiles array
+    uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+    
+    // Remove from display
+    const fileElement = document.querySelector(`[data-file-name="${fileName}"]`);
+    if (fileElement) {
+        fileElement.remove();
+    }
+}
+
+function getFileIcon(fileName) {
+    const extension = fileName.split('.').pop().toLowerCase();
+    switch (extension) {
+        case 'pdf': return '📄';
+        case 'doc':
+        case 'docx': return '📝';
+        case 'xls':
+        case 'xlsx': return '📊';
+        default: return '📎';
+    }
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 function loadFullForm() {
@@ -2198,6 +2846,7 @@ function initializeTenderForm() {
 
 function loadTenderManagementContent() {
     console.log('Loading tender management content...');
+    console.log('Current user roles:', {{ current_user.getRoles()|json_encode|raw }});
     const contentDiv = document.getElementById('tender-management-content');
     if (!contentDiv) {
         console.error('tender-management-content div not found!');
@@ -2232,13 +2881,13 @@ function loadTenderManagementContent() {
         .then(response => response.json())
         .then(data => {
             console.log('Tender data received:', data);
-            if (data.success) {
+            if (data.status === 'success') {
                 displayTenderList(data.tenders);
             } else {
                 contentDiv.innerHTML = `
                     <div class="error-message" style="text-align: center; padding: 2rem; color: #e74c3c;">
                         <h3>Error Loading Tenders</h3>
-                        <p>${data.message}</p>
+                        <p>${data.message || 'Unknown error occurred'}</p>
                         <button onclick="loadTenderManagementContent()" class="btn btn-primary">Retry</button>
                     </div>
                 `;
@@ -2521,14 +3170,130 @@ function displayTenderList(tenders) {
 
 function viewTender(tenderId) {
     console.log('Viewing tender:', tenderId);
-    // For now, just show tender details in a modal or expand the card
-    alert(`View tender functionality would be implemented here for tender ID: ${tenderId}`);
+    // Call the implemented viewTenderDetails function
+    viewTenderDetails(tenderId);
 }
 
 function editTender(tenderId) {
     console.log('Editing tender:', tenderId);
-    // For now, just show edit functionality
-    alert(`Edit tender functionality would be implemented here for tender ID: ${tenderId}`);
+    // First need to get the tender number for the edit function
+    // For now, we'll use the ID directly, but ideally we'd fetch the tender_number
+    
+    // If it's a number ID, we need to fetch the tender data first to get the tender_number
+    if (typeof tenderId === 'number' || /^\d+$/.test(tenderId)) {
+        // Fetch tender data to get the tender_number
+        fetch(`/ajax/tender/details/${tenderId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.tender) {
+                    // Call edit with the tender_number
+                    editTenderById(data.tender.tender_number || data.tender.id);
+                } else {
+                    // Fallback to using the ID directly
+                    editTenderById(tenderId);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching tender for edit:', error);
+                // Fallback to using the ID directly
+                editTenderById(tenderId);
+            });
+    } else {
+        // It's already a tender_number, use it directly
+        editTenderById(tenderId);
+    }
+}
+
+// Helper function that calls the main edit function
+function editTenderById(tenderIdentifier) {
+    // Switch to create-tender section
+    loadSectionContent('create-tender');
+    
+    // Wait for the form to be loaded before proceeding
+    setTimeout(() => {
+        // Show loading message
+        const form = document.getElementById('tender-creation-form');
+        if (form) {
+            // Add loading overlay
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.id = 'form-loading-overlay';
+            loadingOverlay.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.9);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                font-size: 1.2rem;
+                color: #3498db;
+                font-weight: 600;
+            `;
+            loadingOverlay.innerHTML = '<div>Loading tender data...</div>';
+            
+            const formContainer = form.closest('.tender-form') || form.parentElement;
+            formContainer.style.position = 'relative';
+            formContainer.appendChild(loadingOverlay);
+        }
+        
+        // Fetch tender data from database
+        fetch(`/ajax/tender/edit/${tenderIdentifier}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    populateTenderForm(data.tender);
+                } else {
+                    console.error('Error loading tender:', data.message);
+                    alert('Error loading tender: ' + (data.message || 'Unknown error'));
+                    // Go back to tender management
+                    loadTenderManagementContent();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to load tender data. Please check your connection and try again.');
+                // Go back to tender management
+                loadTenderManagementContent();
+            })
+            .finally(() => {
+                // Remove loading overlay
+                const loadingOverlay = document.getElementById('form-loading-overlay');
+                if (loadingOverlay) {
+                    loadingOverlay.remove();
+                }
+            });
+    }, 500); // Wait 500ms for the form to load
+}
+    
+    // Fetch tender data from database
+    fetch(`/ajax/tender/edit/${tenderIdentifier}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                populateTenderForm(data.tender);
+            } else {
+                console.error('Error loading tender:', data.message);
+                alert('Error loading tender: ' + (data.message || 'Unknown error'));
+                // Go back to tender management
+                loadSectionContent('tender-management');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to load tender data. Please check your connection and try again.');
+            // Go back to tender management
+            loadSectionContent('tender-management');
+        })
+        .finally(() => {
+            // Remove loading overlay
+            const loadingOverlay = document.getElementById('form-loading-overlay');
+            if (loadingOverlay) {
+                loadingOverlay.remove();
+            }
+        });
 }
 
 function deleteTender(tenderId) {
@@ -2541,42 +3306,8 @@ function deleteTender(tenderId) {
 
 function loadVendorManagementContent() {
     console.log('Loading vendor management content...');
-    const contentDiv = document.getElementById('vendor-management-content');
-    if (!contentDiv) {
-        console.error('vendor-management-content div not found!');
-        return;
-    }
-    
-    console.log('Found vendor-management-content div, showing loading...');
-    
-    // Show loading state
-    contentDiv.innerHTML = `
-        <div class="loading-message" style="text-align: center; padding: 3rem;">
-            <div class="spinner"></div>
-            <p>Loading vendor management...</p>
-        </div>
-        <style>
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        </style>
-    `;
-    
-    // Load vendor management interface
-    setTimeout(() => {
-        console.log('Loading vendor management interface...');
-        displayVendorManagement();
-    }, 500);
+    // Redirect to Drupal user management page
+    window.location.href = '/admin/people';
 }
 
 function displayVendorManagement() {
@@ -3531,6 +4262,554 @@ function loadNotificationsContent() {
         </div>
     `;
 }
+
+// Tender Management Functions
+function searchTendersManagement() {
+  const searchTerm = document.getElementById('tender-search-manage').value.toLowerCase();
+  const tenderCards = document.querySelectorAll('.tender-card');
+  
+  tenderCards.forEach(card => {
+    const title = card.querySelector('.tender-title').textContent.toLowerCase();
+    const number = card.querySelector('.tender-number').textContent.toLowerCase();
+    const description = card.querySelector('.tender-description').textContent.toLowerCase();
+    
+    if (title.includes(searchTerm) || number.includes(searchTerm) || description.includes(searchTerm)) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+function filterTendersManagement() {
+  const statusFilter = document.getElementById('status-filter').value;
+  const categoryFilter = document.getElementById('category-filter-manage').value;
+  const tenderCards = document.querySelectorAll('.tender-card');
+  
+  tenderCards.forEach(card => {
+    let showCard = true;
+    
+    // Status filter
+    if (statusFilter && !card.dataset.status.includes(statusFilter)) {
+      showCard = false;
+    }
+    
+    // Category filter
+    if (categoryFilter) {
+      const categoryValue = card.querySelector('.meta-value').textContent.toLowerCase();
+      if (!categoryValue.includes(categoryFilter.toLowerCase())) {
+        showCard = false;
+      }
+    }
+    
+    card.style.display = showCard ? 'block' : 'none';
+  });
+}
+
+function viewTenderDetails(tenderId) {
+  console.log('Viewing tender details for:', tenderId);
+  
+  // Show loading state
+  showTenderModal();
+  document.getElementById('tender-details-content').innerHTML = `
+    <div style="text-align: center; padding: 2rem;">
+      <div class="loading-spinner">Loading tender details...</div>
+    </div>
+  `;
+  
+  // Fetch tender details from database
+  fetch(`/ajax/tender/details/${tenderId}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        displayTenderDetails(data.tender);
+        // Show edit button if user has permission
+        const editButton = document.getElementById('edit-from-modal');
+        if (data.can_edit) {
+          editButton.style.display = 'block';
+          editButton.setAttribute('data-tender-id', tenderId);
+        } else {
+          editButton.style.display = 'none';
+        }
+      } else {
+        document.getElementById('tender-details-content').innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: #e74c3c;">
+            <h4>Error Loading Tender</h4>
+            <p>${data.message || 'Unable to load tender details'}</p>
+          </div>
+        `;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('tender-details-content').innerHTML = `
+        <div style="text-align: center; padding: 2rem; color: #e74c3c;">
+          <h4>Error Loading Tender</h4>
+          <p>Failed to load tender details. Please check your connection and try again.</p>
+          <button onclick="viewTenderDetails('${tenderId}')" class="btn btn-primary" style="margin-top: 1rem;">Retry</button>
+        </div>
+      `;
+    });
+}
+
+function displayTenderDetails(tender) {
+  const content = `
+    <div class="tender-details-grid">
+      <div class="detail-section">
+        <h4>📋 Basic Information</h4>
+        <div class="detail-row">
+          <span class="detail-label">Tender Number:</span>
+          <span class="detail-value">${tender.tender_number || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Title:</span>
+          <span class="detail-value">${tender.tender_title || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Type:</span>
+          <span class="detail-value">${tender.tender_type || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Category:</span>
+          <span class="detail-value">${tender.tender_category || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Status:</span>
+          <span class="detail-value">
+            <span class="detail-status status-badge-${tender.status?.replace('_', '-')}">${tender.status || 'Draft'}</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h4>💰 Production Details</h4>
+        <div class="detail-row">
+          <span class="detail-label">Episodes:</span>
+          <span class="detail-value">${tender.total_episodes || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Episode Duration:</span>
+          <span class="detail-value">${tender.episode_duration ? tender.episode_duration + ' minutes' : 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Budget per Episode:</span>
+          <span class="detail-value">RM ${tender.budget_per_episode ? parseFloat(tender.budget_per_episode).toLocaleString() : 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Total Budget:</span>
+          <span class="detail-value">RM ${tender.total_budget ? parseFloat(tender.total_budget).toLocaleString() : 'N/A'}</span>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h4>📅 Timeline</h4>
+        <div class="detail-row">
+          <span class="detail-label">Submission Deadline:</span>
+          <span class="detail-value">${tender.submission_deadline ? new Date(tender.submission_deadline).toLocaleDateString() : 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Production Start:</span>
+          <span class="detail-value">${tender.production_start ? new Date(tender.production_start).toLocaleDateString() : 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Production End:</span>
+          <span class="detail-value">${tender.production_end ? new Date(tender.production_end).toLocaleDateString() : 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Evaluation Period:</span>
+          <span class="detail-value">${tender.evaluation_period || 'N/A'}</span>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h4>📄 Required Documents</h4>
+        <div class="required-documents-list">
+          ${tender.required_documents ? tender.required_documents.map(doc => `
+            <div class="required-doc-item">
+              <span class="doc-icon">📄</span>
+              <span>${formatDocumentName(doc)}</span>
+            </div>
+          `).join('') : '<p>No required documents specified</p>'}
+        </div>
+      </div>
+    </div>
+
+    ${tender.tender_description ? `
+      <div class="detail-section" style="grid-column: 1 / -1; margin-top: 1rem;">
+        <h4>📝 Description</h4>
+        <p style="color: #555; line-height: 1.6; margin: 0;">${tender.tender_description}</p>
+      </div>
+    ` : ''}
+  `;
+  
+  document.getElementById('tender-details-content').innerHTML = content;
+}
+
+function formatDocumentName(docType) {
+  const docNames = {
+    'company_registration': 'Company Registration Certificate',
+    'tax_clearance': 'Tax Clearance Certificate', 
+    'financial_statements': 'Financial Statements (3 years)',
+    'portfolio_samples': 'Portfolio/Work Samples',
+    'project_proposal': 'Project Proposal',
+    'budget_breakdown': 'Budget Breakdown'
+  };
+  return docNames[docType] || docType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function showTenderModal() {
+  const modal = document.getElementById('tender-details-modal');
+  modal.style.display = 'flex';
+  setTimeout(() => modal.classList.add('active'), 10);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeTenderModal() {
+  const modal = document.getElementById('tender-details-modal');
+  modal.classList.remove('active');
+  setTimeout(() => {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }, 300);
+}
+
+function editFromModal() {
+  const tenderId = document.getElementById('edit-from-modal').getAttribute('data-tender-id');
+  closeTenderModal();
+  editTender(tenderId);
+}
+
+function populateTenderForm(tenderData) {
+  const form = document.getElementById('tender-creation-form');
+  if (!form) {
+    console.error('Tender form not found');
+    return;
+  }
+  
+  // Set form to edit mode
+  form.setAttribute('data-edit-mode', 'true');
+  form.setAttribute('data-tender-id', tenderData.tender_number || tenderData.id);
+  
+  // Update form title
+  const sectionHeader = document.querySelector('#create-tender-section .section-header h2');
+  if (sectionHeader) {
+    sectionHeader.textContent = `Edit Tender: ${tenderData.tender_number || 'Draft'}`;
+  }
+  
+  // Populate basic information
+  setFormValue('tender_number', tenderData.tender_number);
+  setFormValue('tender_title', tenderData.tender_title);
+  setFormValue('tender_description', tenderData.tender_description);
+  setFormValue('tender_type', tenderData.tender_type);
+  setFormValue('tender_category', tenderData.tender_category);
+  
+  // Populate production details
+  setFormValue('episode_duration', tenderData.episode_duration);
+  setFormValue('total_episodes', tenderData.total_episodes);
+  setFormValue('budget_per_episode', tenderData.budget_per_episode);
+  setFormValue('total_budget', tenderData.total_budget);
+  
+  // Populate timeline
+  if (tenderData.submission_deadline) {
+    // Convert to datetime-local format
+    const deadline = new Date(tenderData.submission_deadline);
+    const localDateTime = new Date(deadline.getTime() - deadline.getTimezoneOffset() * 60000)
+      .toISOString().slice(0, 16);
+    setFormValue('submission_deadline', localDateTime);
+  }
+  
+  if (tenderData.production_start) {
+    setFormValue('production_start', tenderData.production_start);
+  }
+  
+  if (tenderData.production_end) {
+    setFormValue('production_end', tenderData.production_end);
+  }
+  
+  setFormValue('evaluation_period', tenderData.evaluation_period);
+  
+  // Populate required documents
+  if (tenderData.required_documents && Array.isArray(tenderData.required_documents)) {
+    // First, uncheck all documents
+    const docCheckboxes = document.querySelectorAll('input[name="required_documents[]"]');
+    docCheckboxes.forEach(checkbox => checkbox.checked = false);
+    
+    // Then check the required ones
+    tenderData.required_documents.forEach(docType => {
+      const checkbox = document.querySelector(`input[name="required_documents[]"][value="${docType}"]`);
+      if (checkbox) {
+        checkbox.checked = true;
+      }
+    });
+    
+    // Update count
+    updateDocumentCount();
+  }
+  
+  // Update form actions for edit mode
+  updateFormActionsForEdit(tenderData);
+  
+  // Calculate total budget
+  calculateTotal();
+  
+  console.log('Tender form populated successfully');
+}
+
+function setFormValue(fieldName, value) {
+  const field = document.getElementById(fieldName) || document.querySelector(`[name="${fieldName}"]`);
+  if (field && value !== null && value !== undefined) {
+    field.value = value;
+  }
+}
+
+function updateFormActionsForEdit(tenderData) {
+  const actionsContainer = document.querySelector('.form-actions');
+  if (!actionsContainer) return;
+  
+  // Add edit mode indicator
+  let editIndicator = document.querySelector('.edit-mode-indicator');
+  if (!editIndicator) {
+    editIndicator = document.createElement('div');
+    editIndicator.className = 'edit-mode-indicator';
+    editIndicator.style.cssText = `
+      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    `;
+    actionsContainer.parentElement.insertBefore(editIndicator, actionsContainer);
+  }
+  
+  editIndicator.innerHTML = `
+    <span>✏️</span>
+    <span>Editing Mode: ${tenderData.tender_number || 'Draft Tender'}</span>
+    <button type="button" onclick="cancelEdit()" style="margin-left: auto; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer;">Cancel</button>
+  `;
+}
+
+function cancelEdit() {
+  if (confirm('Are you sure you want to cancel editing? Any unsaved changes will be lost.')) {
+    // Reset form
+    const form = document.getElementById('tender-creation-form');
+    if (form) {
+      form.reset();
+      form.removeAttribute('data-edit-mode');
+      form.removeAttribute('data-tender-id');
+    }
+    
+    // Reset title
+    const sectionHeader = document.querySelector('#create-tender-section .section-header h2');
+    if (sectionHeader) {
+      sectionHeader.textContent = 'Create New Tender';
+    }
+    
+    // Remove edit indicator
+    const editIndicator = document.querySelector('.edit-mode-indicator');
+    if (editIndicator) {
+      editIndicator.remove();
+    }
+    
+    // Reset document count
+    updateDocumentCount();
+    
+    // Go back to manage tenders
+    loadSectionContent('tender-management');
+  }
+}
+
+function updateDocumentCount() {
+  const checkedBoxes = document.querySelectorAll('input[name="required_documents[]"]:checked');
+  const countElement = document.getElementById('selected-count');
+  if (countElement) {
+    countElement.textContent = checkedBoxes.length;
+  }
+  
+  const toggleButton = document.getElementById('toggle-text');
+  if (toggleButton) {
+    toggleButton.textContent = checkedBoxes.length === 6 ? 'Unselect All' : 'Select All';
+  }
+}
+
+function publishTender(tenderId) {
+  console.log('Publishing tender:', tenderId);
+  if (confirm(`Are you sure you want to publish tender ${tenderId}? This will make it visible to all vendors.`)) {
+    // AJAX call to publish tender
+    fetch('/ajax/tender/publish', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tender_id: tenderId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Tender published successfully!');
+        // Update the card status
+        updateTenderCardStatus(tenderId, 'published');
+      } else {
+        alert('Error publishing tender: ' + data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred while publishing the tender.');
+    });
+  }
+}
+
+function deleteTender(tenderId) {
+  console.log('Deleting tender:', tenderId);
+  if (confirm(`Are you sure you want to delete tender ${tenderId}? This action cannot be undone.`)) {
+    // AJAX call to delete tender
+    fetch('/ajax/tender/delete', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tender_id: tenderId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Tender deleted successfully!');
+        // Remove the card from DOM
+        removeTenderCard(tenderId);
+      } else {
+        alert('Error deleting tender: ' + data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred while deleting the tender.');
+    });
+  }
+}
+
+function viewApplications(tenderId) {
+  console.log('Viewing applications for tender:', tenderId);
+  // Implementation for viewing applications
+  alert(`Viewing applications for tender: ${tenderId}\n\nThis would show a list of all vendor applications for this tender.`);
+}
+
+function closeTender(tenderId) {
+  console.log('Closing tender:', tenderId);
+  if (confirm(`Are you sure you want to close tender ${tenderId}? No more applications will be accepted.`)) {
+    // AJAX call to close tender
+    fetch('/ajax/tender/close', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tender_id: tenderId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Tender closed successfully!');
+        // Update the card status
+        updateTenderCardStatus(tenderId, 'closed');
+      } else {
+        alert('Error closing tender: ' + data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred while closing the tender.');
+    });
+  }
+}
+
+function evaluateTender(tenderId) {
+  console.log('Evaluating tender:', tenderId);
+  // Implementation for tender evaluation
+  loadSectionContent('evaluation');
+  alert(`Evaluating tender: ${tenderId}\n\nThis would switch to the evaluation section with this tender's applications.`);
+}
+
+function loadMoreTenders() {
+  console.log('Loading more tenders...');
+  // Implementation for pagination
+  alert('Loading more tenders...\n\nThis would load additional tenders via AJAX.');
+}
+
+function updateTenderCardStatus(tenderId, newStatus) {
+  const tenderCards = document.querySelectorAll('.tender-card');
+  tenderCards.forEach(card => {
+    const numberElement = card.querySelector('.tender-number');
+    if (numberElement && numberElement.textContent === tenderId) {
+      // Update status badge
+      const statusBadge = card.querySelector('.tender-status');
+      statusBadge.className = `tender-status status-${newStatus.replace('_', '-')}`;
+      statusBadge.textContent = newStatus.replace('_', ' ').toUpperCase();
+      
+      // Update card data attribute
+      card.dataset.status = newStatus;
+      
+      // Update actions based on new status
+      updateTenderActions(card, newStatus);
+    }
+  });
+}
+
+function updateTenderActions(card, status) {
+  const actionsContainer = card.querySelector('.tender-card-actions');
+  // This would update the available actions based on the new status
+  // Implementation depends on user role and tender status
+}
+
+function removeTenderCard(tenderId) {
+  const tenderCards = document.querySelectorAll('.tender-card');
+  tenderCards.forEach(card => {
+    const numberElement = card.querySelector('.tender-number');
+    if (numberElement && numberElement.textContent === tenderId) {
+      card.remove();
+    }
+  });
+}
+
+// Document count and total calculation functions
+function toggleAllDocuments() {
+  const checkboxes = document.querySelectorAll('input[name="required_documents[]"]');
+  const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+  
+  checkboxes.forEach(checkbox => {
+    checkbox.checked = !allChecked;
+  });
+  
+  updateDocumentCount();
+}
+
+function calculateTotal() {
+  const episodesField = document.getElementById('total_episodes');
+  const budgetPerEpisodeField = document.getElementById('budget_per_episode');
+  const totalBudgetField = document.getElementById('total_budget');
+  
+  if (episodesField && budgetPerEpisodeField && totalBudgetField) {
+    const episodes = parseFloat(episodesField.value) || 0;
+    const budgetPerEpisode = parseFloat(budgetPerEpisodeField.value) || 0;
+    const total = episodes * budgetPerEpisode;
+    
+    totalBudgetField.value = total.toFixed(2);
+  }
+}
+
+// Add event listeners for document checkboxes when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+  // Add listeners for document checkboxes
+  const docCheckboxes = document.querySelectorAll('input[name="required_documents[]"]');
+  docCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', updateDocumentCount);
+  });
+  
+  // Initial count update
+  updateDocumentCount();
+});
 </script>
 
 <script>
@@ -3771,6 +5050,248 @@ function initializeCompanyForm() {
     // Initialize company form functionality
     console.log('Company form initialized');
 }
+
+// Global functions for tender saving - ensure they're available
+window.saveTenderData = function() {
+    console.log('saveTenderData called');
+    // Validate required fields before saving
+    if (!validateTenderForm()) {
+        return;
+    }
+    
+    // Show confirmation message for UKK users
+    if (confirm('Save tender data? This will save all the information you have entered. The tender will not be published and will require admin approval.')) {
+        saveTender('ukk_saved');
+    }
+};
+
+window.saveDraft = function() {
+    console.log('saveDraft called');
+    saveTender('draft');
+};
+
+window.validateTenderForm = function() {
+    const requiredFields = [
+        'tender_number',
+        'tender_title',
+        'tender_type',
+        'tender_category',
+        'episode_duration',
+        'total_episodes',
+        'budget_per_episode',
+        'submission_deadline',
+        'production_start',
+        'production_end'
+    ];
+    
+    const form = document.getElementById('tender-creation-form');
+    if (!form) {
+        console.error('Tender form not found');
+        return false;
+    }
+    
+    const missingFields = [];
+    requiredFields.forEach(fieldName => {
+        const field = form.querySelector('[name="' + fieldName + '"]');
+        if (!field || !field.value.trim()) {
+            missingFields.push(fieldName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+        }
+    });
+    
+    if (missingFields.length > 0) {
+        alert('Please fill in all required fields: ' + missingFields.join(', '));
+        return false;
+    }
+    
+    return true;
+};
+
+window.saveTender = function(status) {
+    console.log('saveTender called with status:', status);
+    
+    const form = document.getElementById('tender-creation-form');
+    if (!form) {
+        console.error('Form not found!');
+        alert('Form not found. Please refresh the page and try again.');
+        return;
+    }
+    
+    console.log('Form found:', form);
+    
+    const formData = new FormData(form);
+    formData.append('status', status);
+    
+    // Check if we're in edit mode
+    const isEditMode = form.hasAttribute('data-edit-mode');
+    const tenderId = form.getAttribute('data-tender-id');
+    
+    if (isEditMode && tenderId) {
+        formData.append('tender_id', tenderId);
+        formData.append('edit_mode', 'true');
+        console.log('Edit mode detected for tender:', tenderId);
+    }
+    
+    // Log form data for debugging
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+    
+    // Basic validation
+    const requiredFields = ['tender_number', 'tender_title', 'tender_type', 'tender_category', 
+                           'episode_duration', 'total_episodes', 'budget_per_episode', 
+                           'submission_deadline', 'production_start', 'production_end'];
+    
+    const missingFields = [];
+    requiredFields.forEach(fieldName => {
+        const field = form.querySelector('[name="' + fieldName + '"]');
+        if (!field || !field.value.trim()) {
+            missingFields.push(fieldName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+        }
+    });
+    
+    if (missingFields.length > 0 && status === 'published') {
+        alert('Please fill in all required fields: ' + missingFields.join(', '));
+        return;
+    }
+    
+    // Show loading - find the button that was actually clicked
+    let submitBtn = null;
+    let originalText = isEditMode ? 'Update Tender Data' : 'Save Tender Data';
+    
+    // Try different selectors to find the button
+    if (status === 'ukk_saved') {
+        // For UKK save, look for the specific button
+        originalText = isEditMode ? 'Update Tender Data' : 'Save Tender Data';
+        submitBtn = document.querySelector('button[onclick="saveTenderData()"]');
+    } else if (status === 'draft') {
+        // For draft save
+        originalText = isEditMode ? 'Update Draft' : 'Save as Draft';
+        submitBtn = document.querySelector('button[onclick="saveDraft()"]');
+    } else {
+        // For publish or other actions
+        originalText = isEditMode ? 'Update & Publish' : 'Publish Tender';
+        submitBtn = form.querySelector('button[type="submit"]');
+    }
+    
+    // Fallback selectors if the above don't work
+    if (!submitBtn) {
+        submitBtn = document.querySelector('button[onclick*="saveTenderData"]') || 
+                   document.querySelector('button[onclick*="saveDraft"]') ||
+                   form.querySelector('button[type="submit"]');
+    }
+    
+    console.log('Found submit button:', submitBtn);
+    
+    if (submitBtn) {
+        originalText = submitBtn.textContent || submitBtn.innerText || 'Save Tender Data';
+        submitBtn.textContent = 'Saving...';
+        submitBtn.disabled = true;
+        console.log('Button text changed to "Saving..."');
+    } else {
+        console.warn('Submit button not found - continuing without button state change');
+    }
+    
+    console.log('Sending AJAX request to /ajax/tender/save');
+    
+    // Send to server
+    fetch('/ajax/tender/save', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        console.log('Response received:', response);
+        console.log('Response status:', response.status);
+        console.log('Response status text:', response.statusText);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+        }
+        return response.text(); // Get text first to see raw response
+    })
+    .then(responseText => {
+        console.log('Raw response text:', responseText);
+        try {
+            const data = JSON.parse(responseText);
+            console.log('Parsed response data:', data);
+            
+            if (data.success) {
+                let message = '';
+                const action = isEditMode ? 'updated' : 'saved';
+                
+                switch(status) {
+                    case 'draft':
+                        message = isEditMode ? 'Draft updated successfully!' : 'Draft saved successfully!';
+                        break;
+                    case 'published':
+                        message = isEditMode ? 'Tender updated and published successfully!' : 'Tender published successfully!';
+                        break;
+                    case 'ukk_saved':
+                        message = isEditMode 
+                            ? 'Tender data updated successfully! The tender has been updated and is pending admin review for publication.'
+                            : 'Tender data saved successfully! The tender has been saved and is pending admin review for publication.';
+                        break;
+                    default:
+                        message = `Tender ${action} successfully!`;
+                }
+                alert(message);
+                
+                // Handle post-save actions
+                if (isEditMode) {
+                    // Reset form and go back to management view
+                    form.reset();
+                    form.removeAttribute('data-edit-mode');
+                    form.removeAttribute('data-tender-id');
+                    
+                    // Reset title
+                    const sectionHeader = document.querySelector('#create-tender-section .section-header h2');
+                    if (sectionHeader) {
+                        sectionHeader.textContent = 'Create New Tender';
+                    }
+                    
+                    // Remove edit indicator
+                    const editIndicator = document.querySelector('.edit-mode-indicator');
+                    if (editIndicator) {
+                        editIndicator.remove();
+                    }
+                    
+                    // Go back to tender management
+                    loadSectionContent('tender-management');
+                } else {
+                    // For new tenders, optionally reset form
+                    if (confirm('Tender saved successfully! Would you like to create another tender?')) {
+                        form.reset();
+                        if (typeof updateDocumentCount === 'function') {
+                            updateDocumentCount();
+                        }
+                    }
+                }
+                if (typeof loadDashboardStats === 'function') {
+                    loadDashboardStats();
+                }
+            } else {
+                alert('Error: ' + (data.message || 'Unknown error occurred'));
+            }
+        } catch (jsonError) {
+            console.error('JSON parsing error:', jsonError);
+            console.error('Response was not valid JSON:', responseText);
+            alert('Server returned an invalid response. Please check the server logs.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while saving the tender: ' + error.message);
+    })
+    .finally(() => {
+        console.log('Finally block - restoring button state');
+        if (submitBtn) {
+            console.log('Restoring button text to:', originalText);
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        } else {
+            console.log('No button to restore');
+        }
+    });
+};
 </script>
 
 <div class="tender-dashboard-container">
@@ -3801,25 +5322,31 @@ function initializeCompanyForm() {
           <span>Dashboard</span>
         </a>
       </li>
-      
-      {% if is_admin %}
+      {% if is_admin or is_ukk %}
         <li class="nav-item">
           <a href="#create-tender" class="nav-link" data-section="create-tender">
             <span class="nav-icon">➕</span>
-            <span>Create Tender</span>
+            <span>Create Tender
+            </span>
           </a>
         </li>
+      {% endif %}
+      
+      {% if is_admin or is_jpsd or is_panel or is_ukk %}
         <li class="nav-item">
           <a href="#tender-management" class="nav-link" data-section="tender-management">
             <span class="nav-icon">📋</span>
             <span>Manage Tenders</span>
           </a>
         </li>
+      {% endif %}
+      
+      {% if is_admin %}
         <li class="nav-item">
-          <a href="#vendor-management" class="nav-link" data-section="vendor-management">
-            <span class="nav-icon">👥</span>
-            <span>Vendor Management</span>
-          </a>
+            <a href="/admin/people" class="nav-link" target="_blank">
+              <span class="nav-icon">👥</span>
+              <span>Vendor Management</span>
+            </a>
         </li>
       {% endif %}
       
@@ -3834,6 +5361,12 @@ function initializeCompanyForm() {
           <a href="#available-tenders" class="nav-link" data-section="available-tenders">
             <span class="nav-icon">🔍</span>
             <span>Available Tenders</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#tender-application" class="nav-link" data-section="tender-application">
+            <span class="nav-icon">📤</span>
+            <span>Submit Application</span>
           </a>
         </li>
       {% endif %}
@@ -3916,8 +5449,8 @@ function initializeCompanyForm() {
       </div>
     </div>
 
-    <!-- Create Tender Section (Admin only) -->
-    {% if is_admin %}
+    <!-- Create Tender Section (Admin and UKK users) -->
+    {% if is_admin or is_ukk %}
     <div class="content-section" id="create-tender-section">
       <div class="section-header">
         <h2>Create New Tender</h2>
@@ -4040,24 +5573,172 @@ function initializeCompanyForm() {
               </div>
 
               <div class="form-section">
-                <h3>Requirements</h3>
+                <h3>Required Documents for Vendors</h3>
+                <p class="section-description">Select which documents vendors must submit with their tender proposals. Vendors will be required to upload the selected documents.</p>
                 
-                <div class="form-group">
-                  <label for="technical_requirements">Technical Requirements</label>
-                  <textarea id="technical_requirements" name="technical_requirements" rows="4" 
-                            placeholder="Specify technical requirements..." class="form-control"></textarea>
+                <div class="document-selection-grid">
+                  <div class="document-checkbox-item">
+                    <label class="checkbox-label">
+                      <input type="checkbox" name="required_documents[]" value="company_registration" 
+                             id="req_company_registration" class="document-checkbox" checked>
+                      <span class="checkbox-custom"></span>
+                      <div class="document-info">
+                        <span class="document-title">Company Registration Certificate</span>
+                        <span class="document-description">Official company registration documents</span>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div class="document-checkbox-item">
+                    <label class="checkbox-label">
+                      <input type="checkbox" name="required_documents[]" value="tax_clearance" 
+                             id="req_tax_clearance" class="document-checkbox" checked>
+                      <span class="checkbox-custom"></span>
+                      <div class="document-info">
+                        <span class="document-title">Tax Clearance Certificate</span>
+                        <span class="document-description">Valid tax clearance from relevant authorities</span>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div class="document-checkbox-item">
+                    <label class="checkbox-label">
+                      <input type="checkbox" name="required_documents[]" value="financial_statements" 
+                             id="req_financial_statements" class="document-checkbox" checked>
+                      <span class="checkbox-custom"></span>
+                      <div class="document-info">
+                        <span class="document-title">Financial Statements (Last 3 years)</span>
+                        <span class="document-description">Audited financial statements for the past 3 years</span>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div class="document-checkbox-item">
+                    <label class="checkbox-label">
+                      <input type="checkbox" name="required_documents[]" value="portfolio_samples" 
+                             id="req_portfolio_samples" class="document-checkbox" checked>
+                      <span class="checkbox-custom"></span>
+                      <div class="document-info">
+                        <span class="document-title">Portfolio/Previous Work Samples</span>
+                        <span class="document-description">Examples of previous work and project portfolio</span>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div class="document-checkbox-item">
+                    <label class="checkbox-label">
+                      <input type="checkbox" name="required_documents[]" value="project_proposal" 
+                             id="req_project_proposal" class="document-checkbox" checked>
+                      <span class="checkbox-custom"></span>
+                      <div class="document-info">
+                        <span class="document-title">Project Proposal</span>
+                        <span class="document-description">Detailed project proposal and methodology</span>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div class="document-checkbox-item">
+                    <label class="checkbox-label">
+                      <input type="checkbox" name="required_documents[]" value="budget_breakdown" 
+                             id="req_budget_breakdown" class="document-checkbox" checked>
+                      <span class="checkbox-custom"></span>
+                      <div class="document-info">
+                        <span class="document-title">Budget Breakdown</span>
+                        <span class="document-description">Detailed budget breakdown and cost analysis</span>
+                      </div>
+                    </label>
+                  </div>
                 </div>
+
+                <div class="selection-summary">
+                  <div class="summary-info">
+                    <span class="summary-icon">📋</span>
+                    <span class="summary-text">
+                      <span id="selected-count">6</span> documents will be required from vendors
+                    </span>
+                  </div>
+                  <button type="button" class="btn-link" onclick="toggleAllDocuments()">
+                    <span id="toggle-text">Unselect All</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>Optional Documents Upload</h3>
+                <p class="section-description">Upload any additional documents that may be helpful for vendors (tender specifications, drawings, reference materials, etc.). These documents will be available for vendors to download when applying.</p>
                 
-                <div class="form-group">
-                  <label for="content_requirements">Content Requirements</label>
-                  <textarea id="content_requirements" name="content_requirements" rows="4" 
-                            placeholder="Specify content requirements..." class="form-control"></textarea>
+                <div class="optional-documents-container">
+                  <div class="upload-zone" id="optional-upload-zone">
+                    <div class="upload-zone-content">
+                      <span class="upload-icon">📁</span>
+                      <h4>Drag & Drop Files Here</h4>
+                      <p>or <button type="button" class="btn-link" onclick="document.getElementById('optional-files').click()">browse files</button></p>
+                      <small>Supports: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG (Max: 25MB per file)</small>
+                    </div>
+                    <input type="file" id="optional-files" multiple 
+                           accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" 
+                           class="optional-file-input" style="display: none;">
+                  </div>
+
+                  <div class="optional-files-list" id="optional-files-list" style="display: none;">
+                    <h4>📎 Uploaded Optional Documents</h4>
+                    <div class="optional-files-grid" id="optional-files-grid">
+                      <!-- Files will be added here dynamically -->
+                    </div>
+                  </div>
+
+                  <div class="optional-upload-actions">
+                    <button type="button" class="btn btn-outline" onclick="clearOptionalFiles()">
+                      <span>🗑️</span> Clear All
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="document.getElementById('optional-files').click()">
+                      <span>➕</span> Add More Files
+                    </button>
+                  </div>
+
+                  <div class="optional-upload-summary">
+                    <div class="optional-summary-item">
+                      <span class="optional-summary-label">Optional Documents:</span>
+                      <span class="optional-summary-count" id="optional-count">0 files</span>
+                    </div>
+                    <div class="optional-summary-item">
+                      <span class="optional-summary-label">Total Size:</span>
+                      <span class="optional-summary-size" id="optional-size">0 MB</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
-                <button type="submit" class="btn btn-primary">Publish Tender</button>
+                {% if is_ukk %}
+                  <!-- UKK users can only save as draft -->
+                  <button type="button" class="btn btn-primary" onclick="saveTenderData()">
+                    <span class="btn-icon">💾</span>
+                    Save Tender Data
+                  </button>
+                  <button type="button" class="btn btn-secondary disabled" disabled title="UKK users cannot publish tenders directly">
+                    <span class="btn-icon">🚫</span>
+                    Publish Tender (Not Allowed)
+                  </button>
+                  <div class="permission-notice">
+                    <span class="notice-icon">ℹ️</span>
+                    <span class="notice-text">As a UKK user, you can only save tender data. Publishing requires Panel approval.</span>
+                  </div>
+                {% elseif is_admin %}
+                  <!-- Admin users can both save and publish -->
+                  <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                    <span class="btn-icon">📄</span>
+                    Save as Draft
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    <span class="btn-icon">🚀</span>
+                    Publish Tender
+                  </button>
+                {% else %}
+                  <!-- Other users (fallback) -->
+                  <button type="button" class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
+                  <button type="submit" class="btn btn-primary">Publish Tender</button>
+                {% endif %}
               </div>
             </div>
 
@@ -4201,6 +5882,55 @@ function initializeCompanyForm() {
           background: white;
           border-top: 1px solid #e8f4f8;
           margin-top: 2rem;
+          flex-wrap: wrap;
+        }
+
+        .btn-icon {
+          margin-right: 0.5rem;
+          font-size: 0.9rem;
+        }
+
+        .btn.disabled {
+          background: #bdc3c7 !important;
+          color: #7f8c8d !important;
+          border-color: #bdc3c7 !important;
+          cursor: not-allowed !important;
+          opacity: 0.6;
+          pointer-events: none;
+        }
+
+        .btn.disabled:hover {
+          background: #bdc3c7 !important;
+          color: #7f8c8d !important;
+          transform: none !important;
+          box-shadow: none !important;
+        }
+
+        .permission-notice {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 1rem 1.25rem;
+          background: linear-gradient(135deg, #fff3cd 0%, #fef7e0 100%);
+          border: 1px solid #ffeaa7;
+          border-radius: 8px;
+          color: #856404;
+          font-size: 0.9rem;
+          margin-top: 0.75rem;
+          width: 100%;
+          flex-basis: 100%;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .notice-icon {
+          font-size: 1.2rem;
+          flex-shrink: 0;
+          color: #f39c12;
+        }
+
+        .notice-text {
+          font-weight: 500;
+          line-height: 1.4;
         }
 
         .btn {
@@ -4321,6 +6051,512 @@ function initializeCompanyForm() {
           }
         }
 
+        /* Document Selection Styles (for UKK users to select required documents) */
+        .document-selection-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          gap: 1rem;
+          margin-top: 1rem;
+        }
+
+        .document-checkbox-item {
+          background: white;
+          border: 2px solid #e1e8ed;
+          border-radius: 8px;
+          padding: 1rem;
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+
+        .document-checkbox-item:hover {
+          border-color: #3498db;
+          box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
+        }
+
+        .document-checkbox-item:has(.document-checkbox:checked) {
+          border-color: #27ae60;
+          background: #f8fffe;
+          box-shadow: 0 2px 8px rgba(39, 174, 96, 0.1);
+        }
+
+        .checkbox-label {
+          display: flex;
+          align-items: flex-start;
+          gap: 1rem;
+          cursor: pointer;
+          margin: 0;
+          font-weight: normal;
+        }
+
+        .document-checkbox {
+          position: absolute;
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+
+        .checkbox-custom {
+          width: 20px;
+          height: 20px;
+          border: 2px solid #bdc3c7;
+          border-radius: 4px;
+          background: white;
+          position: relative;
+          flex-shrink: 0;
+          margin-top: 2px;
+          transition: all 0.3s ease;
+        }
+
+        .document-checkbox:checked + .checkbox-custom {
+          background: #27ae60;
+          border-color: #27ae60;
+        }
+
+        .document-checkbox:checked + .checkbox-custom::after {
+          content: '✓';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+          font-size: 12px;
+          font-weight: bold;
+        }
+
+        .document-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+          flex: 1;
+        }
+
+        .document-title {
+          font-weight: 600;
+          color: #2c3e50;
+          font-size: 0.95rem;
+        }
+
+        .document-description {
+          font-size: 0.8rem;
+          color: #7f8c8d;
+          line-height: 1.3;
+        }
+
+        .selection-summary {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 1.5rem;
+          padding: 1rem;
+          background: #f8f9fa;
+          border-radius: 6px;
+          border-left: 4px solid #3498db;
+        }
+
+        .summary-info {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .summary-icon {
+          font-size: 1.2rem;
+        }
+
+        .summary-text {
+          font-weight: 600;
+          color: #2c3e50;
+          font-size: 0.9rem;
+        }
+
+        #selected-count {
+          color: #3498db;
+          font-weight: 700;
+        }
+
+        .btn-link {
+          background: none;
+          border: none;
+          color: #3498db;
+          font-weight: 600;
+          font-size: 0.85rem;
+          cursor: pointer;
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          transition: all 0.3s ease;
+        }
+
+        .btn-link:hover {
+          background: #3498db;
+          color: white;
+        }
+
+        .section-description {
+          color: #7f8c8d;
+          font-size: 0.9rem;
+          margin-bottom: 1rem;
+          font-style: italic;
+        }
+
+        /* Optional Documents Upload Styles */
+        .optional-documents-container {
+          background: #f8f9fa;
+          border-radius: 12px;
+          padding: 1.5rem;
+          border: 2px dashed #dee2e6;
+          transition: all 0.3s ease;
+        }
+
+        .upload-zone {
+          background: white;
+          border: 2px dashed #bdc3c7;
+          border-radius: 10px;
+          padding: 2rem;
+          text-align: center;
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+
+        .upload-zone:hover {
+          border-color: #3498db;
+          background: #ebf3fd;
+        }
+
+        .upload-zone.dragover {
+          border-color: #27ae60;
+          background: #eafaf1;
+          transform: scale(1.02);
+        }
+
+        .upload-zone-content {
+          pointer-events: none;
+        }
+
+        .upload-icon {
+          font-size: 3rem;
+          display: block;
+          margin-bottom: 1rem;
+        }
+
+        .upload-zone h4 {
+          color: #2c3e50;
+          margin-bottom: 0.5rem;
+          font-size: 1.2rem;
+        }
+
+        .upload-zone p {
+          color: #7f8c8d;
+          margin-bottom: 0.5rem;
+        }
+
+        .upload-zone small {
+          color: #95a5a6;
+          font-size: 0.8rem;
+        }
+
+        .optional-files-list {
+          margin-top: 1.5rem;
+          padding: 1rem;
+          background: white;
+          border-radius: 8px;
+          border: 1px solid #e1e8ed;
+        }
+
+        .optional-files-list h4 {
+          color: #2c3e50;
+          margin-bottom: 1rem;
+          font-size: 1.1rem;
+        }
+
+        .optional-files-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 1rem;
+        }
+
+        .optional-file-item {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.75rem;
+          background: #f8f9fa;
+          border-radius: 6px;
+          border: 1px solid #e9ecef;
+          transition: all 0.3s ease;
+        }
+
+        .optional-file-item:hover {
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          transform: translateY(-1px);
+        }
+
+        .file-type-icon {
+          font-size: 1.5rem;
+          flex-shrink: 0;
+        }
+
+        .file-info {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .file-name {
+          font-weight: 600;
+          color: #2c3e50;
+          font-size: 0.85rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .file-size {
+          color: #7f8c8d;
+          font-size: 0.75rem;
+        }
+
+        .file-remove {
+          background: none;
+          border: none;
+          color: #e74c3c;
+          cursor: pointer;
+          font-size: 1.2rem;
+          padding: 0.25rem;
+          border-radius: 4px;
+          transition: all 0.3s ease;
+          flex-shrink: 0;
+        }
+
+        .file-remove:hover {
+          background: #e74c3c;
+          color: white;
+        }
+
+        .optional-upload-actions {
+          display: flex;
+          gap: 1rem;
+          margin-top: 1rem;
+          justify-content: center;
+        }
+
+        .btn-outline {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.75rem 1.5rem;
+          border: 2px solid #3498db;
+          background: transparent;
+          color: #3498db;
+          border-radius: 6px;
+          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+
+        .btn-outline:hover {
+          background: #3498db;
+          color: white;
+          transform: translateY(-1px);
+        }
+
+        .optional-upload-summary {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 1.5rem;
+          padding: 1rem;
+          background: white;
+          border-radius: 8px;
+          border-left: 4px solid #f39c12;
+        }
+
+        .optional-summary-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .optional-summary-label {
+          font-weight: 600;
+          color: #2c3e50;
+          font-size: 0.9rem;
+        }
+
+        .optional-summary-count, .optional-summary-size {
+          font-weight: 700;
+          color: #f39c12;
+          font-size: 0.9rem;
+        }
+
+        /* Vendor Application Styles */
+        .vendor-application-form {
+          max-width: 100%;
+          margin: 0;
+        }
+
+        .application-form-container {
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+        }
+
+        .section-subtitle {
+          color: #7f8c8d;
+          font-size: 1rem;
+          margin-top: 0.5rem;
+          font-weight: normal;
+        }
+
+        .tender-requirements {
+          margin-top: 1rem;
+          padding: 1rem;
+          background: #f8f9fa;
+          border-radius: 8px;
+          border-left: 4px solid #3498db;
+        }
+
+        .requirements-info h4 {
+          color: #2c3e50;
+          margin-bottom: 0.5rem;
+        }
+
+        .vendor-document-upload-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          gap: 1.5rem;
+          margin-top: 1rem;
+        }
+
+        .vendor-document-item {
+          background: #fafbfc;
+          border: 2px solid #e1e8ed;
+          border-radius: 10px;
+          padding: 1.25rem;
+          transition: all 0.3s ease;
+        }
+
+        .vendor-document-item:hover {
+          border-color: #3498db;
+          box-shadow: 0 4px 15px rgba(52, 152, 219, 0.1);
+          transform: translateY(-2px);
+        }
+
+        .vendor-document-item label {
+          display: block;
+          font-weight: 600;
+          color: #2c3e50;
+          margin-bottom: 0.75rem;
+          font-size: 0.95rem;
+        }
+
+        .vendor-file-upload-wrapper {
+          position: relative;
+          cursor: pointer;
+        }
+
+        .vendor-file-input {
+          position: absolute;
+          opacity: 0;
+          width: 100%;
+          height: 100%;
+          cursor: pointer;
+        }
+
+        .vendor-file-upload-display {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 1rem;
+          border: 2px dashed #bdc3c7;
+          border-radius: 8px;
+          background: white;
+          transition: all 0.3s ease;
+          min-height: 60px;
+        }
+
+        .vendor-file-upload-display:hover {
+          border-color: #3498db;
+          background: #ebf3fd;
+        }
+
+        .vendor-file-upload-display.has-file {
+          border-color: #27ae60;
+          background: #eafaf1;
+          border-style: solid;
+        }
+
+        .vendor-file-upload-display.has-error {
+          border-color: #e74c3c;
+          background: #fdf2f2;
+        }
+
+        .vendor-file-icon {
+          font-size: 1.5rem;
+          flex-shrink: 0;
+        }
+
+        .vendor-file-text {
+          flex: 1;
+          font-size: 0.9rem;
+          color: #555;
+          font-weight: 500;
+        }
+
+        .vendor-file-status {
+          font-size: 0.8rem;
+          font-weight: 600;
+        }
+
+        .vendor-file-status.success {
+          color: #27ae60;
+        }
+
+        .vendor-file-status.error {
+          color: #e74c3c;
+        }
+
+        .vendor-upload-summary {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 2rem;
+          padding: 1.25rem;
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          border-radius: 10px;
+          border-left: 5px solid #3498db;
+        }
+
+        .vendor-summary-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .vendor-summary-label {
+          font-weight: 600;
+          color: #2c3e50;
+          font-size: 0.95rem;
+        }
+
+        .vendor-summary-count, .vendor-summary-size {
+          font-weight: 700;
+          color: #3498db;
+          font-size: 1rem;
+        }
+
+        .requirement-tag {
+          display: inline-block;
+          padding: 0.25rem 0.75rem;
+          margin: 0.25rem;
+          background: #e3f2fd;
+          color: #1976d2;
+          border-radius: 20px;
+          font-size: 0.85rem;
+          font-weight: 500;
+          border: 1px solid #bbdefb;
+        }
+
         @media (max-width: 768px) {
           .form-actions {
             flex-direction: column;
@@ -4329,20 +6565,619 @@ function initializeCompanyForm() {
           .btn {
             width: 100%;
           }
+
+          .document-selection-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .selection-summary {
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-start;
+          }
+
+          .vendor-document-upload-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .vendor-upload-summary {
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: flex-start;
+          }
+        }
+
+        /* Tender Management Styles */
+        .tender-management-container {
+          background: white;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .management-filters {
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          padding: 1.5rem;
+          border-bottom: 1px solid #dee2e6;
+        }
+
+        .filter-row {
+          display: flex;
+          gap: 1.5rem;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+
+        .search-group {
+          display: flex;
+          gap: 0.5rem;
+          flex: 1;
+          min-width: 250px;
+        }
+
+        .search-group .form-control {
+          flex: 1;
+        }
+
+        .btn-search {
+          padding: 0.75rem 1rem;
+          background: #3498db;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 1rem;
+        }
+
+        .btn-search:hover {
+          background: #2980b9;
+          transform: translateY(-1px);
+        }
+
+        .filter-group {
+          display: flex;
+          gap: 1rem;
+        }
+
+        .filter-group .form-control {
+          min-width: 150px;
+        }
+
+        .tenders-list-container {
+          padding: 1.5rem;
+        }
+
+        .tenders-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+          gap: 1.5rem;
+          margin-bottom: 2rem;
+        }
+
+        .tender-card {
+          background: white;
+          border: 2px solid #e1e8ed;
+          border-radius: 12px;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tender-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          border-color: #3498db;
+        }
+
+        .tender-card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem 1.25rem;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+        }
+
+        .tender-number {
+          font-weight: 700;
+          font-size: 1.1rem;
+        }
+
+        .tender-status {
+          padding: 0.4rem 0.8rem;
+          border-radius: 20px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .status-draft {
+          background: #f39c12;
+          color: white;
+        }
+
+        .status-ukk-saved {
+          background: #9b59b6;
+          color: white;
+        }
+
+        .status-pending-approval {
+          background: #e67e22;
+          color: white;
+        }
+
+        .status-published {
+          background: #27ae60;
+          color: white;
+        }
+
+        .status-closed {
+          background: #95a5a6;
+          color: white;
+        }
+
+        .tender-card-body {
+          padding: 1.25rem;
+        }
+
+        .tender-title {
+          color: #2c3e50;
+          margin-bottom: 0.75rem;
+          font-size: 1.2rem;
+          font-weight: 600;
+        }
+
+        .tender-description {
+          color: #7f8c8d;
+          margin-bottom: 1rem;
+          font-size: 0.9rem;
+          line-height: 1.4;
+        }
+
+        .tender-meta {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.5rem;
+        }
+
+        .meta-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.4rem 0;
+          border-bottom: 1px solid #f8f9fa;
+        }
+
+        .meta-label {
+          font-weight: 600;
+          color: #34495e;
+          font-size: 0.85rem;
+        }
+
+        .meta-value {
+          color: #2c3e50;
+          font-weight: 500;
+          font-size: 0.85rem;
+        }
+
+        .tender-card-actions {
+          padding: 1rem 1.25rem;
+          background: #f8f9fa;
+          border-top: 1px solid #e9ecef;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          align-items: center;
+        }
+
+        .btn-action {
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 6px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+        }
+
+        .btn-view {
+          background: #3498db;
+          color: white;
+        }
+
+        .btn-view:hover {
+          background: #2980b9;
+        }
+
+        .btn-edit {
+          background: #f39c12;
+          color: white;
+        }
+
+        .btn-edit:hover {
+          background: #e67e22;
+        }
+
+        .btn-publish {
+          background: #27ae60;
+          color: white;
+        }
+
+        .btn-publish:hover {
+          background: #219a52;
+        }
+
+        .btn-delete {
+          background: #e74c3c;
+          color: white;
+        }
+
+        .btn-delete:hover {
+          background: #c0392b;
+        }
+
+        .btn-applications {
+          background: #9b59b6;
+          color: white;
+        }
+
+        .btn-applications:hover {
+          background: #8e44ad;
+        }
+
+        .btn-close {
+          background: #95a5a6;
+          color: white;
+        }
+
+        .btn-close:hover {
+          background: #7f8c8d;
+        }
+
+        .btn-evaluate {
+          background: #16a085;
+          color: white;
+        }
+
+        .btn-evaluate:hover {
+          background: #138d75;
+        }
+
+        .action-note {
+          font-size: 0.8rem;
+          color: #7f8c8d;
+          font-style: italic;
+          padding: 0.5rem;
+        }
+
+        .load-more-container {
+          text-align: center;
+          margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+          .filter-row {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .search-group {
+            min-width: auto;
+          }
+
+          .filter-group {
+            flex-direction: column;
+          }
+
+          .tenders-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .tender-meta {
+            grid-template-columns: 1fr;
+          }
+
+          .tender-card-actions {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .btn-action {
+            justify-content: center;
+          }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.7);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 10000;
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .modal-container {
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+          max-width: 900px;
+          width: 90%;
+          max-height: 90vh;
+          overflow: hidden;
+          transform: scale(0.8);
+          transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-container {
+          transform: scale(1);
+        }
+
+        .modal-small {
+          max-width: 500px;
+        }
+
+        .modal-header {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 1.5rem 2rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .modal-header h3 {
+          margin: 0;
+          font-size: 1.3rem;
+          font-weight: 600;
+        }
+
+        .modal-close {
+          background: none;
+          border: none;
+          color: white;
+          font-size: 2rem;
+          font-weight: bold;
+          cursor: pointer;
+          padding: 0;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+          background: rgba(255, 255, 255, 0.2);
+          transform: rotate(90deg);
+        }
+
+        .modal-body {
+          padding: 2rem;
+          max-height: 60vh;
+          overflow-y: auto;
+        }
+
+        .modal-footer {
+          background: #f8f9fa;
+          padding: 1.5rem 2rem;
+          border-top: 1px solid #dee2e6;
+          display: flex;
+          justify-content: flex-end;
+          gap: 1rem;
+        }
+
+        /* Tender Details Styles */
+        .tender-details-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+        }
+
+        .detail-section {
+          background: #f8f9fa;
+          padding: 1.5rem;
+          border-radius: 8px;
+          border-left: 4px solid #3498db;
+        }
+
+        .detail-section h4 {
+          color: #2c3e50;
+          margin-bottom: 1rem;
+          font-size: 1.1rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .detail-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.75rem 0;
+          border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-row:last-child {
+          border-bottom: none;
+        }
+
+        .detail-label {
+          font-weight: 600;
+          color: #34495e;
+          font-size: 0.9rem;
+        }
+
+        .detail-value {
+          color: #2c3e50;
+          font-weight: 500;
+          font-size: 0.9rem;
+          text-align: right;
+        }
+
+        .detail-status {
+          padding: 0.3rem 0.8rem;
+          border-radius: 15px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+
+        .status-badge-draft {
+          background: #f39c12;
+          color: white;
+        }
+
+        .status-badge-ukk-saved {
+          background: #9b59b6;
+          color: white;
+        }
+
+        .status-badge-published {
+          background: #27ae60;
+          color: white;
+        }
+
+        .status-badge-closed {
+          background: #95a5a6;
+          color: white;
+        }
+
+        .required-documents-list {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 0.5rem;
+          margin-top: 1rem;
+        }
+
+        .required-doc-item {
+          background: white;
+          padding: 0.75rem;
+          border-radius: 6px;
+          border: 1px solid #e9ecef;
+          font-size: 0.85rem;
+          color: #2c3e50;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .doc-icon {
+          color: #3498db;
+          font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+          .modal-container {
+            width: 95%;
+            margin: 1rem;
+          }
+
+          .tender-details-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+          }
+
+          .detail-value {
+            text-align: left;
+          }
+
+          .required-documents-list {
+            grid-template-columns: 1fr;
+          }
         }
         </style>
       </div>
     </div>
     {% endif %}
 
-    <!-- Tender Management Section (Admin only) -->
-    {% if is_admin %}
+    <!-- Tender Management Section (Admin, JPSD, Panel, and UKK users) -->
+    {% if is_admin or is_jpsd or is_panel or is_ukk %}
     <div class="content-section" id="tender-management-section">
-      <div class="section-header">
-        <h2>Manage Tenders</h2>
-      </div>
       <div id="tender-management-content">
-        
+        <div class="tender-management-container">
+          <!-- Filters and Search -->
+          <div class="management-filters">
+            <div class="filter-row">
+              <div class="search-group">
+                <input type="text" id="tender-search-manage" placeholder="Search tenders..." class="form-control">
+                <button type="button" class="btn-search" onclick="searchTendersManagement()">🔍</button>
+              </div>
+              
+              <div class="filter-group">
+                <select id="status-filter" class="form-control" onchange="filterTendersManagement()">
+                  <option value="">All Statuses</option>
+                  {% if is_admin %}
+                    <option value="draft">Draft</option>
+                    <option value="ukk_saved">UKK Saved</option>
+                    <option value="pending_approval">Pending Approval</option>
+                    <option value="published">Published</option>
+                    <option value="closed">Closed</option>
+                  {% elseif is_ukk %}
+                    <option value="draft">My Drafts</option>
+                    <option value="ukk_saved">My Saved</option>
+                    <option value="pending_approval">Pending Approval</option>
+                  {% else %}
+                    <option value="published">Published</option>
+                    <option value="closed">Closed</option>
+                  {% endif %}
+                </select>
+                
+                <select id="category-filter-manage" class="form-control" onchange="filterTendersManagement()">
+                  <option value="">All Categories</option>
+                  <option value="drama">Drama Series</option>
+                  <option value="documentary">Documentary</option>
+                  <option value="variety">Variety Show</option>
+                  <option value="news">News Program</option>
+                  <option value="educational">Educational Content</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tender List -->
+          <div class="tenders-list-container">
+            <div class="tenders-grid" id="tenders-management-grid">
+              <!-- Tender cards will be populated via AJAX from database -->
+              <div class="loading-message" style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                <p>Loading tenders from database...</p>
+              </div>
+            </div>
+
+            <!-- Load More Button -->
+            <div class="load-more-container" style="text-align: center; margin-top: 2rem;">
+              <button class="btn btn-outline" onclick="loadMoreTenders()">
+                Load More Tenders
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     {% endif %}
@@ -4359,6 +7194,183 @@ function initializeCompanyForm() {
     </div>
     {% endif %}
 
+    <!-- Tender Application Section (Vendor only) -->
+    {% if is_vendor %}
+    <div class="content-section" id="tender-application-section">
+      <div class="section-header">
+        <h2>Submit Tender Application</h2>
+        <p class="section-subtitle">Upload required documents for your tender application</p>
+      </div>
+      <div id="tender-application-content">
+        
+        <div class="application-form-container">
+          <form id="vendor-application-form" class="vendor-application-form">
+            
+            <!-- Tender Selection -->
+            <div class="form-section">
+              <h3>Select Tender</h3>
+              <div class="form-group">
+                <label for="selected_tender">Available Tenders *</label>
+                <select id="selected_tender" name="selected_tender" required class="form-control">
+                  <option value="">Choose a tender to apply for...</option>
+                  <!-- Options will be populated from database via AJAX -->
+                </select>
+              </div>
+              
+              <div class="tender-requirements" id="tender-requirements" style="display: none;">
+                <div class="requirements-info">
+                  <h4>📋 Required Documents for This Tender</h4>
+                  <div id="required-documents-list">
+                    <!-- Will be populated based on tender selection -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Company Information -->
+            <div class="form-section">
+              <h3>Company Information</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="company_name">Company Name *</label>
+                  <input type="text" id="company_name" name="company_name" required 
+                         placeholder="Enter your company name" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="company_reg_no">Registration Number *</label>
+                  <input type="text" id="company_reg_no" name="company_reg_no" required 
+                         placeholder="e.g., 123456789" class="form-control">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="contact_person">Contact Person *</label>
+                  <input type="text" id="contact_person" name="contact_person" required 
+                         placeholder="Contact person name" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="contact_email">Contact Email *</label>
+                  <input type="email" id="contact_email" name="contact_email" required 
+                         placeholder="contact@company.com" class="form-control">
+                </div>
+              </div>
+            </div>
+
+            <!-- Document Upload Section -->
+            <div class="form-section">
+              <h3>Required Documents Upload</h3>
+              <p class="section-description">Upload all required documents. Maximum file size: 10MB per document. Accepted format: PDF only.</p>
+              
+              <div class="vendor-document-upload-grid">
+                <div class="vendor-document-item" data-doc-type="company_registration">
+                  <label>Company Registration Certificate *</label>
+                  <div class="vendor-file-upload-wrapper">
+                    <input type="file" name="vendor_company_registration" accept=".pdf" required class="vendor-file-input">
+                    <div class="vendor-file-upload-display">
+                      <span class="vendor-file-icon">📄</span>
+                      <span class="vendor-file-text">Choose PDF file...</span>
+                      <span class="vendor-file-status"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="vendor-document-item" data-doc-type="tax_clearance">
+                  <label>Tax Clearance Certificate *</label>
+                  <div class="vendor-file-upload-wrapper">
+                    <input type="file" name="vendor_tax_clearance" accept=".pdf" required class="vendor-file-input">
+                    <div class="vendor-file-upload-display">
+                      <span class="vendor-file-icon">📄</span>
+                      <span class="vendor-file-text">Choose PDF file...</span>
+                      <span class="vendor-file-status"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="vendor-document-item" data-doc-type="financial_statements">
+                  <label>Financial Statements (Last 3 years) *</label>
+                  <div class="vendor-file-upload-wrapper">
+                    <input type="file" name="vendor_financial_statements" accept=".pdf" required class="vendor-file-input">
+                    <div class="vendor-file-upload-display">
+                      <span class="vendor-file-icon">📄</span>
+                      <span class="vendor-file-text">Choose PDF file...</span>
+                      <span class="vendor-file-status"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="vendor-document-item" data-doc-type="portfolio_samples">
+                  <label>Portfolio/Previous Work Samples *</label>
+                  <div class="vendor-file-upload-wrapper">
+                    <input type="file" name="vendor_portfolio_samples" accept=".pdf" required class="vendor-file-input">
+                    <div class="vendor-file-upload-display">
+                      <span class="vendor-file-icon">📄</span>
+                      <span class="vendor-file-text">Choose PDF file...</span>
+                      <span class="vendor-file-status"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="vendor-document-item" data-doc-type="project_proposal">
+                  <label>Project Proposal *</label>
+                  <div class="vendor-file-upload-wrapper">
+                    <input type="file" name="vendor_project_proposal" accept=".pdf" required class="vendor-file-input">
+                    <div class="vendor-file-upload-display">
+                      <span class="vendor-file-icon">📄</span>
+                      <span class="vendor-file-text">Choose PDF file...</span>
+                      <span class="vendor-file-status"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="vendor-document-item" data-doc-type="budget_breakdown">
+                  <label>Budget Breakdown *</label>
+                  <div class="vendor-file-upload-wrapper">
+                    <input type="file" name="vendor_budget_breakdown" accept=".pdf" required class="vendor-file-input">
+                    <div class="vendor-file-upload-display">
+                      <span class="vendor-file-icon">📄</span>
+                      <span class="vendor-file-text">Choose PDF file...</span>
+                      <span class="vendor-file-status"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Upload Summary -->
+              <div class="vendor-upload-summary">
+                <div class="vendor-summary-item">
+                  <span class="vendor-summary-label">Documents Uploaded:</span>
+                  <span class="vendor-summary-count" id="vendor-upload-count">0/6</span>
+                </div>
+                <div class="vendor-summary-item">
+                  <span class="vendor-summary-label">Total Size:</span>
+                  <span class="vendor-summary-size" id="vendor-upload-size">0 MB</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="form-section">
+              <h3>Additional Information</h3>
+              <div class="form-group">
+                <label for="additional_notes">Additional Notes (Optional)</label>
+                <textarea id="additional_notes" name="additional_notes" rows="4" 
+                          placeholder="Any additional information you'd like to provide..." class="form-control"></textarea>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="saveDraftApplication()">Save as Draft</button>
+              <button type="submit" class="btn btn-primary">Submit Application</button>
+            </div>
+          </form>
+        </div>
+        
+      </div>
+    </div>
+    {% endif %}
+
     <!-- Additional sections for other features -->
     <div class="content-section" id="notifications-section">
       <div class="section-header">
@@ -4369,143 +7381,38 @@ function initializeCompanyForm() {
       </div>
     </div>
   </main>
+
+  <!-- Tender Details Modal -->
+  <div class="modal-overlay" id="tender-details-modal" style="display: none;">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>Tender Details</h3>
+        <button class="modal-close" onclick="closeTenderModal()">×</button>
+      </div>
+      <div class="modal-body" id="tender-details-content">
+        <!-- Content will be loaded dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeTenderModal()">Close</button>
+        <button class="btn btn-primary" id="edit-from-modal" onclick="editFromModal()" style="display: none;">Edit Tender</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal-overlay" id="confirmation-modal" style="display: none;">
+    <div class="modal-container modal-small">
+      <div class="modal-header">
+        <h3 id="confirmation-title">Confirm Action</h3>
+        <button class="modal-close" onclick="closeConfirmationModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmation-message">Are you sure you want to perform this action?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeConfirmationModal()">Cancel</button>
+        <button class="btn btn-primary" id="confirmation-action">Confirm</button>
+      </div>
+    </div>
+  </div>
 </div>
-
-<script>
-function saveTender(status) {
-    console.log('saveTender called with status:', status);
-    const form = document.getElementById('tender-creation-form');
-    if (!form) {
-        console.error('Form not found!');
-        return;
-    }
-    
-    const formData = new FormData(form);
-    formData.append('status', status);
-    
-    // Debug: Log original form data
-    console.log('Original form data:');
-    for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-    }
-    
-    // Map form field names to match controller expectations
-    if (formData.get('tender_title')) {
-        formData.set('title', formData.get('tender_title'));
-    }
-    if (formData.get('tender_type')) {
-        formData.set('type', formData.get('tender_type'));
-    }
-    if (formData.get('tender_category')) {
-        formData.set('category', formData.get('tender_category'));
-    }
-    if (formData.get('tender_description')) {
-        formData.set('description', formData.get('tender_description'));
-    }
-    
-    // Debug: Log mapped form data
-    console.log('Mapped form data:');
-    for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-    }
-    
-    // Basic validation
-    const requiredFields = ['tender_number', 'tender_title', 'tender_type', 'tender_category', 
-                           'episode_duration', 'total_episodes', 'budget_per_episode', 
-                           'submission_deadline', 'production_start', 'production_end'];
-    
-    const missingFields = [];
-    requiredFields.forEach(fieldName => {
-        const field = form.querySelector('[name="' + fieldName + '"]');
-        if (!field || !field.value.trim()) {
-            missingFields.push(fieldName.replace(/_/g, ' ').replace(/\\b\\w/g, l => l.toUpperCase()));
-        }
-    });
-    
-    if (missingFields.length > 0 && status === 'published') {
-        alert('Please fill in all required fields: ' + missingFields.join(', '));
-        return;
-    }
-    
-    // Show loading
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Saving...';
-    submitBtn.disabled = true;
-    
-    console.log('Sending to server...');
-    
-    // Send to server
-    fetch('/ajax/tender/save', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        console.log('Response received:', response);
-        return response.json();
-    })
-    .then(data => {
-        console.log('Response data:', data);
-        if (data.success) {
-            alert(status === 'draft' ? 'Draft saved successfully!' : 'Tender published successfully!');
-            if (status === 'published') {
-                // Redirect to manage tenders or reload dashboard
-                loadDashboardStats();
-                // Switch to dashboard view
-                const dashboardLink = document.querySelector('.nav-link[data-section="dashboard"]');
-                if (dashboardLink) {
-                    dashboardLink.click();
-                }
-            }
-        } else {
-            alert('Error: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while saving the tender.');
-    })
-    .finally(() => {
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-    });
-}
-
-// Initialize the form when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-        const form = document.getElementById('tender-creation-form');
-        if (form) {
-            console.log('Initializing tender form...');
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveTender('published');
-            });
-            
-            // Test calculation function
-            console.log('Testing calculateTotal function...');
-            if (typeof calculateTotal === 'function') {
-                console.log('calculateTotal function is available');
-                calculateTotal(); // Trigger initial calculation
-            } else {
-                console.error('calculateTotal function not found!');
-            }
-            
-            // Add event listeners to ensure calculation works
-            const episodesField = document.getElementById('total_episodes');
-            const budgetField = document.getElementById('budget_per_episode');
-            
-            if (episodesField) {
-                episodesField.addEventListener('input', calculateTotal);
-                episodesField.addEventListener('change', calculateTotal);
-            }
-            
-            if (budgetField) {
-                budgetField.addEventListener('input', calculateTotal);
-                budgetField.addEventListener('change', calculateTotal);
-            }
-        }
-    }, 500);
-});
-</script>
-
